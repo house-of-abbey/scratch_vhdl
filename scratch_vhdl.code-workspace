@@ -2,6 +2,10 @@
     "folders": [
         {
             "path": "."
+        },
+        {
+            "path": "./scratch-vhdl-vscode",
+            "name": "vscode"
         }
     ],
     "settings": {

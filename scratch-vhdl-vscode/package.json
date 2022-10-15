@@ -1,58 +1,55 @@
 {
-    "name": "scratch-vhdl-vscode",
-    "displayName": "scratch-vhdl-vscode",
-    "description": "",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.72.0"
-    },
-    "categories": [
-        "Other"
-    ],
-    "activationEvents": [
-        "onCustomEditor:scratch-vhdl-vscode.vhdl",
-        "onCommand:scratch-vhdl-vscode.vhdl.new"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "customEditors": [
-            {
-                "viewType": "scratch-vhdl-vscode.vhdl",
-                "displayName": "Scratch VHDL",
-                "selector": [
-                    {
-                        "filenamePattern": "*.vhdl"
-                    }
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "command": "scratch-vhdl-vscode.vhdl.new",
-                "title": "Create new Scratch VHDL Document",
-                "category": "Scratch VHDL"
-            }
-        ]
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "pretest": "npm run compile && npm run lint",
-        "lint": "eslint src --ext ts",
-        "test": "node ./out/test/runTest.js"
-    },
-    "devDependencies": {
-        "@types/vscode": "^1.72.0",
-        "@types/glob": "^7.2.0",
-        "@types/mocha": "^9.1.1",
-        "@types/node": "16.x",
-        "@typescript-eslint/eslint-plugin": "^5.31.0",
-        "@typescript-eslint/parser": "^5.31.0",
-        "eslint": "^8.20.0",
-        "glob": "^8.0.3",
-        "mocha": "^10.0.0",
-        "typescript": "^4.7.4",
-        "@vscode/test-electron": "^2.1.5"
-    }
+	"name": "scratch-vhdl-vscode",
+	"displayName": "Scratch VHDL",
+	"description": "",
+	"version": "0.0.1",
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.65.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCustomEditor:scratch-vhdl-vscode.scratchVHDL",
+		"onCommand:scratch-vhdl-vscode.scratchVHDL.new"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "scratch-vhdl-vscode.scratchVHDL",
+				"displayName": "Scratch VHDL",
+				"selector": [
+					{
+						"filenamePattern": "*.vhdl"
+					}
+				]
+			}
+		],
+		"commands": [
+			{
+				"command": "scratch-vhdl-vscode.scratchVHDL.new",
+				"title": "Create new Scratch VHDL Document",
+				"category": "Scratch VHDL"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -w -p ./"
+	},
+	"devDependencies": {
+		"@types/node": "^16.11.7",
+		"@types/vscode": "^1.65.0",
+		"@typescript-eslint/eslint-plugin": "^5.30.0",
+		"@typescript-eslint/parser": "^5.30.0",
+		"eslint": "^8.13.0",
+		"typescript": "^4.8.4"
+	},
+	"dependencies": {
+		"blockly": "^9.0.0"
+	}
 }

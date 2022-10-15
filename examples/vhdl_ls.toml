@@ -1,0 +1,4 @@
+[libraries]
+examples.files = [
+    "./*.vhdl"
+]
