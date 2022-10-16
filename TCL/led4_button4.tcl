@@ -208,7 +208,7 @@ proc stop_monitor {} {
 }
 
 proc display_cursor {} {
-  global leds default traffic
+  global leds default toggle traffic
   set leds_v [examine -time [wave cursor time] -radix bin $leds]
   display ${default}.ledframe.leds plain \
     [string index $leds_v 3] \
@@ -269,7 +269,6 @@ proc get_button_tab {} {
   # 1 - Push Switch tab
   # 2 - Toggle Switch tab
   # 3 - Traffic Lights tab
-  puts "bt=$bt"
   switch $bt {
     1 {$app raise default}
     2 {$app raise toggle}
@@ -464,6 +463,10 @@ wm title .controls "Controls"
 wm geometry .controls ${winwidth}x${winheight}+100+100
 wm attributes .controls -topmost 1
 
+# Setup sim
+if {$now > 0} {
+  restart -f
+}
 if {[runStatus] == "ready" || [runStatus] == "break"} {
   # Setup the trigger to update the display
   setup_monitor
@@ -472,9 +475,7 @@ if {[runStatus] == "ready" || [runStatus] == "break"} {
   puts "WARNING - Load the design then call TCL 'setup_monitor'."
 }
 puts "NOTE - Use 'display_cursor' to update the display to the values shown under the cursor."
-
-# setup sim
-restart -f
+# Switch the tab used to display the buttons and LEDs to the one preferred by the active 'led4_button4' architecture
 get_button_tab
 run -all
 view wave

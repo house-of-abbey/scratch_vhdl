@@ -201,6 +201,11 @@ begin
 end architecture;
 
 
+--
+-- Bonnet (hood) lights on 'Kitt', the car from Knight Rider (1982–1986), and subsequent sequels.
+-- KITT = "Knight Industries Two Thousand"
+-- https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics
+--
 architecture knight_rider of led4_button4 is
 
   -- 1 - Push Switch tab
