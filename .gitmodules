@@ -1,0 +1,3 @@
+[submodule "fpga"]
+	path = fpga
+	url = https://github.com/philipabbey/fpga
