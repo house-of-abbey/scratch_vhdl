@@ -1,1 +1,4 @@
 https://google.github.io/blockly-samples/examples/backpack-demo/
+https://google.github.io/blockly-samples/plugins/typed-variable-modal/test/
+https://google.github.io/blockly-samples/plugins/strict-connection-checker/test/
+https://google.github.io/blockly-samples/plugins/block-dynamic-connection/test/
