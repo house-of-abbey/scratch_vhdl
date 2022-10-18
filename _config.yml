@@ -1,4 +1,6 @@
-theme: jekyll-theme-minimal
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+- jekyll-remote-theme
 title: Scratch VHDL
 description: The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious.
 logo: ""
