@@ -19,6 +19,7 @@ end entity;
 
 library ieee;
   use ieee.std_logic_1164.all;
+library std;
 library local;
   use local.testbench_pkg.all;
 
@@ -58,7 +59,9 @@ begin
 
     wait_nr_ticks(clk, 500);
 
-    stop_clocks;
+    --stop_clocks;
+    -- PLL IP Core won't stop creating events, must use 'stop' instead of 'stop_clocks'.
+    std.env.stop;
     wait;
   end process;
 

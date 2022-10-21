@@ -24,16 +24,7 @@ set_property keep_hierarchy true [get_cells {retime_btn retime_sw led4_button4_i
 
 # Not getting clever with max_delay constraints here, keep it simple for this tiny design
 set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime_reg[*]}]
-# These off chip sources and destonations are not synchronous
-set_false_path -from [get_ports {btn[*] sw[*]}]
-set_false_path -to   [get_ports {leds[*]}]
-
+# These off chip sources and destinations are not synchronous, but we want a clean timing report.
 # Time in ns
-#set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
-#set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {leds[*]}]
-
-#set_property iob false [get_ports {btn[*] sw[*]}]
-
-# Not using the PS7
-# [Designutils 20-1307] Command 'get_drc_violations' is not supported in the xdc constraint file.
-#create_waiver -of_objects [get_drc_violations -name zybo_z7_10_drc_routed.rpx {ZPS7-1#1}] -user Philip
+set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
+set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {leds[*]}]

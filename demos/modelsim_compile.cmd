@@ -54,14 +54,17 @@ vcom -quiet -2008 ^
   %SRC%\led4_button4.vhdl ^
   %SRC%\stimulus_led4_button4.vhdl ^
   %SRC%\retime.vhdl ^
+  %SRC%\pll.vhdl ^
   %SRC%\zybo_z7_10.vhdl ^
   %SRC%\test_zybo_z7_10.vhdl
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (exit /b %ec%)
 
 echo.
+echo To run the top level simulation use:
+echo.
 echo cd %DEST%
-echo %MODELSIMDIR%\modelsim_ase\win32aloem\vsim work.test_zybo_z7_10
+echo %MODELSIMDIR%\modelsim_ase\win32aloem\vsim -gsim_g=true work.test_zybo_z7_10
 echo.
 
 rem Do not pause inside MS Visual Studio Code, it has its own prompt on completion.

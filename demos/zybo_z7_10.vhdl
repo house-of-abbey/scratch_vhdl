@@ -18,11 +18,13 @@
 --  * https://digilent.com/reference/programmable-logic/zybo-z7/start
 --  * https://digilent.com/reference/programmable-logic/guides/installing-vivado-and-vitis
 
-
 library ieee;
   use ieee.std_logic_1164.all;
 
 entity zybo_z7_10 is
+  generic(
+    sim_g : boolean := false
+  );
   port(
     clk_port : in  std_logic; -- 125 MHz External Clock
     sw       : in  std_logic_vector(3 downto 0);
@@ -32,17 +34,24 @@ entity zybo_z7_10 is
 end entity;
 
 
-library unisim;
-  use unisim.vcomponents.all;
-
 architecture rtl of zybo_z7_10 is
 
-  --constant divide_c : positive := 500 ms / 8 ns;
-  constant divide_c : positive := 10;
+  function divide(sim : boolean) return positive is
+  begin
+    if sim then
+      return 10;
+    else
+      -- 500 ms / 8 ns, but Vivado is unable to perform this calculation even when the result
+      -- is assigned to a constant.
+      return 625000000;
+    end if;
+  end function;
+
+  constant divide_c : positive := divide(sim_g);
 
   signal clk     : std_logic                    := '0';
   signal reset   : std_logic                    := '0';
---  signal locked  : std_logic;
+  signal locked  : std_logic;
   signal rst_reg : std_logic_vector(3 downto 0) := (others => '1');
   signal sw_r    : std_logic_vector(sw'range)   := (others => '0');
   signal btn_r   : std_logic_vector(btn'range)  := (others => '0');
@@ -52,31 +61,25 @@ architecture rtl of zybo_z7_10 is
 
 begin
 
-  -- IBUF gets inferred
-  clk_buf : BUFG
+  pll_i : entity work.pll
     port map (
-      I => clk_port,
-      O => clk
-  );
+      -- Clock in ports
+      clk_in => clk_port,
+      -- Clock out ports
+      clk_out => clk,
+      -- Status and control signals
+      locked => locked
+    );
 
 
---  pll_i : entity work.pll
---    port map (
---      -- Clock in ports
---      clk_in => clk_port,
---      -- Clock out ports
---      clk_out => clk,
---      -- Status and control signals
---      locked => locked
---    );
-
-
-  -- Take advantage of initial values set GSR to generate the reset. It's not
-  -- obvious how to tap GSR directly and discouraged too.
+  -- Take advantage of initial values set GSR to generate the reset. It's not obvious
+  -- how to tap GSR directly and discouraged too. 'locked' goes high earlier than GSR
+  -- allows 'rst_reg' to start shifting, so this is belt & braces to ensure that reset
+  -- cannot preceed the PLL entering the locked state.
   process(clk)
   begin
     if rising_edge(clk) then
-      (reset, rst_reg) <= rst_reg(rst_reg'high downto 0) & '0'; -- use "not locked" here?
+      (reset, rst_reg) <= rst_reg(rst_reg'high downto 0) & not locked;
     end if;
   end process;
 
