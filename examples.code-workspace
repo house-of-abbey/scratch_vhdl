@@ -9,6 +9,11 @@
             "activityBar.background": "#01360B",
             "titleBar.activeBackground": "#024C10",
             "titleBar.activeForeground": "#ECFFF0"
+        },
+        "files.associations": {
+            "*.sbd": "json",
+            "*.sbe": "json",
+            "*.sbi": "json"
         }
     }
 }

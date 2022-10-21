@@ -74,6 +74,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
         return this._scratchData;
     }
 
+    public get entityData(): string {
+        return this._entityData;
+    }
+
     private readonly _onDidDispose = this._register(
         new vscode.EventEmitter<void>()
     );
@@ -486,6 +490,13 @@ export class ScratchVHDLEditorProvider
 
             case 'update':
                 document.update(message.body);
+                return;
+
+            case 'requestEntity':
+                panel.webview.postMessage({
+                    type: 'entity',
+                    body: document.entityData,
+                });
                 return;
 
             case 'requestUpdate':
