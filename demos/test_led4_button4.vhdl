@@ -50,7 +50,7 @@ architecture test of test_led4_button4 is
 
 begin
 
-  clkgen : clock(clk, 10 ns);
+  clkgen : clock(clk, 8 ns);
 
   incr_pulse : process
   begin

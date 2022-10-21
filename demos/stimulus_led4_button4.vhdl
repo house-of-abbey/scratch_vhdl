@@ -130,6 +130,55 @@ configuration test_logic_gates of test_led4_button4 is
 end configuration;
 
 
+library local;
+  use local.testbench_pkg.all;
+
+architecture binary_counter of stimulus_led4_button4 is
+
+  alias start is buttons(0);
+  alias stop  is buttons(1);
+
+begin
+
+  stimulus : process
+  begin
+    reset <= '1';
+    start <= '0';
+    stop  <= '0';
+    wait_nr_ticks(clk, 2);
+    reset <= '0';
+
+    wait_nr_ticks(clk, 20);
+    toggle_r(start, clk, 1);
+    wait_nr_ticks(clk, 200);
+    toggle_r(stop, clk, 1);
+    wait_nr_ticks(clk, 100);
+    toggle_r(start, clk, 1);
+    wait_nr_ticks(clk, 50);
+    toggle_r(stop, clk, 1);
+    wait_nr_ticks(clk, 20);
+
+    stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_binary_counter of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(binary_counter);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(binary_counter);
+    end for;
+
+  end for;
+end configuration;
+
+
 library ieee;
   use ieee.numeric_std_unsigned.all;
 library local;
@@ -191,56 +240,6 @@ end configuration;
 library local;
   use local.testbench_pkg.all;
 
-architecture binary_counter of stimulus_led4_button4 is
-
-  alias start is buttons(0);
-  alias stop  is buttons(1);
-
-begin
-
-  stimulus : process
-  begin
-    reset <= '1';
-    start <= '0';
-    stop  <= '0';
-    wait_nr_ticks(clk, 2);
-    reset <= '0';
-
-    wait_nr_ticks(clk, 20);
-    toggle_r(start, clk, 1);
-    wait_nr_ticks(clk, 200);
-    toggle_r(stop, clk, 1);
-    wait_nr_ticks(clk, 100);
-    toggle_r(start, clk, 1);
-    wait_nr_ticks(clk, 50);
-    toggle_r(stop, clk, 1);
-    wait_nr_ticks(clk, 20);
-
-    stop_clocks;
-    wait;
-  end process;
-
-end architecture;
-
-
-configuration test_binary_counter of test_led4_button4 is
-  for test
-
-    for led4_button4_i : led4_button4
-      use entity work.led4_button4(binary_counter);
-    end for;
-
-    for stimulus_led4_button4_i : stimulus_led4_button4
-      use entity work.stimulus_led4_button4(binary_counter);
-    end for;
-
-  end for;
-end configuration;
-
-
-library local;
-  use local.testbench_pkg.all;
-
 architecture knight_rider of stimulus_led4_button4 is
 
   alias start is buttons(0);
@@ -271,7 +270,6 @@ begin
   end process;
 
 end architecture;
-
 
 configuration test_knight_rider of test_led4_button4 is
   for test
@@ -335,7 +333,6 @@ configuration test_traffic_lights of test_led4_button4 is
 
   end for;
 end configuration;
-
 
 
 library local;
@@ -406,7 +403,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(adder_binary);
+      use entity work.led4_button4(traffic_lights);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4

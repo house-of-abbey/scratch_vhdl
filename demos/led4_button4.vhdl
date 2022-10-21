@@ -83,6 +83,55 @@ end architecture;
 
 
 library ieee;
+  use ieee.numeric_std_unsigned.all;
+
+architecture binary_counter of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 1;
+
+  alias start is buttons(0);
+  alias stop  is buttons(1);
+
+  signal run : std_logic             := '0';
+  signal cnt : integer range 0 to 15 := 0;
+
+begin
+
+  leds <= to_stdulogicvector(cnt, leds'length);
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        run <= '0';
+        cnt <= 0;
+      else
+
+        if start = '1' then
+          run <= '1';
+        elsif stop = '1' then
+          run <= '0';
+        end if;
+
+        if run = '1' and incr = '1' then
+          if cnt = 15 then
+            cnt <= 0;
+          else
+            cnt <= cnt + 1;
+          end if;
+        end if;
+
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
+library ieee;
   use ieee.numeric_std.all;
 
 architecture adder_onehot of led4_button4 is
@@ -143,56 +192,6 @@ begin
           -- Cover the other bit values: 'U', 'X', 'Z', 'W', 'L' & 'H'
           when others                                              => leds <= "1111";
         end case;
-
-      end if;
-    end if;
-  end process;
-
-end architecture;
-
-
-
-library ieee;
-  use ieee.numeric_std_unsigned.all;
-
-architecture binary_counter of led4_button4 is
-
-  -- 1 - Push Switch tab
-  -- 2 - Toggle Switch tab
-  -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
-
-  alias start is buttons(0);
-  alias stop  is buttons(1);
-
-  signal run : std_logic             := '0';
-  signal cnt : integer range 0 to 15 := 0;
-
-begin
-
-  leds <= to_stdulogicvector(cnt, leds'length);
-
-  process(clk)
-  begin
-    if rising_edge(clk) then
-      if reset = '1' then
-        run <= '0';
-        cnt <= 0;
-      else
-
-        if start = '1' then
-          run <= '1';
-        elsif stop = '1' then
-          run <= '0';
-        end if;
-
-        if run = '1' and incr = '1' then
-          if cnt = 15 then
-            cnt <= 0;
-          else
-            cnt <= cnt + 1;
-          end if;
-        end if;
 
       end if;
     end if;

@@ -11,7 +11,7 @@ The purpose of "Scratch VHDL" is to make reprogrammable logic design into child'
 7. Reducing the clock speed so that timing closure can be ignored.
 8. Downloading the design to a development board in order to test for real, in a similar style to the interactive test bench used for simulation.
 
-All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands.
+All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands. Anyone new to FPGA design will be able to experience the full design process to realise and test a real (if simple) design, and gain an education.
 
 ## Design Entry
 
@@ -37,11 +37,11 @@ The download to the development board is managed through TCL scripts so the auth
 
 Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time.
 
-1. One LED per button, can we get the board to work?
-2. Logic gates, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring them to life.
-3. 4-bit Binary counter with start and stop buttons.
-4. Add up the number of buttons pressed. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
-5. The Knight Rider KITT car sequence from the 1980's television series.
-6. Traffic lights come in two flavours; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+1. **One LED per button**, can we get the board to work?
+2. **Logic gates**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring them to life.
+3. **4-bit binary counter** with start and stop buttons.
+4. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
+5. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
+6. **Traffic lights** come in two flavours; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools.
