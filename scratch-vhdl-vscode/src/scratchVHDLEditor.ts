@@ -23,10 +23,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
             await ScratchVHDLDocument.readFile(uri),
             await ScratchVHDLDocument.readFile(
                 vscode.Uri.parse(uri.toString() + '.sbd')
-            ),
+            ) || "{}",
             await ScratchVHDLDocument.readFile(
                 vscode.Uri.parse(uri.toString() + '.sbe')
-            ),
+            ) || "{entity:{}}",
             delegate
         );
     }

@@ -354,12 +354,12 @@ document.addEventListener('DOMContentLoaded', function () {
 					"type": "field_dropdown",
 					"name": "OPERATION",
 					"options": [
-						["and", "AND"],
-						["or", "OR"],
-						["xor", "XOR"],
-						["nor", "NOR"],
-						["nand", "NAND"],
-						["xnor", "XNOR"]
+						["AND", "and"],
+						["OR", "or"],
+						["XOR", "xor"],
+						["NOR", "nor"],
+						["NAND", "nand"],
+						["XNOR", "xnor"],
 					]
 				},
 				{
@@ -384,12 +384,12 @@ document.addEventListener('DOMContentLoaded', function () {
 					"type": "field_dropdown",
 					"name": "OPERATION",
 					"options": [
-						["and", "AND"],
-						["or", "OR"],
-						["xor", "XOR"],
-						["nor", "NOR"],
-						["nand", "NAND"],
-						["xnor", "XNOR"],
+						["AND", "and"],
+						["OR", "or"],
+						["XOR", "xor"],
+						["NOR", "nor"],
+						["NAND", "nand"],
+						["XNOR", "xnor"],
 					]
 				},
 				{
@@ -610,18 +610,17 @@ document.addEventListener('DOMContentLoaded', function () {
 	const theme = Blockly.Theme.defineTheme('dark', {
 		'base': Blockly.Themes.Classic,
 		'componentStyles': {
-			'workspaceBackgroundColour': '#1e1e1e',
-			'toolboxBackgroundColour': 'blackBackground',
-			'toolboxForegroundColour': '#fff',
-			'flyoutBackgroundColour': '#252526',
-			'flyoutForegroundColour': '#ccc',
-			'flyoutOpacity': 1,
+			'workspaceBackgroundColour': 'var(--vscode-editor-background)',
+			'toolboxBackgroundColour': 'var(--vscode-editorWidget-background)',
+			'toolboxForegroundColour': 'var(--vscode-editorWidget-foreground)',
+			'flyoutBackgroundColour': 'var(--vscode-editorWidget-background)',
+			'flyoutForegroundColour': 'var(--vscode-editorWidget-foreground)',
+			'flyoutOpacity': 0.8,
 			'scrollbarColour': '#797979',
 			'insertionMarkerColour': '#fff',
 			'insertionMarkerOpacity': 0.3,
 			'scrollbarOpacity': 0.4,
 			'cursorColour': '#d0d0d0',
-			'blackBackground': '#333',
 		},
 	});
 
@@ -636,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 	VHDLGenerator.finish = function (code) {
-		return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\nbegin\n\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;";
+		return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\nbegin\n\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
 	}
 
 	VHDLGenerator.scrub_ = function (block, code, opt_thisOnly) {
@@ -646,7 +645,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			// Collect comment for this block.
 			let comment = block.getCommentText();
 			if (comment) {
-				comment = stringUtils.wrap(comment, this.COMMENT_WRAP - 3);
+				comment = Blockly.utils.string.wrap(comment, this.COMMENT_WRAP - 3);
 				commentCode += this.prefixLines(comment, '-- ') + '\n';
 			}
 			// Collect comments for all value arguments.
@@ -775,8 +774,8 @@ document.addEventListener('DOMContentLoaded', function () {
 		(message) => {
 			if (message.data.type == "entity") {
 				Blockly.Events.disable();
-				name = message.data.file_name;
 				entity = JSON.parse(message.data.body);
+				name = entity.name || message.data.file_name;
 				for (const n in entity.entity) {
 					entityVars[ws.createVariable(n).id_] = n;
 				}

@@ -21,7 +21,8 @@ begin
     if reset = '0' then
       leds <= "0000";
     else
-      if OR(buttons) then
+      -- If any buttons are pressed, set leds to buttons.
+      if or(buttons) then
         leds <= buttons;
       end if;
     end if;
