@@ -1,0 +1,9 @@
+{
+    "entity": {
+        "clk"     : ["in",  "std_logic"],
+        "reset"   : ["in",  "std_logic"],
+        "incr"    : ["in",  "std_logic"],
+        "buttons" : ["in",  "std_logic_vector(3 downto 0)"],
+        "leds"    : ["out", "std_logic_vector(3 downto 0)", "0000"]
+    }
+}

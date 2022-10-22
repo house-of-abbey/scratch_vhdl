@@ -48,11 +48,19 @@ document.addEventListener('DOMContentLoaded', function () {
 					},
 					{
 						'kind': 'block',
+						'type': 'logic_or',
+					},
+					{
+						'kind': 'block',
 						'type': 'logic_compare',
 					},
 					{
 						'kind': 'block',
 						'type': 'logic_operation',
+					},
+					{
+						'kind': 'block',
+						'type': 'logic_operation_vector',
 					},
 					{
 						'kind': 'block',
@@ -315,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function () {
 			"args0": [
 				{
 					"type": "field_number",
-					"name": "INDEX",
+					"name": "VALUE",
 					"min": 0,
 					"max": 1,
 					"precision": 1,
@@ -331,14 +339,67 @@ document.addEventListener('DOMContentLoaded', function () {
 			"message0": "\"%1\"",
 			"args0": [
 				{
-					"type": "field_number",
-					"name": "INDEX",
-					"min": 0,
-					"precision": 1,
-					"value": 0,
+					"type": "field_input",
+					"name": "VALUE",
 				}
 			],
 			"output": null,
+		},
+		{
+			"kind": "block",
+			"type": "logic_operation_vector",
+			"message0": "%1 %2",
+			"args0": [
+				{
+					"type": "field_dropdown",
+					"name": "OPERATION",
+					"options": [
+						["and", "AND"],
+						["or", "OR"],
+						["xor", "XOR"],
+						["nor", "NOR"],
+						["nand", "NAND"],
+						["xnor", "XNOR"]
+					]
+				},
+				{
+					"type": "input_value",
+					"name": "LIST",
+				}
+			],
+			"output": "Boolean",
+			"inputsInline": true,
+			"style": "logic_blocks",
+		},
+		{
+			"kind": "block",
+			"type": "logic_operation",
+			"message0": "%1 %2 %3",
+			"args0": [
+				{
+					"type": "input_value",
+					"name": "A",
+				},
+				{
+					"type": "field_dropdown",
+					"name": "OPERATION",
+					"options": [
+						["and", "AND"],
+						["or", "OR"],
+						["xor", "XOR"],
+						["nor", "NOR"],
+						["nand", "NAND"],
+						["xnor", "XNOR"],
+					]
+				},
+				{
+					"type": "input_value",
+					"name": "B",
+				}
+			],
+			"output": "Boolean",
+			"style": "logic_blocks",
+			"inputsInline": true,
 		},
 		{
 			"kind": "block",
@@ -425,7 +486,8 @@ document.addEventListener('DOMContentLoaded', function () {
 			],
 			"colour": "%{BKY_LOGIC_HUE}",
 			"previousStatement": null,
-			"nextStatement": null
+			"nextStatement": null,
+			"inputsInline": true,
 		},
 		{
 			"kind": "block",
@@ -443,16 +505,32 @@ document.addEventListener('DOMContentLoaded', function () {
 			],
 			"colour": "%{BKY_LOGIC_HUE}",
 			"previousStatement": "controls_when",
-			"nextStatement": "controls_when"
-		}
+			"nextStatement": "controls_when",
+		},
+		{
+			"kind": "block",
+			"type": "logic_or",
+			"message0": "%1 | %2",
+			"colour": "%{BKY_LOGIC_HUE}",
+			"args0": [
+				{
+					"type": "input_value",
+					"name": "A"
+				},
+				{
+					"type": "input_value",
+					"name": "B"
+				}
+			],
+			"inputsInline": true,
+			"output": null,
+		},
 	]);
 
 	Blockly.Extensions.registerMutator("process_mutator", {
 		updateShape_: function () {
 			if (this.prevDepCount_ < this.depCount_) {
-				console.log(this.prevDepCount_, this.depCount_);
 				for (var i = this.prevDepCount_ + 1; i <= this.depCount_; i++) {
-					console.log("+", i);
 					this.inputList[0].appendField(new Blockly.FieldVariable("clk"), i.toString());
 				}
 			} else if (this.prevDepCount_ > this.depCount_) {
@@ -473,7 +551,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			this.updateShape_();
 		},
 
-		// TODO: fix
 		decompose: function (workspace) {
 			var topBlock = workspace.newBlock('process_internal_container');
 			topBlock.initSvg();
@@ -548,6 +625,108 @@ document.addEventListener('DOMContentLoaded', function () {
 		},
 	});
 
+	const VHDLGenerator = new Blockly.Generator("VHDL");
+	// TODO: VHDL keyword list
+	// TODO: operator precedence
+
+	VHDLGenerator.ORDER_ATOMIC = 0;
+	VHDLGenerator.ORDER_FUNCTION_CALL = 1;
+	VHDLGenerator.ORDER_COMPARE = 2;
+	VHDLGenerator.ORDER_NONE = 99;
+
+
+	VHDLGenerator.finish = function (code) {
+		return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\nbegin\n\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;";
+	}
+
+	VHDLGenerator.scrub_ = function (block, code, opt_thisOnly) {
+		let commentCode = '';
+		// Only collect comments for blocks that aren't inline.
+		if (!block.outputConnection || !block.outputConnection.targetConnection) {
+			// Collect comment for this block.
+			let comment = block.getCommentText();
+			if (comment) {
+				comment = stringUtils.wrap(comment, this.COMMENT_WRAP - 3);
+				commentCode += this.prefixLines(comment, '-- ') + '\n';
+			}
+			// Collect comments for all value arguments.
+			// Don't collect comments for nested statements.
+			for (let i = 0; i < block.inputList.length; i++) {
+				if (block.inputList[i].type === Blockly.inputTypes.VALUE) {
+					const childBlock = block.inputList[i].connection.targetBlock();
+					if (childBlock) {
+						comment = this.allNestedComments(childBlock);
+						if (comment) {
+							commentCode += this.prefixLines(comment, '-- ');
+						}
+					}
+				}
+			}
+		}
+		const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
+		const nextCode = opt_thisOnly ? '' : this.blockToCode(nextBlock);
+		return commentCode + code + nextCode;
+	};
+
+	VHDLGenerator.process = function (block) {
+		return "  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(block.inputList[0]
+			.fieldRow.filter(
+				(a) => a instanceof Blockly.FieldVariable
+			).map(
+				(a) => a.getVariable().name
+			).join(", ")) + "\n  begin\n" +
+			VHDLGenerator.statementToCode(block, 'body') +
+			"\n  end process;";
+	}
+
+	VHDLGenerator.controls_if = function (block) {
+		let n = 0;
+		let code = '';
+		while (block.getInput('IF' + n)) {
+			const conditionCode =
+				VHDLGenerator.valueToCode(block, 'IF' + n, VHDLGenerator.ORDER_NONE) || 'false';
+			let branchCode = VHDLGenerator.statementToCode(block, 'DO' + n);
+			code +=
+				(n > 0 ? 'else' : '') + 'if ' + conditionCode + ' then\n' + branchCode;
+			n++;
+		}
+
+		if (block.getInput('ELSE')) {
+			let branchCode = VHDLGenerator.statementToCode(block, 'ELSE');
+			code += 'else\n' + branchCode;
+		}
+		return code + 'end if;\n';
+	}
+
+	VHDLGenerator.logic_rising_edge = function (block) {
+		return ["rising_edge(" + block.getField("dep").getVariable().name + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
+	}
+
+	VHDLGenerator.logic_operation_vector = function (block) {
+		return [block.getFieldValue("OPERATION") + "(" + VHDLGenerator.valueToCode(block, "LIST", VHDLGenerator.ORDER_NONE) + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
+	}
+
+	VHDLGenerator.logic_compare = function (block) {
+		return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_COMPARE) + " = " + VHDLGenerator.valueToCode(block, "B", VHDLGenerator.ORDER_COMPARE), VHDLGenerator.ORDER_COMPARE]
+	}
+
+	VHDLGenerator.variables_get = function (block) {
+		return [block.getField("VAR").getVariable().name, VHDLGenerator.ORDER_ATOMIC];
+	}
+
+	VHDLGenerator.variables_set = function (block) {
+		return block.getField("VAR").getVariable().name + ' <= ' +
+			(VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE)) + ';\n';
+	}
+
+	VHDLGenerator.value_std_logic = function (block) {
+		return ["'" + block.getFieldValue("VALUE") + "'", VHDLGenerator.ORDER_ATOMIC];
+	};
+
+	VHDLGenerator.value_std_logic_vector = function (block) {
+		return ['"' + block.getFieldValue("VALUE") + '"', VHDLGenerator.ORDER_ATOMIC];
+	};
+
 	const ws = Blockly.inject('root', {
 		toolbox: toolbox,
 		grid: {
@@ -560,14 +739,24 @@ document.addEventListener('DOMContentLoaded', function () {
 		renderer: "zelos"
 	});
 
-	let entity = undefined;
+	let entity = {};
+	let libraries = {
+		"ieee": {
+			"std_logic_1164": null
+		}
+	};
+	let entityCode = "";
+	let librariesCode = "";
+
+	// TODO: this should get the name from the vscode api
+	let name = "hi";
 
 	window.addEventListener('message',
 		(message) => message.data.type == "getFileData" &&
 			vscode.postMessage({
 				type: 'response',
 				requestId: message.data.requestId,
-				body: ""
+				body: VHDLGenerator.workspaceToCode(ws)
 			}));
 	window.addEventListener('message',
 		(message) => message.data.type == "getScratchData" &&
@@ -586,12 +775,21 @@ document.addEventListener('DOMContentLoaded', function () {
 		(message) => {
 			if (message.data.type == "entity") {
 				Blockly.Events.disable();
+				name = message.data.file_name;
 				entity = JSON.parse(message.data.body);
 				for (const n in entity.entity) {
 					entityVars[ws.createVariable(n).id_] = n;
 				}
 				Blockly.Events.enable();
 				vscode.postMessage({ type: 'requestUpdate' });
+				entityCode = "entity " + name + " is\n  port(" +
+					Object.keys(entity.entity).map((n) =>
+						"\n    " + n + " : " + entity.entity[n][0] + " " + entity.entity[n][1]
+					).join(";") +
+					"\n  );\nend entity;";
+
+				// TODO: actually import libraries
+				librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
 			}
 		}
 	);

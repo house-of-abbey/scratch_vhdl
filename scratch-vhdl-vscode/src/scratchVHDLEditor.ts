@@ -1,3 +1,4 @@
+import path = require('path');
 import { TextDecoder, TextEncoder } from 'util';
 import * as vscode from 'vscode';
 import { Disposable, disposeAll } from './dispose';
@@ -155,6 +156,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
         await vscode.workspace.fs.writeFile(
             vscode.Uri.parse(targetResource.toString() + '.sbd'),
             new TextEncoder().encode(this._scratchData)
+        );
+        await vscode.workspace.fs.writeFile(
+            vscode.Uri.parse(targetResource.toString() + '.sbe'),
+            new TextEncoder().encode(this._entityData)
         );
     }
 
@@ -496,6 +501,7 @@ export class ScratchVHDLEditorProvider
                 panel.webview.postMessage({
                     type: 'entity',
                     body: document.entityData,
+                    file_name: path.basename(document.uri.fsPath).split('.')[0],
                 });
                 return;
 
