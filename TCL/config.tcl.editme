@@ -14,4 +14,5 @@
 #####################################################################################
 
 # Set this to your local Git clone
-set scratch_vhdl_src {path\to\scratch_vhdl}
+set scratch_vhdl_src [file normalize {path\to\scratch_vhdl}]
+set modelsim_install [file normalize {C:\intelFPGA_lite\20.1\modelsim_ase\win32aloem}]

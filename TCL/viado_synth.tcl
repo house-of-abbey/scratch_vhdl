@@ -18,34 +18,27 @@
 #
 #####################################################################################
 
-# To compile for simulation:
-# TCL script to build project
-# * Can we add the PLL from a TCL command for configuring IP?
-# * Generate the simualtion model at the correct path
-#
-# After PLL IP generation from the "Clock Wizard", the simulation model can be
-# written from the design using this command.
-#
-# set_property \
-#   -dict [list \
-#     CONFIG.PRIM_IN_FREQ {125.000} \
-#     CONFIG.CLKIN1_JITTER_PS {80.0} \
-#     CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-#     CONFIG.MMCM_CLKFBOUT_MULT_F {7} \
-#     CONFIG.MMCM_CLKIN1_PERIOD {8.000} \
-#     CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
-#     CONFIG.MMCM_CLKOUT0_DIVIDE_F {7} \
-#     CONFIG.CLKOUT1_JITTER {125.031} \
-#     CONFIG.CLKOUT1_PHASE_ERROR {104.065} \
-#   ] \
-#   [get_ips pll]
-#
-# write_vhdl \
-#   -cell [get_cells {pll_i}] \
-#   -force -mode funcsim \
-#   -rename_top pll \
-#   -prefix decalper_eb_ot_sdeen_pot_pi_dehcac_xnilix_ \
-#   {path\to\scratch_vhdl\demos\pll.vhdl}
+set thisscript [file normalize [info script]]
+set thisdir    [file dirname $thisscript]
+# The aim of this file is to provide a reliable way of knowing where the source code
+# is, without setting up variables in a special start up batch file which are relied
+# upon but absent when Modelsim is started from Windows start menu.
+set configfile "${thisdir}/config.tcl"
+
+if {[file exists $configfile]} {
+  # This file sets up the path to source
+  source $configfile
+} {
+  error "Set up 'config.tcl' file before proceeding." 1
+}
+# Verify the config has been read
+if {![info exists scratch_vhdl_src]} {
+  error "Set 'scratch_vhdl_src' before proceeding." 1
+}
+# Check the directory exists - belt & braces
+if {![file isdirectory $scratch_vhdl_src]} {
+  error "'scratch_vhdl_src' does not point to the source code." 1
+}
 
 # Not using the PS7
 # [Designutils 20-1307] Command 'get_drc_violations' is not supported in the xdc constraint file.

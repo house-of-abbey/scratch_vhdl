@@ -1,3 +1,5 @@
 TCL/config.tcl
 transcript
 **/Thumbs.db
+design/Zybo_Z7_10/ip/*
+!design/Zybo_Z7_10/ip/README.md
