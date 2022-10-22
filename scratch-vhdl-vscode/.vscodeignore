@@ -9,3 +9,5 @@ vsc-extension-quickstart.md
 **/*.map
 **/*.ts
 **/@types/**
+node_modules/**
+!node_modules/blockly/blockly.min.js

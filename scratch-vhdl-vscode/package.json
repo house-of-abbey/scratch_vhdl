@@ -1,5 +1,11 @@
 {
     "name": "scratch-vhdl-vscode",
+    "author": {
+        "name": "JosephAbbey",
+        "email": "joseph@abbey1.org.uk",
+        "url": "https://joseph.abbey1.org.uk"
+    },
+    "publisher": "JosephAbbey",
     "displayName": "Scratch VHDL",
     "description": "",
     "version": "0.0.1",
