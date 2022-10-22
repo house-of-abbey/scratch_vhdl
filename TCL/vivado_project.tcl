@@ -83,6 +83,7 @@ set_property file_type {VHDL 2008} [get_files {*.vhdl}]
 add_files $scratch_vhdl_src/design/Zybo_Z7_10/constraints
 set_property top zybo_z7_10 [current_fileset]
 update_compile_order -fileset [current_fileset]
+set_property generic sim_g=false [current_fileset]
 
 set ip_inst pll
 set ip_dest_file $scratch_vhdl_src/design/Zybo_Z7_10/ip
