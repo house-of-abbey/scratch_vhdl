@@ -11,3 +11,5 @@ vsc-extension-quickstart.md
 **/@types/**
 node_modules/**
 !node_modules/blockly/blockly.min.js
+things_to_try.txt
+.eslintignore
