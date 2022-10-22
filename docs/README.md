@@ -41,9 +41,38 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 
 1. **One LED per button**, can we get the board to work?
 2. **Logic gates**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring them to life.
-3. **4-bit binary counter** with start and stop buttons.
-4. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
-5. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
-6. **Traffic lights** come in two flavours; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+3. **Shift Register**, press a button to scroll a lit led to the left.
+4. **4-bit binary counter** with start and stop buttons.
+5. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
+6. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
+
+![Traffic Lights](./images/knight_rider_demo.gif)
+
+7. **Traffic lights** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+8. **Linear Feedback Shift Register** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools.
+
+## Fuller Details
+
+These are split into separate pages as follows:
+
+* Installation
+  * Scratch VHDL
+  * ModelSim
+  * Vivado
+  * Visual Studio Code, including:
+    * Scratch VHDL plugin
+    * VHDL editor plugin
+* Editing with Scratch VHDL 
+  * Drag and droop of block to create VHDL code
+  * Compilation of VHDL code
+* Simulation of VHDL
+  * Verification using the simulator to emulate the design interactively
+* Synthesis of VHDL
+  * Elaboration to see the recognisable (generic) gates inferred by the VHDL
+  * Synthesis to map the generic gates to the required FPGA device
+  * "Place & Route" the design across the FPGA fabric
+* Execution on the target development board
+  * Bit file generation and programming of the FPGA on the development board over USB
+  * Verification on the development board
