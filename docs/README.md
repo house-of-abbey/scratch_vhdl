@@ -40,8 +40,8 @@ The download to the development board is managed through TCL scripts so the auth
 Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time.
 
 1. **One LED per button**, can we get the board to work?
-2. **Logic gates**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring them to life.
-3. **Shift Register**, press a button to scroll a lit led to the left.
+2. **Logic gates**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
+3. **Shift Register**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left.
 4. **4-bit binary counter** with start and stop buttons.
 5. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 6. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
@@ -51,7 +51,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 7. **Traffic lights** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
 8. **Linear Feedback Shift Register** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 
-The desire is to combine a discussion of the theory with the practical via engagement with interactive tools.
+The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
 
 ## Fuller Details
 
