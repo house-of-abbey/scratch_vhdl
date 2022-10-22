@@ -1,71 +1,20 @@
-# scratch-vhdl-vscode README
+# Scratch VHDL
 
-This is the README for your extension "scratch-vhdl-vscode". After writing up a brief description, we recommend including the following sections.
+[![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
 
-## Features
+The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious. We'll do this by providing an introductory package of measures to simplify all aspects of design entry from coding through to deployment on a *"Field Programmable Gate Array"* (reprogrammable silicon chip). We'll simplify the process into the following step:
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+1. Using a *Scratch* interface to enable drag and drop coding of VHDL.
+2. Providing simple examples to code on a basic theme of 4 button and 4 LEDs, thereby...
+3. Reducing the range of VHDL being used to a subset that can still be interesting and provide a learning experience.
+4. Making testing interactive through a graphical control panel composed of buttons and LEDs to drive stimulus for the functional simulation instead of writing a VHDL test bench.
+5. Using the native FPGA design tools in a guided point & click mode.
+6. Encourage the understanding of the synthesis results by clicking through from gates to code.
+7. Reducing the clock speed so that timing closure can be ignored.
+8. Downloading the design to a development board in order to test for real, in a similar style to the interactive test bench used for simulation.
 
-For example if there is an image subfolder under your extension project workspace:
+All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands. Anyone new to FPGA design will be able to experience the full design process to realise and test a real (if simple) design, and gain an education.
 
-\!\[feature X\]\(images/feature-x.png\)
+## Design Entry
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
-
-## Requirements
-
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
-
-## Known Issues
-
-Calling out known issues can help limit users opening duplicate issues against your extension.
-
-## Release Notes
-
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Rather than hiding the code from the students, the Scratch project builder engages its audience with its creation, allowing them to experience a modern design entry method. Scratch will reduce the chances of syntax errors (but not completely eliminate them), and a standard project setup can be used to avoid many of the time consuming distractions. For example, we use a standard VHDL `entity` for all the demonstration designs, and the Scratch builder only has to assist with the derivation of the VHDL `architecture` in a single file.
