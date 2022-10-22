@@ -49,7 +49,7 @@
 
 # Not using the PS7
 # [Designutils 20-1307] Command 'get_drc_violations' is not supported in the xdc constraint file.
-create_waiver -of_objects [get_drc_violations -name zybo_z7_10_drc_routed.rpx {ZPS7-1#1}] -user Philip
+create_waiver -of_objects [get_drc_violations -name zybo_z7_10_drc_routed.rpx {ZPS7-1#1}] -user scratch_vhdl
 
 # Open a schematic of the basic design
 show_schematic [get_cells {led4_button4_i/*}]

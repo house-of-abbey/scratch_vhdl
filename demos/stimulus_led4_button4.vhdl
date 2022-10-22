@@ -19,6 +19,7 @@ library ieee;
 entity stimulus_led4_button4 is
   port(
     clk     : in  std_logic;
+    incr    : in  std_logic;
     reset   : out std_logic;
     buttons : out std_logic_vector(3 downto 0) := "0000"
   );
@@ -124,6 +125,54 @@ configuration test_logic_gates of test_led4_button4 is
 
     for stimulus_led4_button4_i : stimulus_led4_button4
       use entity work.stimulus_led4_button4(logic_gates);
+    end for;
+
+  end for;
+end configuration;
+
+
+library local;
+  use local.testbench_pkg.all;
+
+architecture shift_register of stimulus_led4_button4 is
+begin
+
+  stimulus : process
+  begin
+    reset   <= '1';
+    buttons <= "0000";
+    wait_nr_ticks(clk, 2);
+    reset   <= '0';
+
+    wait_nr_ticks(clk, 10);
+    buttons(0) <= '1';
+    wait_nr_ticks(clk, 10);
+    buttons(0) <= '0';
+    wait_nr_ticks(clk, 20);
+    buttons(0) <= '1';
+    wait_nr_ticks(clk, 10);
+    buttons(0) <= '0';
+    wait_nr_ticks(clk, 10);
+    buttons(0) <= '1';
+    wait_nr_ticks(clk, 20);
+    buttons(0) <= '0';
+    wait_nr_ticks(clk, 50);
+
+    stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_shift_register of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(shift_register);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(shift_register);
     end for;
 
   end for;
@@ -381,6 +430,69 @@ end configuration;
 
 
 library local;
+  use local.testbench_pkg.all;
+
+architecture lfsr_counter of stimulus_led4_button4 is
+
+  alias start is buttons(0);
+  alias stop  is buttons(1);
+
+begin
+
+  stimulus : process
+  begin
+    reset <= '1';
+    start <= '0';
+    stop  <= '0';
+    wait_nr_ticks(clk, 2);
+    reset <= '0';
+
+    wait_nr_ticks(clk, 20);
+    toggle_r(start, clk, 1);
+    wait_nr_ticks(clk, 200);
+    toggle_r(stop, clk, 1);
+    wait_nr_ticks(clk, 100);
+    toggle_r(start, clk, 1);
+    wait_nr_ticks(clk, 50);
+    toggle_r(stop, clk, 1);
+    wait_nr_ticks(clk, 20);
+
+    stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_lfsr_external of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(lfsr_external);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(lfsr_counter);
+    end for;
+
+  end for;
+end configuration;
+
+configuration test_lfsr_internal of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(lfsr_internal);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(lfsr_counter);
+    end for;
+
+  end for;
+end configuration;
+
+
+library local;
 
 architecture interactive of stimulus_led4_button4 is
 begin
@@ -403,7 +515,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(traffic_lights);
+      use entity work.led4_button4(lfsr_internal);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4

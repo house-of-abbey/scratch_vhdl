@@ -43,6 +43,7 @@ architecture test of test_led4_button4 is
   component stimulus_led4_button4 is
     port(
       clk     : in  std_logic;
+      incr    : in  std_logic;
       reset   : out std_logic;
       buttons : out std_logic_vector(3 downto 0)
     );
@@ -79,6 +80,7 @@ begin
   stimulus_led4_button4_i : stimulus_led4_button4
     port map (
       clk     => clk,
+      incr    => incr,
       reset   => reset,
       buttons => buttons
     );

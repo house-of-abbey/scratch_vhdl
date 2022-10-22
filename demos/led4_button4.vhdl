@@ -82,6 +82,32 @@ begin
 end architecture;
 
 
+architecture shift_register of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 1;
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        leds <= "0000";
+      else
+        if incr = '1' then
+          -- Could use "leds'high-1" as the upper bound here
+          leds <= leds(2 downto 0) & buttons(0);
+        end if;
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
 library ieee;
   use ieee.numeric_std_unsigned.all;
 
@@ -442,3 +468,141 @@ begin
 
 end architecture;
 
+
+-- Linear-Feedback Shift Register
+--
+-- In computing, a linear-feedback shift register (LFSR) is a shift register whose input
+-- bit is a linear function of its previous state.
+--
+-- Applications of LFSRs include generating pseudo-random numbers, pseudo-noise sequences,
+-- fast digital counters, and whitening sequences. Both hardware and software implementations
+-- of LFSRs are common.
+--
+-- https://en.wikipedia.org/wiki/Linear-feedback_shift_register#Example_polynomials_for_maximal_LFSRs
+--
+-- Usually the number of bits in the LFSR is much larger than 4; this is for demonstration
+-- purposes only.
+--
+-- Polynomial for maximal 4-bit LFSR
+--          Taps x^ 4321 0
+-- x^4 + x^3 + 1 => 1100(1)
+--
+-- Period (2^n - 1) = 15
+--
+-- Implementation Reference: https://www.eng.auburn.edu/~strouce/class/elec6250/LFSRs.pdf
+--
+-- External Feedback Implementation
+-- ================================
+--
+--                  ++------+
+--     +------------>\\      \  (x^4 + x^3)
+--     |              || XOR  |---------------+
+--     |          +->//      /                |
+--     |          | ++------+                 |
+--     |          |                           |
+--     |          |                           |
+--     |          |  LED bits(3:0)            |
+--     |   +---+  | +---+    +---+    +---+   |
+--     |   |   |  | |   |    |   |    |   |   |
+-- <---+---+ 3 |<-+-| 2 |<---| 1 |<---| 0 |<--+
+--         |   |    |   |    |   |    |   |
+--         +---+    +---+    +---+    +---+
+--      x^4      x^3      x^2      x^1      x^0
+--
+architecture lfsr_external of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 1;
+
+  alias start is buttons(0);
+  alias stop  is buttons(1);
+
+  signal run : std_logic := '0';
+
+  constant taps_c : std_logic_vector(3 downto 0) := "1100";
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        run  <= '0';
+        -- Must not start as "0000", or it never changes!
+        leds <= "1111";
+      else
+
+        if start = '1' then
+          run <= '1';
+        elsif stop = '1' then
+          run <= '0';
+        end if;
+
+        if run = '1' and incr = '1' then
+          -- External Feedback
+          leds <= leds(2 downto 0) & (leds(3) xor leds(2));
+        end if;
+
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
+-- Internal Feedback Implementation
+-- ================================
+--
+--     +------------------------+-----------------------------------------+
+--     |                        |       LED bits(3:0)                     |
+--     |   +---+      +------++ |  +---+    +---+    +---+     +------++  |
+--     |   |   |     /      //<-+  |   |    |   |    |   |    /      //<--+
+-- <---+---+ 3 |<---|  XOR ||      | 2 |<---| 1 |<---| 0 |<--|  XOR ||
+--         |   |     \      \\<----|   |    |   |    |   |    \      \\<-- '0'
+--         +---+      +------++    +---+    +---+    +---+     +------++
+--      x^4                     x^3      x^2      x^1      x^0
+--
+--                                                         NB. A XOR '0' = A
+--                                                         So this XOR gate is to
+--                                                         illustrate the code below only
+--
+architecture lfsr_internal of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 1;
+
+  alias start is buttons(0);
+  alias stop  is buttons(1);
+
+  signal run : std_logic := '0';
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        run  <= '0';
+        -- Must not start as "0000", or it never changes!
+        leds <= "1111";
+      else
+
+        if start = '1' then
+          run <= '1';
+        elsif stop = '1' then
+          run <= '0';
+        end if;
+
+        if run = '1' and incr = '1' then
+          leds <= (leds(2 downto 0) & '0') xor (leds(3) & "00" & leds(3));
+        end if;
+
+      end if;
+    end if;
+  end process;
+
+end architecture;
