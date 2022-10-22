@@ -12,7 +12,10 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 16
-      - run: npm install
+      - run: |
+        cd scratch-vhdl-vscode
+        npm install
+        cd ..
       - name: Publish to Open VSX Registry
         id: open_vsx
         uses: HaaLeo/publish-vscode-extension@v1
