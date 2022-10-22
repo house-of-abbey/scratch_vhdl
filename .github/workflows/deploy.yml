@@ -1,0 +1,42 @@
+on:
+  push:
+    tags:
+      - "*"
+
+name: Deploy Extension
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - run: npm install
+      - name: Publish to Open VSX Registry
+        id: open_vsx
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          packagePath: ./scratch-vhdl-vscode
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ github.ref }}
+          body: |
+            New release!
+          draft: false
+          prerelease: false
+      - name: Upload Release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ steps.open_vsx.outputs.upload_url }}
+          asset_name: scratch-vhdl-vscode.vsix
+          asset_content_type: application/zip
