@@ -282,7 +282,8 @@ destroy .controls
 toplevel .controls
 
 catch {image delete logo}
-label .controls.logo -image [image create photo logo -file "${thisdir}/l3harris.png"]
+#label .controls.logo -image [image create photo logo -file "${thisdir}/l3harris.png"]
+label .controls.logo -image [image create photo logo -width 200 -file "${thisdir}/icon_200w.png"]
 pack .controls.logo -side left -fill x -expand 0 -padx 20 -pady 20
 
 frame .controls.body

@@ -21,7 +21,7 @@ Rather than hiding the code from the students, the Scratch project builder engag
 
 Once the Scratch design compiles, it can be tested in a VHDL simulator with the following point & click graphical controls.
 
-![Traffic Lights](./images/traffic_lights_demo.png)
+![Traffic Lights](./images/traffic_lights_demo.gif)
 
 Variations on the controls are placed in different tabs.
 

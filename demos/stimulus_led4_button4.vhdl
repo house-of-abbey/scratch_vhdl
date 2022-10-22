@@ -515,7 +515,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(lfsr_internal);
+      use entity work.led4_button4(traffic_lights);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
