@@ -2,7 +2,7 @@
     <g>
         <path d="m0,0m0,4a4,4 0 0 1 4,-4l8,0c2,0 3,1 4,2l4,4c1,1 2,2 4,2l12,0c2,0 3,-1 4,-2l4,-4c1,-1 2,-2 4,-2l61.64844,0a4,4 0 0 1 4,4l0,8l0,28l0,4l0,0a4,4 0 0 1 -4,4l-61.64844,0c-2,0 -3,1 -4,2l-4,4c-1,1 -2,2 -4,2l-12,0c-2,0 -3,-1 -4,-2l-4,-4c-1,-1 -2,-2 -4,-2l-8,0a4,4 0 0 1 -4,-4l0,-40z" fill="#FF7043" stroke="#ed683e" />
         <g transform="translate(5 8) scale(1.5)">
-            <path d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z"></path>
+            <path style="filter: drop-shadow(2px 2px 2px #222);" d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z"></path>
         </g>
         <text xml:space="preserve" text-anchor="start" font-family="monospace" font-size="28" y="34" x="47" stroke-width="0" stroke="#000" fill="#000000" font-weight="bold">VHDL</text>
     </g>
