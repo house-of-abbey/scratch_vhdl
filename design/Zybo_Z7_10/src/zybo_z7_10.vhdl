@@ -129,7 +129,7 @@ begin
     end if;
   end process;
 
-  led4_button4_i : entity work.led4_button4(logic_gates)
+  led4_button4_i : entity work.led4_button4(pulse_gen)
     port map (
       clk     => clk,
       reset   => reset,

@@ -105,6 +105,37 @@ begin
 end architecture;
 
 
+architecture pulse_gen of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 2;
+  
+  signal buttons_d : std_logic_vector(3 downto 0);
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        buttons_d <= "0000";
+        leds      <= "0000";
+      else
+
+        if incr = '1' then
+          buttons_d <= buttons;
+          leds <= buttons and not buttons_d;
+        end if;
+
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
 architecture shift_register of led4_button4 is
 
   -- 1 - Push Switch tab

@@ -148,6 +148,52 @@ end configuration;
 library local;
   use local.testbench_pkg.all;
 
+architecture pulse_gen of stimulus_led4_button4 is
+begin
+
+  stimulus : process
+  begin
+    reset   <= '1';
+    buttons <= "0000";
+    wait_nr_ticks(clk, 2);
+    reset   <= '0';
+
+    wait_nr_ticks(clk, 20);
+    buttons <= "0001";
+    wait_nr_ticks(clk, 20);
+    buttons <= "0010";
+    wait_nr_ticks(clk, 20);
+    buttons <= "0100";
+    wait_nr_ticks(clk, 20);
+    buttons <= "1000";
+    wait_nr_ticks(clk, 20);
+    buttons <= "0000";
+    wait_nr_ticks(clk, 20);
+
+    stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_pulse_gen of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(pulse_gen);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(pulse_gen);
+    end for;
+
+  end for;
+end configuration;
+
+
+library local;
+  use local.testbench_pkg.all;
+
 architecture shift_register of stimulus_led4_button4 is
 begin
 
@@ -634,7 +680,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(toggle_driven);
+      use entity work.led4_button4(pulse_gen);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
