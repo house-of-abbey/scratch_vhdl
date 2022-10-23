@@ -69,14 +69,16 @@ set mybuttonsadded 0
 proc mybuttons {} {
   global mybuttonsadded
   if {!$mybuttonsadded} {
-    add button "Resim"       "transcribe resim"
-    add button "Goto Cursor" "transcribe scroll_cursor"
+    add button "Resim"          {transcribe resim}
+    add button "Goto Cursor"    {transcribe scroll_cursor}
+    add button "Start Monitor"  {transcribe setup_monitor}
+    add button "Stop Monitor"   {transcribe stop_monitor}
     set mybuttonsadded 1
   }
 }
 
 proc sim_start_hook {} {
-  if {[runStatus] == "ready"} {
+  if {[runStatus] == "ready" || [runStatus] == "break"} {
     set_warnings 0
     # Logging all signals
     log -r *
