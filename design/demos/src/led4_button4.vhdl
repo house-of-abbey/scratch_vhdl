@@ -108,6 +108,48 @@ begin
 end architecture;
 
 
+architecture bishift_register of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 1;
+
+  signal rl : std_logic := '1';
+
+  alias dir_rl is buttons(0);
+  alias dir_lr is buttons(3);
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        rl   <= '1';
+        leds <= "0000";
+      else
+        if dir_rl = '1' then
+          rl <= '1';
+        elsif dir_lr = '1' then
+          rl <= '0';
+        end if;
+
+        if incr = '1' then
+          if dir_lr = '0' and (rl = '1' or dir_rl = '1') then
+            -- Could use "leds'high-1" as the upper bound here
+            leds <= leds(2 downto 0) & dir_rl;
+          elsif dir_rl = '0' and (rl = '0' or dir_lr = '1') then
+            leds <= dir_lr & leds(3 downto 1);
+          end if;
+        end if;
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
 library ieee;
   use ieee.numeric_std_unsigned.all;
 

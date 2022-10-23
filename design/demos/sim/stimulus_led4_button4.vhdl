@@ -182,6 +182,111 @@ end configuration;
 library local;
   use local.testbench_pkg.all;
 
+architecture bishift_register of stimulus_led4_button4 is
+
+  alias dir_rl is buttons(0);
+  alias dir_lr is buttons(3);
+
+begin
+
+  stimulus : process
+  begin
+    reset   <= '1';
+    buttons <= "0000";
+    wait_nr_ticks(clk, 2);
+    reset   <= '0';
+
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 20);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 20);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 50);
+
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 20);
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 20);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 50);
+
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 20);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 20);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 50);
+
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 30);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 30);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 30);
+    dir_lr <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_lr <= '0';
+    wait_nr_ticks(clk, 30);
+    dir_rl <= '1';
+    wait_nr_ticks(clk, 10);
+    dir_rl <= '0';
+    wait_nr_ticks(clk, 50);
+
+stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_bishift_register of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(bishift_register);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(bishift_register);
+    end for;
+
+  end for;
+end configuration;
+
+
+library local;
+  use local.testbench_pkg.all;
+
 architecture binary_counter of stimulus_led4_button4 is
 
   alias start is buttons(0);
@@ -515,7 +620,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(traffic_lights);
+      use entity work.led4_button4(bishift_register);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
