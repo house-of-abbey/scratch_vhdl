@@ -324,6 +324,12 @@ pack .controls.body.sim.atcursor -side left -pady $butgap -padx $butgap
 
 # Application Controls
 
+# Keys
+bind .controls <KeyPress-0> {button_cmd 0}
+bind .controls <KeyPress-1> {button_cmd 1}
+bind .controls <KeyPress-2> {button_cmd 2}
+bind .controls <KeyPress-3> {button_cmd 3}
+
 set app [NoteBook .controls.body.app -side bottom]
 set default [$app insert 0 default -text "Push Switch"]
 set toggle  [$app insert 1 toggle  -text "Toggle Switch"]
