@@ -6,6 +6,6 @@ Each toggle button lights a corresponding LED. That's it. This design introduces
 
 An extension is to maintain the last selected push button after it is released. This amendment is more suitable to the push buttons as it means it is no longer possible to turn off all the LEDs with toggle buttons.
 
-![Wave window for button driven LEDs](./images/button_driven_demo.png)
+![Wave window for button driven LEDs](./images/button_driven_wave.png)
 
-Abive, the wave traces for the LEDs mirror those of the buttons.
+Above, the wave traces for the LEDs mirror those of the buttons.
