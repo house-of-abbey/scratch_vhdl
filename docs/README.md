@@ -41,7 +41,7 @@ The download to the development board is managed through TCL scripts so the auth
 
 Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time.
 
-1. **One LED per button**, can we get the board to work?
+1. **[One LED per button](button_driven.md)**, can we get the board to work?
 2. **[Logic gates](logic_gates.md)**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
 3. **Shift Register**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left. This can be developed into sequences that go back and forth for a bi-directional shift register controlled by two buttons, each inserting a lit LED into one end and changing the direction of shift.
 4. **4-bit binary counter** with start and stop buttons.

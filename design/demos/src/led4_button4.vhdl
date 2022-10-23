@@ -26,6 +26,29 @@ entity led4_button4 is
 end entity;
 
 
+architecture toggle_driven of led4_button4 is
+
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : positive := 2;
+
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        leds <= "0000";
+      else
+        leds <= buttons;
+      end if;
+    end if;
+  end process;
+
+end architecture;
+
+
 architecture button_driven of led4_button4 is
 
   -- 1 - Push Switch tab

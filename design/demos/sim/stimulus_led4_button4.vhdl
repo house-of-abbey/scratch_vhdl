@@ -29,7 +29,7 @@ end entity;
 library local;
   use local.testbench_pkg.all;
 
-architecture button_driven of stimulus_led4_button4 is
+architecture buttons_only of stimulus_led4_button4 is
 begin
 
   stimulus : process
@@ -64,6 +64,20 @@ begin
 
 end architecture;
 
+configuration test_toggle_driven of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(toggle_driven);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(buttons_only);
+    end for;
+
+  end for;
+end configuration;
+
 configuration test_button_driven of test_led4_button4 is
   for test
 
@@ -72,7 +86,7 @@ configuration test_button_driven of test_led4_button4 is
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
-      use entity work.stimulus_led4_button4(button_driven);
+      use entity work.stimulus_led4_button4(buttons_only);
     end for;
 
   end for;
@@ -620,7 +634,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(bishift_register);
+      use entity work.led4_button4(toggle_driven);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
