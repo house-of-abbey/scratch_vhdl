@@ -48,7 +48,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 5. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 6. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
 
-![Traffic Lights](./images/knight_rider_demo.gif)
+   ![Traffic Lights](./images/knight_rider_demo.gif)
 
 7. **Traffic lights** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
 8. **Linear Feedback Shift Register** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
@@ -66,7 +66,7 @@ These are split into separate pages as follows:
   * Visual Studio Code, including:
     * Scratch VHDL plugin
     * VHDL editor plugin
-* Editing with Scratch VHDL 
+* Editing with Scratch VHDL
   * Drag and droop of block to create VHDL code
   * Compilation of VHDL code
 * Simulation of VHDL

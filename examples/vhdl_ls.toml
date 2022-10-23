@@ -1,4 +1,6 @@
 [libraries]
-examples.files = [
-    "./*.vhdl"
+work.files = [
+    "./*.vhdl",
+    "../design/demos/src/*.vhdl",
+    "../design/demos/sim/*.vhdl"
 ]

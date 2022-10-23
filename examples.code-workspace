@@ -13,7 +13,7 @@
         "files.associations": {
             "*.sbd": "json",
             "*.sbe": "json",
-            "*.sbi": "json"
+            "*.sbi": "javascript"
         }
     }
 }

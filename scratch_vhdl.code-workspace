@@ -13,6 +13,9 @@
             "activityBar.background": "#3E0F77",
             "titleBar.activeBackground": "#5614A6",
             "titleBar.activeForeground": "#FBF9FE"
-        }
+        },
+        "todo-tree.tree.showCountsInTree": true,
+        "todo-tree.tree.showBadges": true,
+        "todo-tree.tree.disableCompactFolders": true
     }
 }

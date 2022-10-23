@@ -5,5 +5,6 @@
         "incr"    : ["in",  "std_logic"],
         "buttons" : ["in",  "std_logic_vector(3 downto 0)"],
         "leds"    : ["out", "std_logic_vector(3 downto 0)", "0000"]
-    }
+    },
+    "name": "led4_button4"
 }

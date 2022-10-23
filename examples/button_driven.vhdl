@@ -1,18 +1,13 @@
 library ieee;
   use ieee.std_logic_1164.all;
 
-entity button_driven is
-  port(
-    clk : in std_logic;
-    reset : in std_logic;
-    incr : in std_logic;
-    buttons : in std_logic_vector(3 downto 0);
-    leds : out std_logic_vector(3 downto 0)
-  );
-end entity;
 
 
-architecture scratch of button_driven is
+
+architecture scratch of led4_button4 is
+
+
+
 begin
 
   process(clk)
