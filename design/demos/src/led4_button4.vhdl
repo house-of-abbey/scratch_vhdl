@@ -143,17 +143,21 @@ architecture shift_register of led4_button4 is
   -- 3 - Traffic Lights tab
   constant button_tab_c : positive := 1;
 
+  signal button_d : std_logic := '0';
+
 begin
 
   process(clk)
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        leds <= "0000";
+        button_d <= '0';
+        leds     <= "0000";
       else
         if incr = '1' then
+          button_d <= buttons(0);
           -- Could use "leds'high-1" as the upper bound here
-          leds <= leds(2 downto 0) & buttons(0);
+          leds <= leds(2 downto 0) & (buttons(0) and not button_d);
         end if;
       end if;
     end if;
@@ -169,33 +173,47 @@ architecture bishift_register of led4_button4 is
   -- 3 - Traffic Lights tab
   constant button_tab_c : positive := 1;
 
-  signal rl : std_logic := '1';
-
   alias dir_rl is buttons(0);
   alias dir_lr is buttons(3);
 
+  signal dir_rl_d : std_logic := '0';
+  signal dir_lr_d : std_logic := '0';
+  signal dir_rl_p : std_logic := '0';
+  signal dir_lr_p : std_logic := '0';
+  signal rl       : std_logic := '0';
+
 begin
+
+  dir_rl_p <= dir_rl and not dir_rl_d;
+  dir_lr_p <= dir_lr and not dir_lr_d;
 
   process(clk)
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        rl   <= '1';
-        leds <= "0000";
+        dir_rl_d <= '0';
+        dir_lr_d <= '0';
+        rl       <= '0';
+        leds     <= "0000";
       else
-        if dir_rl = '1' then
-          rl <= '1';
-        elsif dir_lr = '1' then
-          rl <= '0';
-        end if;
-
         if incr = '1' then
-          if dir_lr = '0' and (rl = '1' or dir_rl = '1') then
-            -- Could use "leds'high-1" as the upper bound here
-            leds <= leds(2 downto 0) & dir_rl;
-          elsif dir_rl = '0' and (rl = '0' or dir_lr = '1') then
-            leds <= dir_lr & leds(3 downto 1);
+
+          dir_rl_d <= buttons(0);
+          dir_lr_d <= buttons(3);
+
+          if dir_rl = '1' and dir_rl_d = '0' then
+            rl <= '1';
+          elsif dir_lr = '1' and dir_lr_d = '0' then
+            rl <= '0';
           end if;
+
+          if dir_lr_p = '0' and (rl = '1' or dir_rl_p = '1') then
+            -- Could use "leds'high-1" as the upper bound here
+            leds <= leds(2 downto 0) & dir_rl_p;
+          elsif dir_rl_p = '0' and (rl = '0' or dir_lr_p = '1') then
+            leds <= dir_lr_p & leds(3 downto 1);
+          end if;
+
         end if;
       end if;
     end if;

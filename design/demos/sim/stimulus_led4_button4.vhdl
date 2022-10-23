@@ -204,17 +204,17 @@ begin
     wait_nr_ticks(clk, 2);
     reset   <= '0';
 
-    wait_nr_ticks(clk, 10);
-    buttons(0) <= '1';
-    wait_nr_ticks(clk, 10);
-    buttons(0) <= '0';
     wait_nr_ticks(clk, 20);
     buttons(0) <= '1';
-    wait_nr_ticks(clk, 10);
+    wait_nr_ticks(clk, 20);
+    buttons(0) <= '0';
+    wait_nr_ticks(clk, 40);
+    buttons(0) <= '1';
+    wait_nr_ticks(clk, 20);
     buttons(0) <= '0';
     wait_nr_ticks(clk, 10);
     buttons(0) <= '1';
-    wait_nr_ticks(clk, 20);
+    wait_nr_ticks(clk, 40);
     buttons(0) <= '0';
     wait_nr_ticks(clk, 50);
 
@@ -680,7 +680,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(pulse_gen);
+      use entity work.led4_button4(bishift_register);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
