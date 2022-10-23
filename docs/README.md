@@ -42,8 +42,8 @@ The download to the development board is managed through TCL scripts so the auth
 Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time.
 
 1. **One LED per button**, can we get the board to work?
-2. **Logic gates**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
-3. **Shift Register**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left.
+2. **[Logic gates](logic_gates.md)**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
+3. **Shift Register**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left. This can be developed into sequences that go back and forth for a bi-directional shift register controlled by two buttons, each inserting a lit LED into one end and changing the direction of shift.
 4. **4-bit binary counter** with start and stop buttons.
 5. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 6. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
