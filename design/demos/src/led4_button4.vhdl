@@ -111,7 +111,7 @@ architecture pulse_gen of led4_button4 is
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
   constant button_tab_c : positive := 2;
-  
+
   signal buttons_d : std_logic_vector(3 downto 0);
 
 begin
@@ -207,11 +207,32 @@ begin
             rl <= '0';
           end if;
 
-          if dir_lr_p = '0' and (rl = '1' or dir_rl_p = '1') then
+          -- The "all in one" 'i' clause solution is a bit complicated:
+--          if dir_lr_p = '0' and (rl = '1' or dir_rl_p = '1') then
+--            -- Could use "leds'high-1" as the upper bound here
+--            leds <= leds(2 downto 0) & dir_rl_p;
+--          elsif dir_rl_p = '0' and (rl = '0' or dir_lr_p = '1') then
+--            leds <= dir_lr_p & leds(3 downto 1);
+--          end if;
+
+          -- Separating the parts out we get the basic shift action,
+          -- followed by what to do to poke a '1' in either end of
+          -- the shift register.
+          if rl = '1' then
             -- Could use "leds'high-1" as the upper bound here
-            leds <= leds(2 downto 0) & dir_rl_p;
-          elsif dir_rl_p = '0' and (rl = '0' or dir_lr_p = '1') then
+            leds <= leds(2 downto 0) & '0';
+          else
             leds <= dir_lr_p & leds(3 downto 1);
+          end if;
+
+          -- Assignments in the above 'if' clause are overwritten by any
+          -- that might follow. NB. The tests for both direction pulses are
+          -- necessary because and 'if' statement has a priority encoding.
+          -- The additional tests ensure exclusivity.
+          if dir_rl_p = '1' and dir_lr_p = '0' then
+            leds <= leds(2 downto 0) & '1';
+          elsif dir_lr_p = '1' and dir_rl_p = '0' then
+            leds <= '1' & leds(3 downto 1);
           end if;
 
         end if;
