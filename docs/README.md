@@ -1,6 +1,8 @@
 # Scratch VHDL
 
 [![Built on Blockly](https://tinyurl.com/built-on-blockly)](https://github.com/google/blockly)
+[![Open VSX version](https://img.shields.io/open-vsx/v/JosephAbbey/scratch-vhdl-vscode)](https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode)
+[![Open VSX release](https://img.shields.io/open-vsx/release-date/JosephAbbey/scratch-vhdl-vscode)](https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode)
 
 The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious. We'll do this by providing an introductory package of measures to simplify all aspects of design entry from coding through to deployment on a *"Field Programmable Gate Array"* (reprogrammable silicon chip). We'll simplify the process into the following step:
 
