@@ -36,7 +36,7 @@ set thisdir    [file dirname $thisscript]
 set winwidth    530; # [expr 60 + 36*$fontsize]
 set winheight   280; # [expr 180 +  2*$fontsize]
 set btnfontsize [expr $fontsize/2]
-set toggletime  "20 ns"
+set pushbtntime  "300 ns"
 # set toggletime [examine /test_time_display/ClkPeriod]
 # Signals
 set clock   {/test_led4_button4/clk}
@@ -248,9 +248,9 @@ proc autostep_check {} {
   .controls.body.sim.atcursor configure -state normal
 }
 
-proc button_cmd {b} {
-  global buttons togglebutton toggletime
-  force -deposit "${buttons}\[$b\]" 1 0, 0 $toggletime
+proc button_cmd {b {t "20 ns"}} {
+  global buttons togglebutton
+  force -deposit "${buttons}\[$b\]" 1 0, 0 $t
   set togglebutton($b) 0
 }
 
@@ -325,10 +325,10 @@ pack .controls.body.sim.atcursor -side left -pady $butgap -padx $butgap
 # Application Controls
 
 # Keys
-bind .controls <KeyPress-0> {button_cmd 0}
-bind .controls <KeyPress-1> {button_cmd 1}
-bind .controls <KeyPress-2> {button_cmd 2}
-bind .controls <KeyPress-3> {button_cmd 3}
+bind .controls <KeyPress-0> {button_cmd 0 $pushbtntime}
+bind .controls <KeyPress-1> {button_cmd 1 $pushbtntime}
+bind .controls <KeyPress-2> {button_cmd 2 $pushbtntime}
+bind .controls <KeyPress-3> {button_cmd 3 $pushbtntime}
 
 set app [NoteBook .controls.body.app -side bottom]
 set default [$app insert 0 default -text "Push Switch"]
@@ -349,25 +349,25 @@ pack  ${default}.buttons.label -side top
 button ${default}.buttons.button_3 \
   -text " 3 " \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 3}
+  -command {button_cmd 3 $pushbtntime}
 pack ${default}.buttons.button_3 -side left -pady $butgap -padx $butgap
 
 button ${default}.buttons.button_2 \
   -text " 2 " \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 2}
+  -command {button_cmd 2 $pushbtntime}
 pack ${default}.buttons.button_2 -side left -pady $butgap -padx $butgap
 
 button ${default}.buttons.button_1 \
   -text "1 (stop)" \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 1}
+  -command {button_cmd 1 $pushbtntime}
 pack ${default}.buttons.button_1 -side left -pady $butgap -padx $butgap
 
 button ${default}.buttons.button_0 \
   -text "0 (start)" \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 0}
+  -command {button_cmd 0 $pushbtntime}
 pack ${default}.buttons.button_0 -side left -pady $butgap -padx $butgap
 
 display ${default}.ledframe.leds plain
