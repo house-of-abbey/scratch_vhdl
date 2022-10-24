@@ -10,10 +10,12 @@
             "titleBar.activeBackground": "#024C10",
             "titleBar.activeForeground": "#ECFFF0"
         },
-        "files.associations": {
-            "*.sbd": "json",
-            "*.sbe": "json",
-            "*.sbi": "javascript"
-        }
+        "explorer.fileNesting.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "hbohlin.vhdl-ls",
+            "JosephAbbey.scratch-vhdl-vscode"
+        ]
     }
 }

@@ -1,4 +1,4 @@
-([
+[
     {
         "block": {
             "kind": "block",
@@ -17,4 +17,4 @@
             return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", generator.ORDER_FUNCTION_CALL]
         }
     }
-])
+]

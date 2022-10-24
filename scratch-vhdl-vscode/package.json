@@ -43,6 +43,21 @@
                 "title": "Create new Scratch VHDL Document",
                 "category": "Scratch VHDL"
             }
+        ],
+        "languages": [
+            {
+                "id": "javascript",
+                "extensions": [
+                    ".sbi"
+                ]
+            },
+            {
+                "id": "json",
+                "extensions": [
+                    ".sbd",
+                    ".sbe"
+                ]
+            }
         ]
     },
     "scripts": {
