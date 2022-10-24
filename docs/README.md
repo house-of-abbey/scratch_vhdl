@@ -66,7 +66,7 @@ These are split into separate pages as follows:
   * Vivado
   * Visual Studio Code, including:
     * Scratch VHDL plugin
-    * VHDL editor plugin
+    * VHDL editor plugin (VHDL LS)
 * Editing with Scratch VHDL
   * Drag and droop of block to create VHDL code
   * Compilation of VHDL code
