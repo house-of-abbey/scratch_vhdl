@@ -23,6 +23,8 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
+title Compiling for Modelsim
+
 echo Compile Source:   %SRC%\*
 echo Into Destination: %DEST%
 echo.

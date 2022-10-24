@@ -45,9 +45,9 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 2. **[Logic gates](logic_gates.md)**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
 3. **[Pulse Generator](pulse_generator.md)**, shortening a long pulse to a short one.
 4. **[Shift Register](shift_registers.md)**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left. This can be developed into sequences that go back and forth for a bi-directional shift register controlled by two buttons, each inserting a lit LED into one end and changing the direction of shift.
-5. **4-bit binary counter** with start and stop buttons.
+5. **4-bit [binary counter](binary_counter.md)** with start and stop buttons.
 6. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
-7. The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
+7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
 
    ![Traffic Lights](./images/knight_rider_demo.gif)
 

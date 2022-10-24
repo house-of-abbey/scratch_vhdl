@@ -8,6 +8,7 @@ rem  J D Abbey & P A Abbey, 15 October 2022
 rem 
 rem ---------------------------------------------------------------------------------
 
+title Running Modelsim
 vsim -do "source {./TCL/start_sim.tcl}"
 rem This file can be reported as in use by another process when it is not, so just clean it up.
 del /f %USERPROFILE%\ModelSim\projects\button_leds\vsim.wlf
