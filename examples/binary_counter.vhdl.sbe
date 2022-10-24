@@ -4,6 +4,11 @@
         "reset"   : ["in",  "std_logic"],
         "incr"    : ["in",  "std_logic"],
         "buttons" : ["in",  "std_logic_vector(3 downto 0)"],
-        "leds"    : ["out", "std_logic_vector(3 downto 0)", "0000"]
+        "leds"    : ["out", "std_logic_vector(3 downto 0)"]
+    },
+    "libraries": {
+        "ieee": {
+            "numeric_std_unsigned": "ieee.numeric_std_unsigned.sbi"
+        }
     }
 }

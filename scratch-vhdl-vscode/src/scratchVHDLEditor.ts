@@ -21,12 +21,12 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
         return new ScratchVHDLDocument(
             uri,
             await ScratchVHDLDocument.readFile(uri),
-            await ScratchVHDLDocument.readFile(
+            (await ScratchVHDLDocument.readFile(
                 vscode.Uri.parse(uri.toString() + '.sbd')
-            ) || "{}",
-            await ScratchVHDLDocument.readFile(
+            )) || '{}',
+            (await ScratchVHDLDocument.readFile(
                 vscode.Uri.parse(uri.toString() + '.sbe')
-            ) || "{entity:{}}",
+            )) || '{entity:{}}',
             delegate
         );
     }
@@ -37,6 +37,12 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
         }
         return new TextDecoder().decode(
             await vscode.workspace.fs.readFile(uri)
+        );
+    }
+
+    readLocalFile(p: string): Promise<string> {
+        return ScratchVHDLDocument.readFile(
+            vscode.Uri.parse(path.dirname(this.uri.toString()) + '/' + p)
         );
     }
 
@@ -538,6 +544,16 @@ export class ScratchVHDLEditorProvider
                             body: value == 'Ok',
                         })
                     );
+                return;
+
+            case 'getFile':
+                document.readLocalFile(message.path).then((value) =>
+                    panel.webview.postMessage({
+                        type: 'getFile',
+                        id: message.id,
+                        body: value,
+                    })
+                );
                 return;
         }
     }

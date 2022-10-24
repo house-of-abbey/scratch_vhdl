@@ -1,3 +1,35 @@
+/**
+ * Simple object check.
+ * @param item
+ * @returns {boolean}
+ */
+function isObject(item) {
+    return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+/**
+ * Deep merge two objects.
+ * @param target
+ * @param ...sources
+ */
+function mergeDeep(target, ...sources) {
+    if (!sources.length) return target;
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+        for (const key in source) {
+            if (isObject(source[key])) {
+                if (!target[key]) Object.assign(target, { [key]: {} });
+                mergeDeep(target[key], source[key]);
+            } else {
+                Object.assign(target, { [key]: source[key] });
+            }
+        }
+    }
+
+    return mergeDeep(target, ...sources);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const vscode = acquireVsCodeApi();
 
@@ -25,6 +57,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return new Promise((resolve) => requests[rid++] = resolve);
     };
+    window.addEventListener("message", (message) => message.data.type == "getFile" && requests[message.data.id](message.data.body));
+    const getFile = (m) => {
+        vscode.postMessage({
+            type: "getFile",
+            path: m,
+            id: rid
+        });
+        return new Promise((resolve) => requests[rid++] = resolve);
+    };
+
+    const builtinLibs = {};
 
     const toolbox = {
         'kind': 'categoryToolbox',
@@ -723,7 +766,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 "\n  signal " + n + " : " + signals[n] + ";"
             ).join("");
         }
-        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + gen_signals(signals) + "\n\nbegin\n\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
+        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + gen_signals(signals) + "\n\nbegin\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
     }
 
     VHDLGenerator.scrub_ = function (block, code, opt_thisOnly) {
@@ -756,19 +799,19 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     VHDLGenerator.process = function (block) {
-        return "  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(block.inputList[0]
+        return "\n  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(block.inputList[0]
             .fieldRow.filter(
                 (a) => a instanceof Blockly.FieldVariable
             ).map(
                 (a) => a.getVariable().name
-            ).join(", ")) + "\n  begin\n" +
-            VHDLGenerator.statementToCode(block, 'body') +
-            "\n  end process;";
+            ).join(", ")) + "\n  begin\n  " +
+            VHDLGenerator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
+            "end process;";
     }
 
     VHDLGenerator.process_direct_set = function (block) {
-        return "  " + block.getField("VAR").getVariable().name + ' <= ' +
-            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
+        return "\n  " + block.getField("VAR").getVariable().name + ' <= ' +
+            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';';
     }
 
     VHDLGenerator.controls_if = function (block) {
@@ -902,34 +945,87 @@ document.addEventListener('DOMContentLoaded', function () {
                 requestId: message.data.requestId,
                 body: JSON.stringify(Blockly.serialization.workspaces.save(ws))
             }));
+    function generateEntity() {
+        Blockly.Events.disable();
+        for (const n in entity.entity) {
+            entityVars[ws.createVariable(n).id_] = n;
+        }
+        // rerender all variable fields
+        ws.getAllBlocks().forEach((b) => b.inputList.forEach((c) => c.fieldRow.forEach((d) => d instanceof Blockly.FieldVariable && d.renderSelectedText_())));
+        Blockly.Events.enable();
+
+        if (entity.name == undefined)
+            entityCode = "entity " + name + " is\n  port(" +
+                Object.keys(entity.entity).map((n) =>
+                    "\n    " + n + " : " + entity.entity[n][0] + " " + entity.entity[n][1]
+                ).join(";") +
+                "\n  );\nend entity;";
+    }
     window.addEventListener('message',
         (message) => message.data.type == "contentUpdate" && (
             Blockly.Events.disable(),
             Blockly.serialization.workspaces.load(JSON.parse(message.data.body), ws, { registerUndo: false }),
             Blockly.Events.enable(),
-            vscode.postMessage({ type: 'requestEntity' })
+            generateEntity()
         ));
     window.addEventListener('message',
-        (message) => {
+        async (message) => {
             if (message.data.type == "entity") {
-                Blockly.Events.disable();
                 entity = JSON.parse(message.data.body);
                 name = entity.name || message.data.file_name;
-                for (const n in entity.entity) {
-                    entityVars[ws.createVariable(n).id_] = n;
+
+                if (entity.libraries) {
+                    function libraryDef(def) {
+                        Blockly.defineBlocksWithJsonArray(def.map((a) => a.block));
+                        def.forEach((a) => VHDLGenerator[a.block.type] = a.generator);
+                        return def.map((a) => ({
+                            kind: "block",
+                            type: a.block.type
+                        }));
+                    }
+
+                    libraries = mergeDeep(libraries, entity.libraries);
+                    categories = [];
+
+                    for (const a in libraries) {
+                        let c = [];
+                        let colour = Array.from(a).slice(0, 10).map((x) => parseInt(x, 36) - 10).reduce((x, y) => x + y, 0) * Math.min(a.length, 10) / 10;
+                        for (const lib in libraries[a]) {
+                            if (libraries[a][lib] === null)
+                                continue;
+                            else if (libraries[a][lib] === "builtin")
+                                def = builtinLibs[a][lib];
+                            else
+                                def = eval("((colour, generator)=>" + await getFile(libraries[a][lib]) + ")")(colour, VHDLGenerator);
+                            c.push({
+                                kind: "category",
+                                colour,
+                                contents: libraryDef(def),
+                                name: lib
+                            });
+                        }
+                        if (c.length > 0)
+                            categories.push({
+                                kind: "category",
+                                colour,
+                                contents: c,
+                                name: a
+                            });
+                    }
+
+                    const tb = ws.getToolbox().toolboxDef_;
+                    tb.contents = [
+                        ...tb.contents,
+                        {
+                            'kind': 'sep',
+                        },
+                        ...categories
+                    ];
+                    ws.updateToolbox(tb);
                 }
-                // rerender all variable fields
-                ws.getAllBlocks().forEach((b) => b.inputList.forEach((c) => c.fieldRow.forEach((d) => d instanceof Blockly.FieldVariable && d.renderSelectedText_())));
-                Blockly.Events.enable();
 
-                if (entity.name == undefined)
-                    entityCode = "entity " + name + " is\n  port(" +
-                        Object.keys(entity.entity).map((n) =>
-                            "\n    " + n + " : " + entity.entity[n][0] + " " + entity.entity[n][1]
-                        ).join(";") +
-                        "\n  );\nend entity;";
+                vscode.postMessage({ type: 'requestUpdate' });
 
-                // TODO: actually import libraries
                 librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
             }
         }
@@ -944,5 +1040,5 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    vscode.postMessage({ type: 'requestUpdate' });
+    vscode.postMessage({ type: 'requestEntity' });
 });
