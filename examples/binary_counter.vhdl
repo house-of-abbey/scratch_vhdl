@@ -15,8 +15,13 @@ end entity;
 
 architecture scratch of binary_counter is
 
+  constant button_tab_c : positive := 1;
+
   signal cnt : integer range 0 to 15;
   signal run : std_logic;
+
+  alias start is buttons(0);
+  alias stop is buttons(1);
 
 begin
 
@@ -29,9 +34,9 @@ begin
         run <= '0';
         cnt <= 0;
       else
-        if buttons(0) = '1' then
+        if start = '1' then
           run <= '1';
-        elsif buttons(1) = '1' then
+        elsif stop = '1' then
           run <= '0';
         end if;
         if (run = '1') and (incr = '1') then

@@ -713,6 +713,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Blockly.dialog.setConfirm((m, cb) => confirm(m).then((d) => cb(d ?? false)));
 
     const entityVars = {};
+    const aliasVars = {};
 
     (() => {
         Blockly.fieldRegistry.unregister("field_variable");
@@ -722,6 +723,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 super.renderSelectedText_();
                 if (["variables_get", "variables_set", "variables_set_index", "math_change", "process_direct_set"].indexOf(this.sourceBlock_.type) !== -1) {
                     if (Object.keys(entityVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(20);
+                    else if (Object.keys(aliasVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(120);
                     else this.sourceBlock_.setColour('%{BKY_VARIABLES_HUE}');
                 }
             }
@@ -766,7 +768,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 "\n  signal " + n + " : " + signals[n] + ";"
             ).join("");
         }
-        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + gen_signals(signals) + "\n\nbegin\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
+        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + constantsCode + "\n" + gen_signals(signals) + "\n" + aliasesCode + "\n\nbegin\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
     }
 
     VHDLGenerator.scrub_ = function (block, code, opt_thisOnly) {
@@ -853,6 +855,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return [block.getField("VAR").getVariable().name, VHDLGenerator.ORDER_ATOMIC];
     }
 
+    VHDLGenerator.constant = function (block) {
+        return [block.getFieldValue("NAME"), VHDLGenerator.ORDER_ATOMIC];
+    }
+
     VHDLGenerator.variables_set = function (block) {
         return block.getField("VAR").getVariable().name + ' <= ' +
             VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
@@ -898,8 +904,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
     let signals = {};
+    let constants = {};
+    let aliases = {};
     let entityCode = "";
     let librariesCode = "";
+    let constantsCode = "";
+    let aliasesCode = "";
 
     Blockly.serialization.registry.register(
         'signals',
@@ -961,18 +971,70 @@ document.addEventListener('DOMContentLoaded', function () {
                 ).join(";") +
                 "\n  );\nend entity;";
     }
+    function generateAliases() {
+        Blockly.Events.disable();
+        for (const n in aliases) {
+            aliasVars[ws.createVariable(n).id_] = n;
+        }
+        // rerender all variable fields
+        ws.getAllBlocks().forEach((b) => b.inputList.forEach((c) => c.fieldRow.forEach((d) => d instanceof Blockly.FieldVariable && d.renderSelectedText_())));
+        Blockly.Events.enable();
+
+        aliasesCode =
+            Object.keys(aliases).map((n) =>
+                "\n  alias " + n + " is " + aliases[n] + ";"
+            ).join("");
+    }
     window.addEventListener('message',
         (message) => message.data.type == "contentUpdate" && (
             Blockly.Events.disable(),
             Blockly.serialization.workspaces.load(JSON.parse(message.data.body), ws, { registerUndo: false }),
             Blockly.Events.enable(),
-            generateEntity()
+            generateEntity(), generateAliases()
         ));
     window.addEventListener('message',
         async (message) => {
             if (message.data.type == "entity") {
                 entity = JSON.parse(message.data.body);
                 name = entity.name || message.data.file_name;
+                constants = entity.constants || constants;
+                aliases = entity.aliases || aliases;
+
+                if (entity.constants) {
+                    Blockly.defineBlocksWithJsonArray([{
+                        type: "constant",
+                        message0: "%1",
+                        args0: [
+                            {
+                                "type": "field_dropdown",
+                                "name": "NAME",
+                                "options": Object.keys(constants).map((a) => [a, a])
+                            },
+                        ],
+                        colour: 250,
+                        output: null
+                    }]);
+                    const tb = ws.getToolbox().toolboxDef_;
+                    tb.contents = [
+                        ...tb.contents,
+                        {
+                            kind: "category",
+                            colour: 250,
+                            contents: Object.keys(constants).map((a) => ({
+                                kind: "block",
+                                type: "constant",
+                                fields: {
+                                    "NAME": a
+                                }
+                            })),
+                            name: "Constants"
+                        }
+                    ];
+                    ws.updateToolbox(tb);
+                    constantsCode = Object.keys(constants).map((n) =>
+                        "\n  constant " + n + " : " + constants[n][0] + " := " + constants[n][1] + ";"
+                    ).join("");
+                }
 
                 if (entity.libraries) {
                     function libraryDef(def) {
