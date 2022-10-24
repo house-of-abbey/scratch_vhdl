@@ -292,9 +292,6 @@ begin
 end architecture;
 
 
-library ieee;
-  use ieee.numeric_std.all;
-
 architecture adder_onehot of led4_button4 is
 
   -- 1 - Push Switch tab
