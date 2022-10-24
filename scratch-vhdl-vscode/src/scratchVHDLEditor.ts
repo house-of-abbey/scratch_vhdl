@@ -26,7 +26,7 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
             )) || '{}',
             (await ScratchVHDLDocument.readFile(
                 vscode.Uri.parse(uri.toString() + '.sbe')
-            )) || '{entity:{}}',
+            )) || '{"entity":{}}',
             delegate
         );
     }

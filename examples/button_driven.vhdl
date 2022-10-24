@@ -6,23 +6,24 @@ library ieee;
 
 architecture scratch of led4_button4 is
 
+  constant button_tab_c : positive := 1;
+
 
 
 begin
 
   process(clk)
   begin
-  if rising_edge(clk) then
-    if reset = '0' then
-      leds <= "0000";
-    else
-      -- If any buttons are pressed, set leds to buttons.
-      if or(buttons) then
-        leds <= buttons;
+    if rising_edge(clk) then
+      if reset = '0' then
+        leds <= "0000";
+      else
+        -- If any buttons are pressed, set leds to buttons.
+        if or(buttons) then
+          leds <= buttons;
+        end if;
       end if;
     end if;
-  end if;
-
   end process;
 
 end architecture;

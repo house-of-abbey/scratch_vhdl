@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     {
                         'kind': 'block',
-                        'type': 'logic_negate',
+                        'type': 'logic_not',
                     },
                     {
                         'kind': 'block',
@@ -444,6 +444,20 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             "kind": "block",
+            "type": "logic_not",
+            "message0": "not %1",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "INPUT",
+                }
+            ],
+            "output": "Boolean",
+            "inputsInline": true,
+            "style": "logic_blocks",
+        },
+        {
+            "kind": "block",
             "type": "logic_operation",
             "message0": "%1 %2 %3",
             "args0": [
@@ -750,16 +764,17 @@ document.addEventListener('DOMContentLoaded', function () {
     const VHDLGenerator = new Blockly.Generator("VHDL");
     // TODO: VHDL keyword list
 
-    VHDLGenerator.ORDER_ATOMIC = 0;
+    VHDLGenerator.ORDER_ATOMIC   /**/ = 0;
     VHDLGenerator.ORDER_FUNCTION_CALL = 1;
-    VHDLGenerator.ORDER_INDEX = 1.1;
-    VHDLGenerator.ORDER_MUL = 2;
-    VHDLGenerator.ORDER_DIV = 2;
-    VHDLGenerator.ORDER_ADD = 2.1;
-    VHDLGenerator.ORDER_SUB = 2.1;
-    VHDLGenerator.ORDER_LOGIC = 2.2;
-    VHDLGenerator.ORDER_COMPARE = 3;
-    VHDLGenerator.ORDER_NONE = 99;
+    VHDLGenerator.ORDER_INDEX    /**/ = 1.1;
+    VHDLGenerator.ORDER_MUL      /**/ = 2.0;
+    VHDLGenerator.ORDER_DIV      /**/ = 2.1;
+    VHDLGenerator.ORDER_SUB      /**/ = 3.1;
+    VHDLGenerator.ORDER_ADD      /**/ = 3.2;
+    VHDLGenerator.ORDER_NOT      /**/ = 4;
+    VHDLGenerator.ORDER_LOGIC    /**/ = 5;
+    VHDLGenerator.ORDER_COMPARE  /**/ = 6;
+    VHDLGenerator.ORDER_NONE     /**/ = 99;
 
 
     VHDLGenerator.finish = function (code) {
@@ -839,6 +854,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return ["rising_edge(" + block.getField("dep").getVariable().name + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
     }
 
+    VHDLGenerator.logic_not = function (block) {
+        return ["not " + VHDLGenerator.valueToCode(block, "INPUT", VHDLGenerator.ORDER_NOT), VHDLGenerator.ORDER_NOT]
+    }
+
     VHDLGenerator.logic_operation = function (block) {
         return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_LOGIC) + " " + block.getFieldValue("OPERATION") + " " + VHDLGenerator.valueToCode(block, "B", VHDLGenerator.ORDER_LOGIC), VHDLGenerator.ORDER_LOGIC]
     }
@@ -864,9 +883,14 @@ document.addEventListener('DOMContentLoaded', function () {
             VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
     }
 
+    VHDLGenerator.variables_set_index = function (block) {
+        return block.getField("VAR").getVariable().name + "(" + block.getFieldValue("INDEX") + ') <= ' +
+            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
+    }
+
     VHDLGenerator.math_change = function (block) {
         return block.getField("VAR").getVariable().name + ' <= ' +
-            block.getField("VAR").getVariable().name + VHDLGenerator.valueToCode(block, 'BY', VHDLGenerator.ORDER_ADD) + ';\n';
+            block.getField("VAR").getVariable().name + " + " + VHDLGenerator.valueToCode(block, 'DELTA', VHDLGenerator.ORDER_ADD) + ';\n';
     }
 
     VHDLGenerator.value_std_logic = function (block) {

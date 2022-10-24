@@ -44,7 +44,7 @@ begin
           if cnt = 15 then
             cnt <= 0;
           else
-            cnt <= cnt;
+            cnt <= cnt + 1;
           end if;
         end if;
       end if;
