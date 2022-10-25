@@ -15,7 +15,7 @@
     },
     "libraries": {
         "ieee": {
-            "numeric_std_unsigned": "ieee.numeric_std_unsigned.sbi"
+            "numeric_std_unsigned": "./ieee.numeric_std_unsigned.sbi"
         }
     }
 }

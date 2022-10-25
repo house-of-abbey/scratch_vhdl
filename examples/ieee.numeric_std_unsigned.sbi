@@ -1,20 +1,23 @@
-[
-    {
-        "block": {
-            "kind": "block",
-            "type": "ieee.numeric_std_unsigned_to_stdulogicvector",
-            "message0": "to_stdulogicvector %1",
-            colour,
-            "args0": [
-                {
-                    "type": "input_value",
-                    "name": "NUM"
-                }
-            ],
-            "output": null,
-        },
-        "generator": function (block) {
-            return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", generator.ORDER_FUNCTION_CALL]
+({
+    name: "ieee.numeric_std_undinged",
+    blocks: [
+        {
+            "block": {
+                "kind": "block",
+                "type": "ieee.numeric_std_unsigned.to_stdulogicvector",
+                "message0": "to_stdulogicvector %1",
+                colour,
+                "args0": [
+                    {
+                        "type": "input_value",
+                        "name": "NUM"
+                    }
+                ],
+                "output": null,
+            },
+            "generator": function (block) {
+                return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", generator.ORDER_FUNCTION_CALL]
+            }
         }
-    }
-]
+    ]
+})

@@ -57,6 +57,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return new Promise((resolve) => requests[rid++] = resolve);
     };
+    window.addEventListener("message", (message) => message.data.type == "select" && requests[message.data.id](message.data.body));
+    const select = (o) => {
+        vscode.postMessage({
+            type: "select",
+            body: o,
+            id: rid
+        });
+        return new Promise((resolve) => requests[rid++] = resolve);
+    };
+    window.addEventListener("message", (message) => message.data.type == "selectFile" && requests[message.data.id](message.data.body));
+    const selectFile = () => {
+        vscode.postMessage({
+            type: "selectFile",
+            id: rid
+        });
+        return new Promise((resolve) => requests[rid++] = resolve);
+    };
     window.addEventListener("message", (message) => message.data.type == "getFile" && requests[message.data.id](message.data.body));
     const getFile = (m) => {
         vscode.postMessage({
@@ -744,7 +761,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     })();
 
-    const theme = Blockly.Theme.defineTheme('dark', {
+    const theme = Blockly.Theme.defineTheme('vscode', {
         'base': Blockly.Themes.Classic,
         'componentStyles': {
             'workspaceBackgroundColour': 'var(--vscode-editor-background)',
@@ -910,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     const ws = Blockly.inject('root', {
-        toolbox: toolbox,
+        toolbox: structuredClone(toolbox),
         grid: {
             spacing: 25,
             length: 3,
@@ -922,11 +939,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     let entity = {};
-    let libraries = {
-        "ieee": {
-            "std_logic_1164": null
-        }
-    };
+    let libraries = {};
     let signals = {};
     let constants = {};
     let aliases = {};
@@ -934,6 +947,184 @@ document.addEventListener('DOMContentLoaded', function () {
     let librariesCode = "";
     let constantsCode = "";
     let aliasesCode = "";
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "View Code",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            vscode.postMessage({
+                type: "code"
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'viewCode',
+        weight: -1,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Add port",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            prompt("New port name: ").then((n) => {
+                prompt("New port direction: ").then((d) => {
+                    prompt("New port type: ").then((t) => {
+                        entity.entity[n] = [d, t];
+                        vscode.postMessage({
+                            type: "updateEntity",
+                            body: JSON.stringify(entity)
+                        });
+                    });
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'addPort',
+        weight: 9.0,
+    });
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Remove port",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            select(Object.keys(entity.entity)).then((s) => {
+                delete entity.entity[s];
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'removePort',
+        weight: 9.1,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Add library",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            selectFile().then(async (p) => {
+                const lib = eval("((colour, generator)=>" + await getFile(p) + ")")().name.split(".");
+                entity.libraries = entity.libraries || {};
+                entity.libraries[lib[0]] = entity.libraries[lib[0]] || {};
+                entity.libraries[lib[0]][lib[1]] = p;
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'addLibrary',
+        weight: 10.0,
+    });
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Remove library",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            const libs = Object.keys(entity.libraries).flatMap((l) => Object.keys(entity.libraries[l]).map((p) => l + "." + p));
+            select(libs).then((s) => {
+                const lib = s.split(".");
+                delete entity.libraries[lib[0]][lib[1]];
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'removeLibrary',
+        weight: 10.1,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Add constant",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            prompt("New constant name: ").then((n) => {
+                prompt("New constant type: ").then((t) => {
+                    prompt("New constant value: ").then((v) => {
+                        entity.constants[n] = [t, v];
+                        vscode.postMessage({
+                            type: "updateEntity",
+                            body: JSON.stringify(entity)
+                        });
+                    });
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'addConstant',
+        weight: 11.0,
+    });
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Remove constant",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            select(Object.keys(entity.constants)).then((s) => {
+                delete entity.constants[s];
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'removeConstant',
+        weight: 11.1,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Add alias",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            prompt("New alias name: ").then((n) => {
+                prompt("New alias value: ").then((v) => {
+                    entity.aliases[n] = v;
+                    vscode.postMessage({
+                        type: "updateEntity",
+                        body: JSON.stringify(entity)
+                    });
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'addAlias',
+        weight: 12.0,
+    });
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Remove alias",
+        preconditionFn() {
+            return "enabled";
+        },
+        callback() {
+            select(Object.keys(entity.aliases)).then((s) => {
+                delete entity.aliases[s];
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            });
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'removeAlias',
+        weight: 12.1,
+    });
 
     Blockly.serialization.registry.register(
         'signals',
@@ -951,8 +1142,8 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!args[2] && args[0] == "CREATE_VARIABLE") {
                 ws.removeButtonCallback("CREATE_VARIABLE");
                 ws.registerButtonCallback("CREATE_VARIABLE", (d) => {
-                    prompt("New variable type: ").then((t) => {
-                        prompt("New variable name: ").then((n) => {
+                    prompt("New variable name: ").then((n) => {
+                        prompt("New variable type: ").then((t) => {
                             d.getTargetWorkspace().createVariable(n);
                             signals[n] = t;
                         });
@@ -962,7 +1153,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })();
 
-    // TODO: this should get the name from the vscode api
     let name = "hi";
 
     window.addEventListener('message',
@@ -1024,7 +1214,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 constants = entity.constants || constants;
                 aliases = entity.aliases || aliases;
 
-                if (entity.constants) {
+                // reset toolbox
+                ws.updateToolbox(structuredClone(toolbox));
+
+                if (constants) {
                     Blockly.defineBlocksWithJsonArray([{
                         type: "constant",
                         message0: "%1",
@@ -1070,7 +1263,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         }));
                     }
 
-                    libraries = mergeDeep(libraries, entity.libraries);
+                    libraries = mergeDeep({
+                        "ieee": {
+                            "std_logic_1164": null
+                        }
+                    }, entity.libraries);
                     categories = [];
 
                     for (const a in libraries) {
@@ -1082,7 +1279,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             else if (libraries[a][lib] === "builtin")
                                 def = builtinLibs[a][lib];
                             else
-                                def = eval("((colour, generator)=>" + await getFile(libraries[a][lib]) + ")")(colour, VHDLGenerator);
+                                def = eval("((colour, generator)=>" + await getFile(libraries[a][lib]) + ")")(colour, VHDLGenerator).blocks;
                             c.push({
                                 kind: "category",
                                 colour,
@@ -1119,6 +1316,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     ws.addChangeListener((e) => {
         if (e.isUiEvent) return;
+
+        if (e.type == Blockly.Events.VAR_DELETE)
+            delete signals[e.varName];
+        else if (e.type == Blockly.Events.VAR_DELETE) {
+            signals[e.newName] = signals[e.oldName];
+            delete signals[e.oldName];
+        }
 
         vscode.postMessage({
             type: "update",

@@ -22,10 +22,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
             uri,
             await ScratchVHDLDocument.readFile(uri),
             (await ScratchVHDLDocument.readFile(
-                vscode.Uri.parse(uri.toString() + '.sbd')
+                vscode.Uri.parse(uri.toString() + '.sbd', true)
             )) || '{}',
             (await ScratchVHDLDocument.readFile(
-                vscode.Uri.parse(uri.toString() + '.sbe')
+                vscode.Uri.parse(uri.toString() + '.sbe', true)
             )) || '{"entity":{}}',
             delegate
         );
@@ -42,7 +42,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
 
     readLocalFile(p: string): Promise<string> {
         return ScratchVHDLDocument.readFile(
-            vscode.Uri.parse(path.dirname(this.uri.toString()) + '/' + p)
+            vscode.Uri.parse(
+                'file:///' + path.resolve(path.dirname(this.uri.fsPath), p),
+                true
+            )
         );
     }
 
@@ -79,6 +82,10 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
 
     public get scratchData(): string {
         return this._scratchData;
+    }
+
+    public set entityData(d: string) {
+        this._entityData = d;
     }
 
     public get entityData(): string {
@@ -452,6 +459,18 @@ export class ScratchVHDLEditorProvider
                             margin: 0;
                             line-height: 1.5;
                         }
+
+                        .vscode-theme .blocklyContextMenu {
+                            background-color: var(--vscode-menu-background);
+                        }
+
+                        .vscode-theme .blocklyContextMenu .blocklyMenuItem.blocklyMenuItemDisabled > .blocklyMenuItemContent {
+                            color: var(--vscode-disabledForeground);
+                        }
+
+                        .vscode-theme .blocklyContextMenu .blocklyMenuItem:not(.blocklyMenuItemDisabled) > .blocklyMenuItemContent {
+                            color: var(--vscode-menu-foreground);
+                        }
                     </style>
                 </head>
                 <body>
@@ -511,11 +530,38 @@ export class ScratchVHDLEditorProvider
                 });
                 return;
 
+            case 'updateEntity':
+                document.entityData = message.body;
+                panel.webview.postMessage({
+                    type: 'entity',
+                    body: document.entityData,
+                    file_name: path.basename(document.uri.fsPath).split('.')[0],
+                });
+                return;
+
             case 'requestUpdate':
                 panel.webview.postMessage({
                     type: 'contentUpdate',
                     body: document.scratchData,
                 });
+                return;
+
+            case 'code':
+                vscode.commands.executeCommand(
+                    'vscode.openWith',
+                    document.uri,
+                    'default'
+                );
+                return;
+
+            case 'getFile':
+                document.readLocalFile(message.path).then((value) =>
+                    panel.webview.postMessage({
+                        type: 'getFile',
+                        id: message.id,
+                        body: value,
+                    })
+                );
                 return;
 
             case 'alert':
@@ -546,15 +592,47 @@ export class ScratchVHDLEditorProvider
                     );
                 return;
 
-            case 'getFile':
-                document.readLocalFile(message.path).then((value) =>
-                    panel.webview.postMessage({
-                        type: 'getFile',
-                        id: message.id,
-                        body: value,
+            case 'select':
+                vscode.window
+                    .showQuickPick(message.body, {
+                        canPickMany: false,
                     })
-                );
+                    .then((value) =>
+                        panel.webview.postMessage({
+                            type: 'select',
+                            id: message.id,
+                            body: value,
+                        })
+                    );
                 return;
+
+            case 'selectFile': {
+                vscode.window
+                    .showOpenDialog({
+                        canSelectMany: false,
+                        openLabel: 'Select',
+                        canSelectFiles: true,
+                        canSelectFolders: false,
+                    })
+                    .then((fileUri) => {
+                        if (fileUri)
+                            panel.webview.postMessage({
+                                type: 'selectFile',
+                                id: message.id,
+                                body: path.relative(
+                                    path.dirname(document.uri.fsPath),
+                                    fileUri[0].fsPath
+                                ),
+                            });
+                        else
+                            panel.webview.postMessage({
+                                type: 'selectFile',
+                                id: message.id,
+                                body: undefined,
+                            });
+                    });
+                return;
+            }
         }
     }
 }
