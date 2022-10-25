@@ -107,6 +107,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         'type': 'controls_when',
                     },
                     {
+                        'kind': "block",
+                        'type': 'logic_others'
+                    },
+                    {
                         'kind': 'block',
                         'type': 'logic_or',
                     },
@@ -661,6 +665,14 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             "kind": "block",
+            "type": "logic_others",
+            "message0": "others",
+            "colour": "%{BKY_LOGIC_HUE}",
+            "args0": [],
+            "output": null,
+        },
+        {
+            "kind": "block",
             "type": "logic_or",
             "message0": "%1 | %2",
             "colour": "%{BKY_LOGIC_HUE}",
@@ -789,8 +801,8 @@ document.addEventListener('DOMContentLoaded', function () {
     VHDLGenerator.ORDER_SUB      /**/ = 3.1;
     VHDLGenerator.ORDER_ADD      /**/ = 3.2;
     VHDLGenerator.ORDER_NOT      /**/ = 4;
-    VHDLGenerator.ORDER_LOGIC    /**/ = 5;
-    VHDLGenerator.ORDER_COMPARE  /**/ = 6;
+    VHDLGenerator.ORDER_COMPARE  /**/ = 5;
+    VHDLGenerator.ORDER_LOGIC    /**/ = 6;
     VHDLGenerator.ORDER_NONE     /**/ = 99;
 
 
@@ -867,12 +879,32 @@ document.addEventListener('DOMContentLoaded', function () {
         return code + 'end if;\n';
     }
 
+    VHDLGenerator.controls_case = function (block) {
+        return "case " + VHDLGenerator.valueToCode(block, "ON", VHDLGenerator.ORDER_NONE) + " is\n" + VHDLGenerator.statementToCode(block, 'body') + "\nend case;";
+    }
+
+    VHDLGenerator.controls_when = function (block) {
+        return "when " + VHDLGenerator.valueToCode(block, "TEST", VHDLGenerator.ORDER_NONE) + " =>\n" + VHDLGenerator.statementToCode(block, 'body') + "\n";
+    }
+
+    VHDLGenerator.logic_others = function (block) {
+        return ["others", VHDLGenerator.ORDER_ATOMIC];
+    }
+
+    VHDLGenerator.logic_or = function (block) {
+        return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_NONE) + " | " + VHDLGenerator.valueToCode(block, 'B', VHDLGenerator.ORDER_NONE), VHDLGenerator.ORDER_ATOMIC];
+    }
+
     VHDLGenerator.logic_rising_edge = function (block) {
         return ["rising_edge(" + block.getField("dep").getVariable().name + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
     }
 
     VHDLGenerator.logic_not = function (block) {
         return ["not " + VHDLGenerator.valueToCode(block, "INPUT", VHDLGenerator.ORDER_NOT), VHDLGenerator.ORDER_NOT]
+    }
+
+    VHDLGenerator.logic_boolean = function (block) {
+        return [block.getFieldValue(""), VHDLGenerator.ORDER_ATOMIC]
     }
 
     VHDLGenerator.logic_operation = function (block) {
@@ -1253,6 +1285,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     ).join("");
                 }
 
+                libraries = {
+                    "ieee": {
+                        "std_logic_1164": null
+                    }
+                };
+
                 if (entity.libraries) {
                     function libraryDef(def) {
                         Blockly.defineBlocksWithJsonArray(def.map((a) => a.block));
@@ -1263,11 +1301,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         }));
                     }
 
-                    libraries = mergeDeep({
-                        "ieee": {
-                            "std_logic_1164": null
-                        }
-                    }, entity.libraries);
+                    libraries = mergeDeep(libraries, entity.libraries);
                     categories = [];
 
                     for (const a in libraries) {

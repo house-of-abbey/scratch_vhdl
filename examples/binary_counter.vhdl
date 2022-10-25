@@ -39,7 +39,7 @@ begin
         elsif stop = '1' then
           run <= '0';
         end if;
-        if (run = '1') and (incr = '1') then
+        if run = '1' and incr = '1' then
           -- to prevent natural overflow
           if cnt = 15 then
             cnt <= 0;
