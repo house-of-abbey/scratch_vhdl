@@ -208,12 +208,12 @@ begin
           end if;
 
           -- The "all in one" 'i' clause solution is a bit complicated:
---          if dir_lr_p = '0' and (rl = '1' or dir_rl_p = '1') then
---            -- Could use "leds'high-1" as the upper bound here
---            leds <= leds(2 downto 0) & dir_rl_p;
---          elsif dir_rl_p = '0' and (rl = '0' or dir_lr_p = '1') then
---            leds <= dir_lr_p & leds(3 downto 1);
---          end if;
+          -- if dir_lr_p = '0' and (rl = '1' or dir_rl_p = '1') then
+          --   -- Could use "leds'high-1" as the upper bound here
+          --   leds <= leds(2 downto 0) & dir_rl_p;
+          -- elsif dir_rl_p = '0' and (rl = '0' or dir_lr_p = '1') then
+          --   leds <= dir_lr_p & leds(3 downto 1);
+          -- end if;
 
           -- Separating the parts out we get the basic shift action,
           -- followed by what to do to poke a '1' in either end of

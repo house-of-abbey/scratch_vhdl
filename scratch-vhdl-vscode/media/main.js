@@ -149,24 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 'name': 'Loops',
                 'categorystyle': 'loop_category',
                 'contents': [
-                    {
-                        'kind': 'block',
-                        'type': 'controls_repeat_ext',
-                        'inputs': {
-                            'TIMES': {
-                                'shadow': {
-                                    'type': 'math_number',
-                                    'fields': {
-                                        'NUM': 10,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'controls_flow_statements',
-                    },
+                    // TODO: reimplement loops
                 ],
             },
             {
@@ -204,34 +187,20 @@ document.addEventListener('DOMContentLoaded', function () {
                             },
                         },
                     },
-                    {
-                        'kind': 'block',
-                        'type': 'math_single',
-                        'inputs': {
-                            'NUM': {
-                                'shadow': {
-                                    'type': 'math_number',
-                                    'fields': {
-                                        'NUM': 9,
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'math_number_property',
-                        'inputs': {
-                            'NUMBER_TO_CHECK': {
-                                'shadow': {
-                                    'type': 'math_number',
-                                    'fields': {
-                                        'NUM': 0,
-                                    },
-                                },
-                            },
-                        },
-                    },
+                    // {
+                    //     'kind': 'block',
+                    //     'type': 'math_number_property',
+                    //     'inputs': {
+                    //         'NUMBER_TO_CHECK': {
+                    //             'shadow': {
+                    //                 'type': 'math_number',
+                    //                 'fields': {
+                    //                     'NUM': 0,
+                    //                 },
+                    //             },
+                    //         },
+                    //     },
+                    // },
                     {
                         'kind': 'block',
                         'type': 'list_index',
@@ -258,54 +227,54 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                 ],
             },
-            {
-                'kind': 'category',
-                'name': 'Text',
-                'categorystyle': 'text_category',
-                'contents': [
-                    {
-                        'kind': 'block',
-                        'type': 'text',
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'text_multiline',
-                    },
-                    {
-                        'kind': 'label',
-                        'text': 'Input/Output:',
-                        'web-class': 'ioLabel',
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'text_print',
-                        'inputs': {
-                            'TEXT': {
-                                'shadow': {
-                                    'type': 'text',
-                                    'fields': {
-                                        'TEXT': 'abc',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'text_prompt_ext',
-                        'inputs': {
-                            'TEXT': {
-                                'shadow': {
-                                    'type': 'text',
-                                    'fields': {
-                                        'TEXT': 'abc',
-                                    },
-                                },
-                            },
-                        },
-                    },
-                ],
-            },
+            // {
+            //     'kind': 'category',
+            //     'name': 'Text',
+            //     'categorystyle': 'text_category',
+            //     'contents': [
+            //         {
+            //             'kind': 'block',
+            //             'type': 'text',
+            //         },
+            //         {
+            //             'kind': 'block',
+            //             'type': 'text_multiline',
+            //         },
+            //         {
+            //             'kind': 'label',
+            //             'text': 'Input/Output:',
+            //             'web-class': 'ioLabel',
+            //         },
+            //         {
+            //             'kind': 'block',
+            //             'type': 'text_print',
+            //             'inputs': {
+            //                 'TEXT': {
+            //                     'shadow': {
+            //                         'type': 'text',
+            //                         'fields': {
+            //                             'TEXT': 'abc',
+            //                         },
+            //                     },
+            //                 },
+            //             },
+            //         },
+            //         {
+            //             'kind': 'block',
+            //             'type': 'text_prompt_ext',
+            //             'inputs': {
+            //                 'TEXT': {
+            //                     'shadow': {
+            //                         'type': 'text',
+            //                         'fields': {
+            //                             'TEXT': 'abc',
+            //                         },
+            //                     },
+            //                 },
+            //             },
+            //         },
+            //     ],
+            // },
             {
                 'kind': 'sep',
             },
@@ -796,13 +765,14 @@ document.addEventListener('DOMContentLoaded', function () {
     VHDLGenerator.ORDER_ATOMIC   /**/ = 0;
     VHDLGenerator.ORDER_FUNCTION_CALL = 1;
     VHDLGenerator.ORDER_INDEX    /**/ = 1.1;
-    VHDLGenerator.ORDER_MUL      /**/ = 2.0;
-    VHDLGenerator.ORDER_DIV      /**/ = 2.1;
-    VHDLGenerator.ORDER_SUB      /**/ = 3.1;
-    VHDLGenerator.ORDER_ADD      /**/ = 3.2;
-    VHDLGenerator.ORDER_NOT      /**/ = 4;
-    VHDLGenerator.ORDER_COMPARE  /**/ = 5;
-    VHDLGenerator.ORDER_LOGIC    /**/ = 6;
+    VHDLGenerator.ORDER_CONCAT   /**/ = 2;
+    VHDLGenerator.ORDER_MUL      /**/ = 3.0;
+    VHDLGenerator.ORDER_DIV      /**/ = 3.1;
+    VHDLGenerator.ORDER_SUB      /**/ = 4.1;
+    VHDLGenerator.ORDER_ADD      /**/ = 4.2;
+    VHDLGenerator.ORDER_NOT      /**/ = 5;
+    VHDLGenerator.ORDER_COMPARE  /**/ = 6;
+    VHDLGenerator.ORDER_LOGIC    /**/ = 7;
     VHDLGenerator.ORDER_NONE     /**/ = 99;
 
 
@@ -853,6 +823,10 @@ document.addEventListener('DOMContentLoaded', function () {
             ).join(", ")) + "\n  begin\n  " +
             VHDLGenerator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
             "end process;";
+    }
+
+    VHDLGenerator.process_direct_set = function (block) {
+        return 'wait;\n';
     }
 
     VHDLGenerator.process_direct_set = function (block) {
@@ -954,8 +928,34 @@ document.addEventListener('DOMContentLoaded', function () {
         return [block.getFieldValue("NUM"), VHDLGenerator.ORDER_ATOMIC];
     };
 
+    VHDLGenerator.math_arithmetic = function (block) {
+        // Basic arithmetic operators, and power.
+        const OPERATORS = {
+            'ADD': [' + ', Lua.ORDER_ADDITIVE],
+            'MINUS': [' - ', Lua.ORDER_ADDITIVE],
+            'MULTIPLY': [' * ', Lua.ORDER_MULTIPLICATIVE],
+            'DIVIDE': [' / ', Lua.ORDER_MULTIPLICATIVE],
+            'POWER': [' ^ ', Lua.ORDER_EXPONENTIATION],
+        };
+        const tuple = OPERATORS[block.getFieldValue('OP')];
+        const order = tuple[1];
+        return [VHDLGenerator.valueToCode(block, 'A', order) || '0' + tuple[0] + VHDLGenerator.valueToCode(block, 'B', order) || '0', order];
+    };
+
     VHDLGenerator.list_index = function (block) {
         return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("INDEX") + ")", VHDLGenerator.ORDER_INDEX];
+    };
+
+    VHDLGenerator.list_range = function (block) {
+        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("FROM") + " " + block.getFieldValue("ORDER") + " " + block.getFieldValue("TO") + ")", VHDLGenerator.ORDER_INDEX];
+    };
+
+    VHDLGenerator.list_concat = function (block) {
+        return [VHDLGenerator.valueToCode(block, 'A', VHDLGenerator.ORDER_CONCAT) + " & " + VHDLGenerator.valueToCode(block, 'B', VHDLGenerator.ORDER_CONCAT), VHDLGenerator.ORDER_CONCAT];
+    };
+
+    VHDLGenerator.report = function (block) {
+        return "report " + block.getFieldValue("S") + ";\n";
     };
 
     const ws = Blockly.inject('root', {
@@ -1087,6 +1087,7 @@ document.addEventListener('DOMContentLoaded', function () {
             prompt("New constant name: ").then((n) => {
                 prompt("New constant type: ").then((t) => {
                     prompt("New constant value: ").then((v) => {
+                        entity.constants = entity.constants || {};
                         entity.constants[n] = [t, v];
                         vscode.postMessage({
                             type: "updateEntity",
@@ -1127,6 +1128,7 @@ document.addEventListener('DOMContentLoaded', function () {
         callback() {
             prompt("New alias name: ").then((n) => {
                 prompt("New alias value: ").then((v) => {
+                    entity.aliases = entity.aliases || {};
                     entity.aliases[n] = v;
                     vscode.postMessage({
                         type: "updateEntity",
@@ -1353,7 +1355,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (e.type == Blockly.Events.VAR_DELETE)
             delete signals[e.varName];
-        else if (e.type == Blockly.Events.VAR_DELETE) {
+        else if (e.type == Blockly.Events.VAR_RENAME) {
             signals[e.newName] = signals[e.oldName];
             delete signals[e.oldName];
         }
