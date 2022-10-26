@@ -1,0 +1,16 @@
+{
+    "entity": {
+        "clk"     : ["in",  "std_logic"],
+        "reset"   : ["in",  "std_logic"],
+        "incr"    : ["in",  "std_logic"],
+        "buttons" : ["in",  "std_logic_vector(3 downto 0)"],
+        "leds"    : ["out", "std_logic_vector(3 downto 0)"]
+    },
+    "aliases": {
+        "start": "buttons(0)",
+        "stop" : "buttons(1)"
+    },
+    "constants": {
+        "button_tab_c": ["positive", "1"]
+    }
+}
