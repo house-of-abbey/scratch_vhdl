@@ -39,20 +39,32 @@ The download to the development board is managed through TCL scripts so the auth
 
 ## Demonstration Designs
 
-Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time.
+Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time. Each one fits within the following interface design so that the contents can be changed without changing how we perform both simulation and synthesis.
+
+![Top Level Interface](./images/led4_button4.png)
+
+| Signal         | Description|
+| -------------- | ---------- |
+| `clk`          | A 125 MHz clock, i.e. 8 ns period. |
+| `reset`        | A pulse generated once just after programming the FPGA intended to bring the memory elements to a known state.|
+| `incr`         | A pulsed every few clocks to slow down the update of the display. In simulation this is every 10 clocks, in real life this is every 0.5s. |
+| `buttons(3:0)` | The four push buttons, or four toggle buttons from the development board. Each element of `buttons` is driven by both a push button and a toggle button OR'ed together. Therefore the corresponding switch must be held low ('0') for the push button to operate correctly. |
+| `leds(3:0)`    | The four LEDs on the development board. |
+
+### Example Demonstrations
 
 1. **[One LED per button](button_driven.md)**, can we get the board to work?
 2. **[Logic gates](logic_gates.md)**, 4 logic functions of four inputs driving an LED each. Combine this with drawings of truth tables to bring the tables to life.
 3. **[Pulse Generator](pulse_generator.md)**, shortening a long pulse to a short one.
 4. **[Shift Register](shift_registers.md)**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left. This can be developed into sequences that go back and forth for a bi-directional shift register controlled by two buttons, each inserting a lit LED into one end and changing the direction of shift.
 5. **4-bit [binary counter](binary_counter.md)** with start and stop buttons.
-6. **Sum of buttons pressed**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
+6. **[Sum of buttons pressed](adders.md)**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
 
    ![Traffic Lights](./images/knight_rider_demo.gif)
 
-8. **Traffic lights** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
-9. **Linear Feedback Shift Register** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
+8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+9. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
 
