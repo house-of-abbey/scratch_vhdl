@@ -11,7 +11,7 @@
         "stop" : "buttons(1)"
     },
     "constants": {
-        "button_tab_c": ["positive", "1"]
+        "button_tab_c": ["natural", "1"]
     },
     "libraries": {
         "ieee": {

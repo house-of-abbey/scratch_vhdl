@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of bishift_register is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal dir_lr_d : std_logic;
   signal dir_rl_d : std_logic;

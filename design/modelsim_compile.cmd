@@ -23,6 +23,9 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
+rem Directory the batch file was run from
+set DIR=%CD%
+
 title Compiling for Modelsim
 
 echo Compile Source:   %SRC%\*
@@ -49,6 +52,13 @@ if %ERRORLEVEL% NEQ 0 (goto error)
 %MODELSIMBIN%\vlib work
 if %ERRORLEVEL% NEQ 0 (goto error)
 
+setlocal enabledelayedexpansion
+set includeFiles=
+for %%x in (%*) do (
+   set includeFiles=!includeFiles! %DIR%\%%~x
+)
+if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
+
 %MODELSIMBIN%\vcom -quiet -2008 ^
   %SRC%\demos\src\led4_button4.vhdl ^
   %SRC%\demos\src\retime.vhdl ^
@@ -56,7 +66,8 @@ if %ERRORLEVEL% NEQ 0 (goto error)
   %SRC%\Zybo_Z7_10\src\zybo_z7_10.vhdl ^
   %SRC%\demos\sim\test_led4_button4.vhdl ^
   %SRC%\demos\sim\stimulus_led4_button4.vhdl ^
-  %SRC%\Zybo_Z7_10\sim\test_zybo_z7_10.vhdl
+  %SRC%\Zybo_Z7_10\sim\test_zybo_z7_10.vhdl ^
+  !includeFiles!
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (goto error)
 
@@ -76,5 +87,5 @@ exit /b %ec%
 :error
   echo.
   echo Compilation FAILED
-  pause
+  if not "%TERM_PROGRAM%"=="vscode" pause
   exit /b %ERRORLEVEL%

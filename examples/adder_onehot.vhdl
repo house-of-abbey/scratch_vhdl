@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of adder_onehot is
 
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
 
 

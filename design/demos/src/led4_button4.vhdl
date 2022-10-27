@@ -31,7 +31,7 @@ architecture toggle_driven of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
 begin
 
@@ -54,7 +54,7 @@ architecture button_driven of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
 begin
 
@@ -84,7 +84,7 @@ architecture logic_gates of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
 begin
 
@@ -110,7 +110,7 @@ architecture pulse_gen of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
   signal buttons_d : std_logic_vector(3 downto 0);
 
@@ -141,7 +141,7 @@ architecture shift_register of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal button_d : std_logic := '0';
 
@@ -171,7 +171,7 @@ architecture bishift_register of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   alias dir_rl is buttons(0);
   alias dir_lr is buttons(3);
@@ -251,7 +251,7 @@ architecture binary_counter of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -297,7 +297,7 @@ architecture adder_onehot of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
 begin
 
@@ -330,7 +330,7 @@ architecture adder_binary of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 2;
+  constant button_tab_c : natural := 2;
 
 begin
 
@@ -368,7 +368,7 @@ architecture knight_rider of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -429,7 +429,7 @@ architecture traffic_lights of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 3;
+  constant button_tab_c : natural := 3;
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -523,7 +523,7 @@ architecture pelicon_crossing of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 3;
+  constant button_tab_c : natural := 3;
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -646,7 +646,7 @@ architecture lfsr_external of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -705,7 +705,7 @@ architecture lfsr_internal of led4_button4 is
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
   -- 3 - Traffic Lights tab
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   alias start is buttons(0);
   alias stop  is buttons(1);

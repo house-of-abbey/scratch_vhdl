@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of pulse_gen is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal buttons_d : std_logic_vector(3 downto 0);
 

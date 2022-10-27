@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of shift_register is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal button_d : std_logic;
 

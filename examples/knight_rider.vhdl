@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of knight_rider is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal run : std_logic;
   signal state : integer range 0 to 5;

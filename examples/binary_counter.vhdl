@@ -15,7 +15,7 @@ end entity;
 
 architecture scratch of binary_counter is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
   signal cnt : integer range 0 to 15;
   signal run : std_logic;

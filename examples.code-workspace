@@ -10,11 +10,13 @@
             "titleBar.activeBackground": "#024C10",
             "titleBar.activeForeground": "#ECFFF0"
         },
-        "explorer.fileNesting.enabled": true
+        "explorer.fileNesting.enabled": true,
+        "material-icon-theme.languages.associations": {
+            "vhdl": "Verilog"
+        }
     },
     "extensions": {
         "recommendations": [
-            "hbohlin.vhdl-ls",
             "JosephAbbey.scratch-vhdl-vscode"
         ]
     }

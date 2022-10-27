@@ -129,7 +129,7 @@ begin
     end if;
   end process;
 
-  led4_button4_i : entity work.led4_button4(lfsr_internal)
+  led4_button4_i : entity work.led4_button4(scratch)
     port map (
       clk     => clk,
       reset   => reset,

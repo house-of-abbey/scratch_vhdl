@@ -1,1 +1,1 @@
-{"entity":{"clk":["in","std_logic"],"reset":["in","std_logic"],"incr":["in","std_logic"],"buttons":["in","std_logic_vector(3 downto 0)"],"leds":["out","std_logic_vector(3 downto 0)"]},"constants":{"button_tab_c":["positive","1"]},"aliases":{"dir_rl":"buttons(0)","dir_lr":"buttons(3)"}}
+{"entity":{"clk":["in","std_logic"],"reset":["in","std_logic"],"incr":["in","std_logic"],"buttons":["in","std_logic_vector(3 downto 0)"],"leds":["out","std_logic_vector(3 downto 0)"]},"constants":{"button_tab_c":["natural","1"]},"aliases":{"dir_rl":"buttons(0)","dir_lr":"buttons(3)"}}

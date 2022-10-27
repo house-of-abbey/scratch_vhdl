@@ -79,6 +79,7 @@ set_property default_lib work [current_project]
 # Add project files
 add_files -fileset [current_fileset] $scratch_vhdl_src/design/demos/src
 add_files -fileset [current_fileset] $scratch_vhdl_src/design/Zybo_Z7_10/src
+add_files -fileset [current_fileset] $scratch_vhdl_src/design/scratch.vhdl
 set_property file_type {VHDL 2008} [get_files {*.vhdl}]
 add_files -fileset [current_fileset -constrset] $scratch_vhdl_src/design/Zybo_Z7_10/constraints
 # Vivado bleats if it can't manage a constraints file, so we've added one, but we're going to ignore it. Order is important here.
@@ -157,3 +158,5 @@ export_simulation \
   -use_ip_compiled_libs \
   -force \
   -quiet
+
+source -notrace "$scratch_vhdl_src/TCL/vivado_synth.tcl"

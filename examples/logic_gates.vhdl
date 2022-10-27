@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of logic_gates is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
 
 
 

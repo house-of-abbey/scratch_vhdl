@@ -14,7 +14,7 @@ end entity;
 
 architecture scratch of lfsr_external is
 
-  constant button_tab_c : positive := 1;
+  constant button_tab_c : natural := 1;
   constant taps_c : std_logic_vector(3 downto 0) := "1100";
 
   signal run : std_logic;
