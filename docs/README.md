@@ -15,7 +15,7 @@ The purpose of "Scratch VHDL" is to make reprogrammable logic design into child'
 7. Reducing the clock speed so that timing closure can be ignored.
 8. Downloading the design to a development board in order to test for real, in a similar style to the interactive test bench used for simulation.
 
-For example, we can create this Scratch diagram on the left using our VS Code plug-in, and VS Code will generate the VHDL on the right.
+For example, we can create this Scratch diagram using our VS Code plug-in, and VS Code will generate the VHDL shown.
 
 <div style="column-count:2">
 <img src="./images/logic_gates_scratch.png" width="400" alt="Scratch editor for the logic gates demo">
