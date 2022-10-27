@@ -20,7 +20,8 @@ For example, we can create this Scratch diagram using our VS Code plug-in, and V
 <div style="column-count:2">
 <img src="./images/logic_gates_scratch.png" width="400" alt="Scratch editor for the logic gates demo">
 
-```vhdl
+<pre>
+<code class="language-vhdl">
 architecture scratch of logic_gates is
 begin
 
@@ -39,7 +40,8 @@ begin
   end process;
 
 end architecture;
-```
+</code>
+</pre>
 </div>
 
 All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands. Anyone new to FPGA design will be able to experience the design process to realise and test a real (if simple) design, and gain an education.
