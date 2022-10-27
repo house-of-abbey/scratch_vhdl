@@ -126,7 +126,7 @@ begin
 
         if incr = '1' then
           buttons_d <= buttons;
-          leds <= buttons and not buttons_d;
+          leds      <= buttons and not buttons_d;
         end if;
 
       end if;

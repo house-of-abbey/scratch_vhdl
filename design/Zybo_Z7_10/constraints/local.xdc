@@ -27,4 +27,4 @@ set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime
 # These off chip sources and destinations are not synchronous, but we want a clean timing report.
 # Time in ns
 set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
-set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {leds[*]}]
+set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {led[*]}]

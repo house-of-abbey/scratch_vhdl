@@ -39,7 +39,7 @@ begin
       clk_port => clk,
       sw       => sw,
       btn      => btn,
-      leds     => leds
+      led      => leds
     );
 
   process

@@ -77,10 +77,14 @@ set_property target_language VHDL [current_project]
 set_property default_lib work [current_project]
 
 # Add project files
-add_files $scratch_vhdl_src/design/demos/src
-add_files $scratch_vhdl_src/design/Zybo_Z7_10/src
+add_files -fileset [current_fileset] $scratch_vhdl_src/design/demos/src
+add_files -fileset [current_fileset] $scratch_vhdl_src/design/Zybo_Z7_10/src
 set_property file_type {VHDL 2008} [get_files {*.vhdl}]
-add_files $scratch_vhdl_src/design/Zybo_Z7_10/constraints
+add_files -fileset [current_fileset -constrset] $scratch_vhdl_src/design/Zybo_Z7_10/constraints
+# Vivado bleats if it can't manage a constraints file, so we've added one, but we're going to ignore it. Order is important here.
+set_property is_enabled false [get_files {managed.xdc}]
+set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -constrset]
+
 set_property top zybo_z7_10 [current_fileset]
 update_compile_order -fileset [current_fileset]
 set_property generic sim_g=false [current_fileset]

@@ -1,0 +1,5 @@
+Zybo_Z7_10/ip/*
+!Zybo_Z7_10/ip/README.md
+# This file is edited by Vivado to record new constraints manually added. Vivado winges if it does not have
+# access to such a file, so let it manage this one and we'll ignore it.
+Zybo_Z7_10/constraints/managed.xdc

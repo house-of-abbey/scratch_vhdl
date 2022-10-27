@@ -29,7 +29,7 @@ entity zybo_z7_10 is
     clk_port : in  std_logic; -- 125 MHz External Clock
     sw       : in  std_logic_vector(3 downto 0);
     btn      : in  std_logic_vector(3 downto 0);
-    leds     : out std_logic_vector(3 downto 0) := "0000"
+    led      : out std_logic_vector(3 downto 0) := "0000"
   );
 end entity;
 
@@ -43,7 +43,7 @@ architecture rtl of zybo_z7_10 is
     else
       -- 500 ms / 8 ns, but Vivado is unable to perform this calculation even when the result
       -- is assigned to a constant.
-      return 625000000;
+      return 62500000;
     end if;
   end function;
 
@@ -64,11 +64,11 @@ begin
   pll_i : entity work.pll
     port map (
       -- Clock in ports
-      clk_in => clk_port,
+      clk_in  => clk_port,
       -- Clock out ports
       clk_out => clk,
       -- Status and control signals
-      locked => locked
+      locked  => locked
     );
 
 
@@ -129,13 +129,13 @@ begin
     end if;
   end process;
 
-  led4_button4_i : entity work.led4_button4(pulse_gen)
+  led4_button4_i : entity work.led4_button4(lfsr_internal)
     port map (
       clk     => clk,
       reset   => reset,
       incr    => incr,
       buttons => buttons,
-      leds    => leds
+      leds    => led
     );
 
 end architecture;
