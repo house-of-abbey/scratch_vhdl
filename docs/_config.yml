@@ -5,3 +5,7 @@ title: Scratch VHDL
 description: The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious.
 logo: './images/icon.svg'
 show_downloads: false
+markdown: kramdown
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
