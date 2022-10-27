@@ -15,15 +15,41 @@ The purpose of "Scratch VHDL" is to make reprogrammable logic design into child'
 7. Reducing the clock speed so that timing closure can be ignored.
 8. Downloading the design to a development board in order to test for real, in a similar style to the interactive test bench used for simulation.
 
-All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands. Anyone new to FPGA design will be able to experience the full design process to realise and test a real (if simple) design, and gain an education.
+For example, we can create this Scratch diagram on the left using our VS Code plug-in, and VS Code will generate the VHDL on the right.
 
+<div style="column-count:2">
+<img src="./images/logic_gates_scratch.png" width="400" alt="Scratch editor for the logic gates demo">
+
+```vhdl
+architecture scratch of logic_gates is
+begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        leds <= "0000";
+      else
+        leds(0) <= and(buttons);
+        leds(1) <= or(buttons);
+        leds(2) <= xor(buttons);
+        leds(3) <= nor(buttons);
+      end if;
+    end if;
+  end process;
+
+end architecture;
+```
+</div>
+
+All of these measures allow the design entry process to be simplified to a practical guided lesson. The content of what can be done with four buttons and 4 LEDs can then be tailored from fundamental combinatorial gates through to basic sequences of states with more involved combinatorial logic demands. Anyone new to FPGA design will be able to experience the design process to realise and test a real (if simple) design, and gain an education.
 ## Design Entry
 
 Rather than hiding the code from the students, the Scratch project builder engages its audience with its creation, allowing them to experience a modern design entry method. Scratch will reduce the chances of syntax errors (but not completely eliminate them), and a standard project setup can be used to avoid many of the time consuming distractions. For example, we use a standard VHDL `entity` for all the demonstration designs, and the Scratch builder only has to assist with the derivation of the VHDL `architecture` in a single file.
 
 Once the Scratch design compiles, it can be tested in a VHDL simulator with the following point & click graphical controls.
 
-![Traffic Lights](./images/traffic_lights_demo.gif)
+![Traffic Lights](./images/knight_rider_demo.gif)
 
 Variations on the controls are placed in different tabs.
 
@@ -33,7 +59,23 @@ Variations on the controls are placed in different tabs.
 
 The buttons will control the inputs to the top level entity, and the LED outputs from the VHDL simulator will drive the LED graphics. With the "Autostep" simulator control, the VHDL simulator becomes the chip, and no test bench code needs to be written. A free version of ModelSim is used for this purpose, where the limitations do not constrain the required functions.
 
-Vivado webpack is used for synthesis, place and route as we are staying within the devices supported by this free version. The source code includes input, output, constraints and pin out required to interface to the design, and these details are hidden from immediate view.
+The controls are used as a substitute for writing a full VHDL test bench. This is what the simulation looks like.
+
+![ModelSim Wave Window](./images/knight_rider_sim.png)
+
+Scripts are then used to automate the production of the bit file and sending it to the development board for testing. The scripts show the intermediate products, and the picture below shows the elaboration of the design to generic gates.
+
+![ModelSim Wave Window](./images/knight_rider_elab.png)
+
+The chosen FPGA development board is a Zybo Z7 (Zynq-7010 variant). But as the subset of functionality is small, many other boards will be suitable too, for the sake of modifying the outer level VHDL.
+
+![Zybo Z7, Zynq-7010](https://digilent.com/reference/_media/reference/programmable-logic/zybo-z7/zybo-z7-1.png)
+
+<video width="320" height="320" controls>
+  <source src="./images/lfsr_internal.mp4" type="video/mp4">
+</video>
+
+Vivado Webpack is used for synthesis, place and route as we are staying within the devices supported by this free version. The source code includes input, output, constraints and pin out required to interface to the design, and these details are hidden from immediate view.
 
 The download to the development board is managed through TCL scripts so the authors can immediately start trying their design out for real.
 
@@ -41,7 +83,7 @@ The download to the development board is managed through TCL scripts so the auth
 
 Demonstration designs are provided in order of incremental difficulty (in the main). They are designed to introduce digital design concepts a step at a time. Each one fits within the following interface design so that the contents can be changed without changing how we perform both simulation and synthesis.
 
-![Top Level Interface](./images/led4_button4.png)
+<img src="./images/led4_button4.png" width="400" alt="Top Level Interface">
 
 | Signal         | Description|
 | -------------- | ---------- |
@@ -60,10 +102,8 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 5. **4-bit [binary counter](binary_counter.md)** with start and stop buttons.
 6. **[Sum of buttons pressed](adders.md)**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
-
-   ![Traffic Lights](./images/knight_rider_demo.gif)
-
 8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+  ![Traffic Lights](./images/traffic_lights_demo.gif)
 9. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
