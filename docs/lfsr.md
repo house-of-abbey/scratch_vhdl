@@ -1,3 +1,7 @@
+---
+usemathjax: true
+---
+
 # Linear Feedback Shift Register (LFSR)
 
 Now for something a bit more challenging and mathematical.

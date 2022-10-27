@@ -144,14 +144,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                 ],
             },
-            {
-                'kind': 'category',
-                'name': 'Loops',
-                'categorystyle': 'loop_category',
-                'contents': [
-                    // TODO: reimplement loops
-                ],
-            },
+            // {
+            //     'kind': 'category',
+            //     'name': 'Loops',
+            //     'categorystyle': 'loop_category',
+            //     'contents': [
+            //     ],
+            // },
             {
                 'kind': 'category',
                 'name': 'Math',
