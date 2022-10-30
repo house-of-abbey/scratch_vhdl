@@ -6,7 +6,7 @@ Each toggle button lights a corresponding LED. That's it. This design introduces
 
 An extension is to maintain the last selected push button after it is released. This amendment is more suitable to the push buttons as it means it is no longer possible to turn off all the LEDs with toggle buttons.
 
-![Wave window for button driven LEDs](./images/button_driven_wave.png)
+![Wave window for button driven LEDs](./images/modelsim_wave/button_driven_wave.png)
 
 Above, the wave traces for the LEDs mirror those of the buttons.
 
@@ -30,7 +30,7 @@ Except that's just a 'wire' and not terribly exciting. Instead you could registe
 
 ![Registered assignment](./images/scratch_blocks/registered_assignment.png)
 
-On the rising edge of the clock (`clk`), check if `reset` is high, if so assign the default values, otherwise transfer the state of the `buttons` to the `leds`. This does little presently except introduce a one clock cycle delay.
+On the rising edge of the clock (`clk`) transfer the state of the `buttons` to the `leds`. This does little presently except introduce a one clock cycle delay.
 
 <pre>
 <code class="language-vhdl">
@@ -48,9 +48,15 @@ end architecture;
 </code>
 </pre>
 
+## Reset
+
 Finally, we ought to provide the means of returning to a known state on reset. This requires the insertion of a test for a reset condition.
 
-![Registered assignment with reset](./images/scratch_blocks/registered_assignment_reset.png)
+### Synchronous Reset
+
+![Registered assignment with reset](./images/scratch_blocks/synchronous_reset.png)
+
+On the rising edge of the clock (`clk`), check if `reset` is high, if so assign the default values, otherwise transfer the state of the `buttons` to the `leds`. Again, this does little presently except introduce a one clock cycle delay.
 
 <pre>
 <code class="language-vhdl">
@@ -73,3 +79,16 @@ end architecture;
 </pre>
 
 On the rising edge of the clock (`clk`), check if `reset` is high, if so assign the default values, otherwise transfer the state of the `buttons` to the `leds`. This does little presently except introduce a one clock cycle delay.
+
+The `reset` condition ensures we are able to start from a known state across our design. Here we use a _synchronous_ reset, one that requires the active edge of the clock to execute. This is because synchronous resets are advised by the FPGA vendors for their devices.
+
+![Synchronous reset](./images/vivado/synchronous_reset.png)
+### Asynchronous Reset
+
+It is possible to infer an _asynchronous_ reset too, typically advised by ASIC manufacturers, but they can be inferred for FPGA technologies too. The advantages and disadvantages of each are not covered here. Just stick with the above synchronous reset for now.
+
+![Asynchronous reset](./images/scratch_blocks/asynchronous_reset.png)
+
+The difference here from the synchronous reset example is subtle, the FDRE primitives have been swapped for FDCE primitives. The reset pin `R` has changed to `CLR`.
+
+![Asynchronous reset](./images/vivado/asynchronous_reset.png)

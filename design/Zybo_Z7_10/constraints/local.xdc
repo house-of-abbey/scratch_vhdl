@@ -28,3 +28,5 @@ set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime
 # Time in ns
 set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
 set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {led[*]}]
+
+set_property direct_reset true [get_nets {led4_button4_i/reset}]

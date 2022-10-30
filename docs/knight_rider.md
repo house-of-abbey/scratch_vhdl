@@ -4,7 +4,7 @@ The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCC
 
 Create a simple light sequence of a single LED lit moving from right to left to right and so on. Also with `start` and `stop`.
 
-![KITT Car's Light Sequence](./images/knight_rider_demo.gif)
+![KITT Car's Light Sequence](./images/sim_controls/knight_rider_demo.gif)
 
 This introduces the idea of mapping a state variable to bespoke outputs. The state variable can be kept simple by using a constrained integer, and rolling over at the correct value.
 

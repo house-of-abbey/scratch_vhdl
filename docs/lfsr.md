@@ -21,20 +21,20 @@ References:
 
 ## External Feedback
 
-![External LFSR Circuit Diagram](./images/lfsr_external_circuit.png)
+![External LFSR Circuit Diagram](./images/circuit_diagrams/lfsr_external_circuit.png)
 
 Here the registers are shown reversed from the actual implementation. The first D input is $1$, The first Q output and the second D input is $x$, and so on for $x^{2}$, $x^{3}$, with $x^{4}$ being the final Q output. Feedback via the EOR gate comes from the terms $x^{3}$ and $x^{4}$. This is how the polynomial $(1+x^{3}+x^{4})$ is realised.
 
 
-![External LFSR LED Sequence](./images/lfsr_external_demo.gif)
+![External LFSR LED Sequence](./images/sim_controls/lfsr_external_demo.gif)
 
 ## Internal Feedback
 
-![Internal LFSR Circuit Diagram](./images/lfsr_internal_circuit.png)
+![Internal LFSR Circuit Diagram](./images/circuit_diagrams/lfsr_internal_circuit.png)
 
 The polynomial terms are numbered as for the external feedback LFSR. A pointless EOR gate is shown on the left to explain how the polynomial $(1+x^{3}+x^{4})$ is realised. As _A_ EOR _0 = A_, the EOR gate can be minimised away leaving the second simpler circuit underneath.
 
-![Internal LFSR LED Sequence](./images/lfsr_internal_demo.gif)
+![Internal LFSR LED Sequence](./images/sim_controls/lfsr_internal_demo.gif)
 
 ## Difference in Sequence
 

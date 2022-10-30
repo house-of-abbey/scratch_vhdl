@@ -51,7 +51,7 @@ Rather than hiding the code from the students, the Scratch project builder engag
 
 Once the Scratch design compiles, it can be tested in a VHDL simulator with the following point & click graphical controls.
 
-![Traffic Lights](./images/knight_rider_demo.gif)
+![Traffic Lights](./images/sim_controls/knight_rider_demo.gif)
 
 Variations on the controls are placed in different tabs.
 
@@ -63,13 +63,13 @@ The buttons will control the inputs to the top level entity, and the LED outputs
 
 The controls are used as a substitute for writing a full VHDL test bench. This is what the simulation looks like.
 
-![ModelSim Wave Window](./images/knight_rider_sim.png)
+![ModelSim Wave Window](./images/modelsim_wave/knight_rider_sim.png)
 
 Scripts are then used to automate the production of the bit file and sending it to the development board for testing. The scripts show the intermediate products, and the picture below shows the elaboration of the design to generic gates.
 
-![ModelSim Wave Window](./images/knight_rider_elab.png)
+![ModelSim Wave Window](./images/vivado/knight_rider_elab.png)
 
-The chosen FPGA development board is a [Zybo Z7](https://digilent.com/reference/programmable-logic/zybo-z7/start) (Zynq-7010 variant). But as the subset of functionality is small, many other boards will be suitable too, for the sake of modifying the outer level VHDL.
+The chosen FPGA development board is a [Zybo Z7](https://digilent.com/reference/programmable-logic/zybo-z7/start) shown below as its relatively cheap and we are not exactly pushing the capabilities of this board here.
 
 ![Zybo Z7, Zynq-7010](https://digilent.com/reference/_media/reference/programmable-logic/zybo-z7/zybo-z7-1.png)
 
@@ -107,7 +107,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 6. **[Sum of buttons pressed](adders.md)**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
 8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
-  ![Traffic Lights](./images/traffic_lights_demo.gif)
+  ![Traffic Lights](./images/sim_controls/traffic_lights_demo.gif)
 9. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
@@ -118,20 +118,23 @@ These are split into separate pages as follows:
 
 * Installation
   * Scratch VHDL
-  * ModelSim
-  * Vivado
+  * [ModelSim](modelsim_installation.md)
+  * [Vivado](vivado_installation.md)
   * Visual Studio Code, including:
     * Scratch VHDL plugin
-    * VHDL editor plugin (VHDL LS)
+    * VHDL editor plugin
+* [Project creation](project_creation.md)
+  * Vivado project generation
+  * ModelSim compilation
 * Editing with Scratch VHDL
-  * Drag and droop of block to create VHDL code
+  * Drag and drop of block to create VHDL code
   * Compilation of VHDL code
-* Simulation of VHDL
+* [Simulation of VHDL](simulation.md)
   * Verification using the simulator to emulate the design interactively
-* Synthesis of VHDL
+* [Synthesis of VHDL](synthesis.md)
   * Elaboration to see the recognisable (generic) gates inferred by the VHDL
   * Synthesis to map the generic gates to the required FPGA device
   * "Place & Route" the design across the FPGA fabric
-* Execution on the target development board
   * Bit file generation and programming of the FPGA on the development board over USB
-  * Verification on the development board
+  * Execution on the target [development board](development_board.md)
+* Verification on the development board
