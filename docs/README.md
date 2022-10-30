@@ -18,7 +18,7 @@ The purpose of "Scratch VHDL" is to make reprogrammable logic design into child'
 For example, we can create this Scratch diagram using our VS Code plug-in, and VS Code will generate the VHDL shown.
 
 <div style="column-count:2">
-<img src="./images/scratch_blocks/logic_gates_scratch.png" width="400" alt="Scratch editor for the logic gates demo">
+<img src="./images/scratch_blocks/logic_gates_reg_scratch.png" width="400" alt="Scratch editor for the logic gates demo">
 
 <pre>
 <code class="language-vhdl">

@@ -1,6 +1,7 @@
 TCL/config.tcl
 transcript
-**/Thumbs.db
-**/.Xil
+Thumbs.db
+.Xil
 vivado.*
-vivado_*
+vivado_*.jou
+vivado_*.log
