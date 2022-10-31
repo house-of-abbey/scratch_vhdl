@@ -91,6 +91,33 @@ document.addEventListener('DOMContentLoaded', function () {
         'contents': [
             {
                 'kind': 'category',
+                'name': 'Literals',
+                "colour": "30",
+                'contents': [
+                    {
+                        'kind': 'block',
+                        'type': 'logic_boolean',
+                    },
+                    {
+                        'kind': 'block',
+                        'type': 'math_number',
+                        'gap': 32,
+                        'fields': {
+                            'NUM': 123,
+                        },
+                    },
+                    {
+                        'kind': 'block',
+                        'type': 'value_std_logic',
+                    },
+                    {
+                        'kind': 'block',
+                        'type': 'value_std_logic_vector',
+                    },
+                ]
+            },
+            {
+                'kind': 'category',
                 'name': 'Logic',
                 'categorystyle': 'logic_category',
                 'contents': [
@@ -132,10 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                     {
                         'kind': 'block',
-                        'type': 'logic_boolean',
-                    },
-                    {
-                        'kind': 'block',
                         'type': 'logic_rising_edge',
                     },
                     {
@@ -153,17 +176,9 @@ document.addEventListener('DOMContentLoaded', function () {
             // },
             {
                 'kind': 'category',
-                'name': 'Math',
+                'name': 'Operations',
                 'categorystyle': 'math_category',
                 'contents': [
-                    {
-                        'kind': 'block',
-                        'type': 'math_number',
-                        'gap': 32,
-                        'fields': {
-                            'NUM': 123,
-                        },
-                    },
                     {
                         'kind': 'block',
                         'type': 'math_arithmetic',
@@ -215,14 +230,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         'kind': 'block',
                         'type': 'variables_set_index',
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'value_std_logic',
-                    },
-                    {
-                        'kind': 'block',
-                        'type': 'value_std_logic_vector',
                     },
                 ],
             },
@@ -320,7 +327,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     "type": "field_variable",
                     "name": "1",
-                    "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+                    // "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
                 }
             ],
             "message1": "%1",
@@ -367,7 +374,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     "type": "field_variable",
                     "name": "VAR",
-                    "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+                    // "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
                 },
                 {
                     "type": "input_value",    // This expects an input of any type
@@ -378,7 +385,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             "kind": "block",
             "type": "value_std_logic",
-            "colour": "%{BKY_MATH_HUE}",
+            "colour": 30,
             "message0": "'%1'",
             "args0": [
                 {
@@ -387,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     "min": 0,
                     "max": 1,
                     "precision": 1,
-                    "value": 0,
+                    "value": 1,
                 }
             ],
             "output": null,
@@ -395,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             "kind": "block",
             "type": "value_std_logic_vector",
-            "colour": "%{BKY_MATH_HUE}",
+            "colour": 30,
             "message0": "\"%1\"",
             "args0": [
                 {
@@ -553,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     "type": "field_variable",
                     "name": "VAR",
-                    "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+                    // "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
                 },
                 {
                     "type": "field_number",
@@ -577,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 {
                     "type": "field_variable",
                     "name": "dep",
-                    "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
+                    // "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
                 }
             ],
             "output": "Boolean",
@@ -665,7 +672,7 @@ document.addEventListener('DOMContentLoaded', function () {
         updateShape_: function () {
             if (this.prevDepCount_ < this.depCount_) {
                 for (var i = this.prevDepCount_ + 1; i <= this.depCount_; i++) {
-                    this.inputList[0].appendField(new Blockly.FieldVariable("clk"), i.toString());
+                    this.inputList[0].appendField(new Blockly.FieldVariable(), i.toString());
                 }
             } else if (this.prevDepCount_ > this.depCount_) {
                 for (var i = this.prevDepCount_; i > this.depCount_; i--) {
@@ -730,7 +737,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     (() => {
         Blockly.fieldRegistry.unregister("field_variable");
-        Blockly.fieldRegistry.register("field_variable", class extends Blockly.FieldVariable {
+        Blockly.fieldRegistry.register("field_variable", Blockly.FieldVariable = class extends Blockly.FieldVariable {
             // TODO: Prevent deleting and renaming entity signals by removing the dropdown option for entities
             renderSelectedText_() {
                 super.renderSelectedText_();
@@ -738,6 +745,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (Object.keys(entityVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(20);
                     else if (Object.keys(aliasVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(120);
                     else this.sourceBlock_.setColour('%{BKY_VARIABLES_HUE}');
+                }
+            }
+
+            initModel() {
+                if (!this.variable_) {
+                    if (this.defaultVariableName === "") {
+                        this.doValueUpdate_(this.getSourceBlock().workspace.getAllVariables()[0].getId());
+                    } else {
+                        super.initModel();
+                    }
                 }
             }
         });
@@ -826,7 +843,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "end process;";
     }
 
-    VHDLGenerator.process_direct_set = function (block) {
+    VHDLGenerator.process_wait = function (block) {
         return 'wait;\n';
     }
 
@@ -855,7 +872,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     VHDLGenerator.controls_case = function (block) {
-        return "case " + VHDLGenerator.valueToCode(block, "ON", VHDLGenerator.ORDER_NONE) + " is\n" + VHDLGenerator.statementToCode(block, 'body') + "\nend case;";
+        return "case " + VHDLGenerator.valueToCode(block, "ON", VHDLGenerator.ORDER_NONE) + " is\n" + VHDLGenerator.statementToCode(block, 'body') + "end case;\n";
     }
 
     VHDLGenerator.controls_when = function (block) {
