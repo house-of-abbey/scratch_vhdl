@@ -19,3 +19,7 @@ Similar to the above, but implement the flashing amber light sequence. Again wit
 ![Pelicon Crossing](./images/sim_controls/pelicon_crossing_demo.gif)
 
 Reference: [Flashing amber traffic lights](https://www.passmefast.co.uk/resources/driving-advice/traffic-light-sequence-guide) (www.passmefast.co.uk)
+
+## Implementation
+
+Both of these are implemented with a finite state machine (FSM) like the [Knight Rider](knight_rider.md) demonstration. This time the `start` input moves away from the red stop light to the green proceed light, and the `stop` input moves away from the green to the red. So this FSM makes use of input buttons to control the progress of the state transitions.

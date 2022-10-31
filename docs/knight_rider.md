@@ -23,12 +23,12 @@ Typically, in the general case, an FSM has both inputs and outputs as well as th
 ```mermaid
 stateDiagram-v2
     [*] --> 0
-    0 --> 1 : running = '1'
-    1 --> 2 : running = '1'
-    2 --> 3 : running = '1'
-    3 --> 4 : running = '1'
-    4 --> 5 : running = '1'
-    5 --> 0 : running = '1'
+    0 --> 1 : running = '1' and incr = '1'
+    1 --> 2 : running = '1' and incr = '1'
+    2 --> 3 : running = '1' and incr = '1'
+    3 --> 4 : running = '1' and incr = '1'
+    4 --> 5 : running = '1' and incr = '1'
+    5 --> 0 : running = '1' and incr = '1'
 ```
 
 As before `start` and `stop` toggle `running`. Now we just need to add the output assignments, e.g. using a `case` statement. Next make the output assignments run through the sequence of LEDs, decoding an integer value to a 4-bit vector assignment to `leds(3:0)`.
