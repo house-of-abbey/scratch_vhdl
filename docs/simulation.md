@@ -1,6 +1,6 @@
 # Simulation
 
-We avoid the need to write a VHDL test bench by substituting the stimulus VHDL code with a graphical user interface to control the inputs and display the outputs. In order for this to work it is necessary to start the simulation from a [batch file](../design/run_sim.bat), which loads the TCL scripts necessary to make this work.
+We avoid the need to write a VHDL test bench by substituting the stimulus VHDL code with a graphical user interface to control the inputs and display the outputs. In order for this to work it is necessary to start the simulation from a [batch file](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/run_sim.bat), which loads the TCL scripts necessary to make this work.
 
 ![Simulation Controls](./images/sim_controls/simulation_control_gui.png)
 

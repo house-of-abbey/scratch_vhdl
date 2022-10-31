@@ -1,6 +1,6 @@
 # Synthesis
 
-The process of generating a design from VHDL has been simplified and automated in a way this is customised to this application. We have installed toolbar buttons that run TCL functions from a script. **As long as Vivado is started from the [batch file](../design/run_vivado.bat), the correct TCL script will be read and the design prepared earlier will be loaded.**
+The process of generating a design from VHDL has been simplified and automated in a way this is customised to this application. We have installed toolbar buttons that run TCL functions from a script. **As long as Vivado is started from the [batch file](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/run_vivado.bat), the correct TCL script will be read and the design prepared earlier will be loaded.**
 
 ![Vivado toolbar with custom buttons](./images/vivado/Toolbar.png)
 
