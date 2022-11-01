@@ -75,6 +75,7 @@
         "typescript": "^4.8.4"
     },
     "dependencies": {
+        "@blockly/workspace-backpack": "^3.0.2",
         "blockly": "^9.0.0"
     }
 }

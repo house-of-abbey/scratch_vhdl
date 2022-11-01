@@ -83,6 +83,41 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         return new Promise((resolve) => requests[rid++] = resolve);
     };
+    window.addEventListener("message", (message) => message.data.type == "getState" && requests[message.data.id](message.data.value));
+    const getState = (key, a) => {
+        vscode.postMessage({
+            type: "getState",
+            key,
+            a,
+            id: rid
+        });
+        return new Promise((resolve) => requests[rid++] = resolve);
+    };
+    window.addEventListener("message", (message) => message.data.type == "setState" && requests[message.data.id]());
+    const setState = (key, value) => {
+        vscode.postMessage({
+            type: "setState",
+            key,
+            value,
+            id: rid
+        });
+        return new Promise((resolve) => requests[rid++] = resolve);
+    };
+
+    //#region storage_backpack
+    class StorageBackpack extends Backpack {
+        open() {
+            if (!this.isOpenable_()) {
+                return;
+            }
+            getState("bp_contents", []).then((d) => (this.contents_ = d, super.open()));
+        }
+        onContentChange_() {
+            super.onContentChange_();
+            setState("bp_contents", this.contents_)
+        }
+    }
+    //#endregion
 
     const builtinLibs = {};
 
@@ -1035,6 +1070,9 @@ document.addEventListener('DOMContentLoaded', function () {
         theme,
         renderer: "zelos"
     });
+
+    const bp = new StorageBackpack(ws);
+    bp.init();
 
     let entity = {};
     let libraries = {};

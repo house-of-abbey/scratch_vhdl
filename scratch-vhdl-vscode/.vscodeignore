@@ -11,5 +11,6 @@ vsc-extension-quickstart.md
 **/@types/**
 node_modules/**
 !node_modules/blockly/blockly.min.js
+!node_modules/@blockly/workspace-backpack/dist/index.js
 things_to_try.txt
 .eslintignore

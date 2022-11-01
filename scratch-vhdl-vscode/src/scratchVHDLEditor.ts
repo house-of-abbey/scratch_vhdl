@@ -430,6 +430,17 @@ export class ScratchVHDLEditorProvider
             vscode.Uri.joinPath(this._context.extensionUri, 'media', 'main.js')
         );
 
+        const scriptBlocklyBackpackUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(
+                this._context.extensionUri,
+                'node_modules',
+                '@blockly',
+                'workspace-backpack',
+                'dist',
+                'index.js'
+            )
+        );
+
         const scriptBlocklyUri = webview.asWebviewUri(
             vscode.Uri.joinPath(
                 this._context.extensionUri,
@@ -477,6 +488,7 @@ export class ScratchVHDLEditorProvider
                     <div id="root"></div>
 
                     <script src="${scriptBlocklyUri}"></script>
+                    <script src="${scriptBlocklyBackpackUri}"></script>
                     <script src="${scriptUri}"></script>
                 </body>
 			</html>`;
@@ -633,6 +645,29 @@ export class ScratchVHDLEditorProvider
                     });
                 return;
             }
+
+            case 'setState':
+                this._context.globalState.setKeysForSync([message.key]);
+                this._context.globalState
+                    .update(message.key, message.value)
+                    .then(() =>
+                        panel.webview.postMessage({
+                            type: 'setState',
+                            id: message.id,
+                        })
+                    );
+                return;
+
+            case 'getState':
+                panel.webview.postMessage({
+                    type: 'getState',
+                    id: message.id,
+                    value: this._context.globalState.get<any>(
+                        message.key,
+                        message.a
+                    ),
+                });
+                return;
         }
     }
 }
