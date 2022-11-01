@@ -829,6 +829,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
         const nextCode = opt_thisOnly ? '' : this.blockToCode(nextBlock);
+        console.log(block, code, opt_thisOnly, commentCode, nextCode)
         return commentCode + code + nextCode;
     };
 
@@ -983,6 +984,15 @@ document.addEventListener('DOMContentLoaded', function () {
             length: 3,
             colour: '#ccc',
             snap: true,
+        },
+        zoom: {
+            controls: true,
+            wheel: true,
+            startScale: 1.0,
+            maxScale: 3,
+            minScale: 0.3,
+            scaleSpeed: 1.2,
+            pinch: true
         },
         theme,
         renderer: "zelos"
