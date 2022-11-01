@@ -20,7 +20,7 @@ Typically state machines written in VHDL use a custom type that enumerates the s
 
 Typically, in the general case, an FSM has both inputs and outputs as well as the state variable. The inputs are decoded to transition between states, and the outputs are a function of either the state or both the state and the inputs. For this implementation our state transitions look like the following diagram.
 
-```mermaid
+<div class="mermaid">
 stateDiagram-v2
     [*] --> 0
     0 --> 1 : running = '1' and incr = '1'
@@ -29,6 +29,6 @@ stateDiagram-v2
     3 --> 4 : running = '1' and incr = '1'
     4 --> 5 : running = '1' and incr = '1'
     5 --> 0 : running = '1' and incr = '1'
-```
+</div>
 
 As before `start` and `stop` toggle `running`. Now we just need to add the output assignments, e.g. using a `case` statement. Next make the output assignments run through the sequence of LEDs, decoding an integer value to a 4-bit vector assignment to `leds(3:0)`.
