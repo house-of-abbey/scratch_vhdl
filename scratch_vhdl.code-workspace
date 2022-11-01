@@ -19,6 +19,10 @@
         "todo-tree.tree.disableCompactFolders": true,
         "material-icon-theme.languages.associations": {
             "vhdl": "Verilog"
+        },
+        "markdownlint.config": {
+            "MD033": false,
+            "MD024": false
         }
     }
 }
