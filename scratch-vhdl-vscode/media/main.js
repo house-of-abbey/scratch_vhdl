@@ -1099,6 +1099,8 @@ document.addEventListener('DOMContentLoaded', function () {
         weight: -1,
     });
 
+    const notExists = (n) => !(entity.entity.hasOwnProperty(n) || signals.hasOwnProperty(n) || constants.hasOwnProperty(n) || aliases.hasOwnProperty(n));
+
     Blockly.ContextMenuRegistry.registry.register({
         displayText: "Add port",
         preconditionFn() {
@@ -1106,15 +1108,17 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         callback() {
             prompt("New port name: ").then((n) => {
-                prompt("New port direction: ").then((d) => {
-                    prompt("New port type: ").then((t) => {
-                        entity.entity[n] = [d, t];
-                        vscode.postMessage({
-                            type: "updateEntity",
-                            body: JSON.stringify(entity)
+                if (notExists(n))
+                    prompt("New port direction: ").then((d) => {
+                        prompt("New port type: ").then((t) => {
+                            entity.entity[n] = [d, t];
+                            vscode.postMessage({
+                                type: "updateEntity",
+                                body: JSON.stringify(entity)
+                            });
                         });
                     });
-                });
+                else this.callback()
             });
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
@@ -1189,16 +1193,18 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         callback() {
             prompt("New constant name: ").then((n) => {
-                prompt("New constant type: ").then((t) => {
-                    prompt("New constant value: ").then((v) => {
-                        entity.constants = entity.constants || {};
-                        entity.constants[n] = [t, v];
-                        vscode.postMessage({
-                            type: "updateEntity",
-                            body: JSON.stringify(entity)
+                if (notExists(n))
+                    prompt("New constant type: ").then((t) => {
+                        prompt("New constant value: ").then((v) => {
+                            entity.constants = entity.constants || {};
+                            entity.constants[n] = [t, v];
+                            vscode.postMessage({
+                                type: "updateEntity",
+                                body: JSON.stringify(entity)
+                            });
                         });
                     });
-                });
+                else this.callback()
             });
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
@@ -1231,14 +1237,16 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         callback() {
             prompt("New alias name: ").then((n) => {
-                prompt("New alias value: ").then((v) => {
-                    entity.aliases = entity.aliases || {};
-                    entity.aliases[n] = v;
-                    vscode.postMessage({
-                        type: "updateEntity",
-                        body: JSON.stringify(entity)
+                if (notExists(n))
+                    prompt("New alias value: ").then((v) => {
+                        entity.aliases = entity.aliases || {};
+                        entity.aliases[n] = v;
+                        vscode.postMessage({
+                            type: "updateEntity",
+                            body: JSON.stringify(entity)
+                        });
                     });
-                });
+                else this.callback()
             });
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
@@ -1279,12 +1287,14 @@ document.addEventListener('DOMContentLoaded', function () {
             old(...args);
             if (!args[2] && args[0] == "CREATE_VARIABLE") {
                 ws.removeButtonCallback("CREATE_VARIABLE");
-                ws.registerButtonCallback("CREATE_VARIABLE", (d) => {
+                ws.registerButtonCallback("CREATE_VARIABLE", function c(d) {
                     prompt("New variable name: ").then((n) => {
-                        prompt("New variable type: ").then((t) => {
-                            d.getTargetWorkspace().createVariable(n);
-                            signals[n] = t;
-                        });
+                        if (notExists(n))
+                            prompt("New variable type: ").then((t) => {
+                                d.getTargetWorkspace().createVariable(n);
+                                signals[n] = t;
+                            });
+                        else c(d);
                     });
                 }, true);
             }
