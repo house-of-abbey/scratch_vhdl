@@ -46,8 +46,8 @@ begin
           when others =>
             leds <= "1111";
 
-
-        end case;end if;
+        end case;
+      end if;
     end if;
   end process;
 

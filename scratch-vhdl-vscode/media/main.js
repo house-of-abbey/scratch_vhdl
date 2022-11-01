@@ -359,6 +359,14 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             "kind": "block",
+            "type": "process_internal_all",
+            "message0": "all",
+            "args0": [],
+            "previousStatement": null,
+            "colour": 190
+        },
+        {
+            "kind": "block",
             "type": "process_wait",
             "message0": "wait",
             "args0": [],
@@ -670,25 +678,39 @@ document.addEventListener('DOMContentLoaded', function () {
 
     Blockly.Extensions.registerMutator("process_mutator", {
         updateShape_: function () {
-            if (this.prevDepCount_ < this.depCount_) {
-                for (var i = this.prevDepCount_ + 1; i <= this.depCount_; i++) {
-                    this.inputList[0].appendField(new Blockly.FieldVariable(), i.toString());
+            if (this.all_) {
+                if (this.prevDepCount_ > 0) {
+                    for (var i = this.prevDepCount_; i > 0; i--) {
+                        this.inputList[0].removeField(i.toString());
+                    }
                 }
-            } else if (this.prevDepCount_ > this.depCount_) {
-                for (var i = this.prevDepCount_; i > this.depCount_; i--) {
-                    this.inputList[0].removeField(i.toString());
+                this.prevDepCount_ = 0;
+                this.inputList[0].removeField("all", true);
+                this.inputList[0].appendField(new Blockly.FieldLabel("all"), "all");
+            } else {
+                this.inputList[0].removeField("all", true);
+                if (this.prevDepCount_ < this.depCount_) {
+                    for (var i = this.prevDepCount_ + 1; i <= this.depCount_; i++) {
+                        this.inputList[0].appendField(new Blockly.FieldVariable(), i.toString());
+                    }
+                } else if (this.prevDepCount_ > this.depCount_) {
+                    for (var i = this.prevDepCount_; i > this.depCount_; i--) {
+                        this.inputList[0].removeField(i.toString());
+                    }
                 }
+                this.prevDepCount_ = this.depCount_;
             }
-            this.prevDepCount_ = this.depCount_;
         },
 
         saveExtraState: function () {
             return {
                 'depCount': this.depCount_,
+                'all': this.all_,
             };
         },
         loadExtraState: function (state) {
             this.depCount_ = state['depCount'];
+            this.all_ = state['all'];
             this.updateShape_();
         },
 
@@ -704,29 +726,45 @@ document.addEventListener('DOMContentLoaded', function () {
                 connection = itemBlock.nextConnection;
             }
 
+            if (this._all) {
+                var itemBlock = workspace.newBlock('process_internal_all');
+                itemBlock.initSvg();
+                connection.connect(itemBlock.previousConnection);
+            }
+
             return topBlock;
         },
         compose: function (topBlock) {
             var itemBlock = topBlock.getInputTargetBlock('body');
 
             var connections = [];
+            var all = false;
+            var allConnection = undefined;
             while (itemBlock && !itemBlock.isInsertionMarker()) {
-                connections.push(itemBlock.valueConnection_);
+                if (itemBlock.type === "process_internal_item") {
+                    connections.push(itemBlock.valueConnection_);
+                } else if (itemBlock.type === "process_internal_all") {
+                    all = true;
+                    allConnection = itemBlock.valueConnection_;
+                }
                 itemBlock = itemBlock.nextConnection?.targetBlock();
             }
 
             this.depCount_ = connections.length;
+            this.all_ = all;
             this.updateShape_();
 
             for (var i = 0; i < this.itemCount_; i++) {
-                Blockly.Mutator.reconnect(connections[i], this, 'ADD' + i);
+                Blockly.Mutator.reconnect(connections[i], this, 'item' + i);
             }
+            if (all) Blockly.Mutator.reconnect(allConnection, this, 'all');
         },
     }, function () {
         this.prevDepCount_ = 1;
         this.depCount_ = 1;
+        this.all_ = false;
         this.updateShape_();
-    }, ["process_internal_item"]);
+    }, ["process_internal_item", "process_internal_all"]);
 
     Blockly.dialog.setAlert((m, cb) => (alert(m), cb()));
     Blockly.dialog.setPrompt((m, a, cb) => prompt(m).then((d) => cb(d ?? a)));
@@ -829,17 +867,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
         const nextCode = opt_thisOnly ? '' : this.blockToCode(nextBlock);
-        console.log(block, code, opt_thisOnly, commentCode, nextCode)
         return commentCode + code + nextCode;
     };
 
     VHDLGenerator.process = function (block) {
-        return "\n  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(block.inputList[0]
-            .fieldRow.filter(
-                (a) => a instanceof Blockly.FieldVariable
-            ).map(
-                (a) => a.getVariable().name
-            ).join(", ")) + "\n  begin\n  " +
+        return "\n  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(
+            block.all_ ? "all" : block.inputList[0]
+                .fieldRow.filter(
+                    (a) => a instanceof Blockly.FieldVariable
+                ).map(
+                    (a) => a.getVariable().name
+                ).join(", ")) + "\n  begin\n  " +
             VHDLGenerator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
             "end process;";
     }
