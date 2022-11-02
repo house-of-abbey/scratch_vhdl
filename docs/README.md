@@ -137,4 +137,3 @@ These are split into separate pages as follows:
   * "Place & Route" the design across the FPGA fabric
   * Bit file generation and programming of the FPGA on the development board over USB
   * Execution on the target [development board](development_board.md)
-* Verification on the development board

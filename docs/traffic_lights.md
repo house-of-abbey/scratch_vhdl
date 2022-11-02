@@ -22,4 +22,30 @@ Reference: [Flashing amber traffic lights](https://www.passmefast.co.uk/resource
 
 ## Implementation
 
-Both of these are implemented with a finite state machine (FSM) like the [Knight Rider](knight_rider.md) demonstration. This time the `start` input moves away from the red stop light to the green proceed light, and the `stop` input moves away from the green to the red. So this FSM makes use of input buttons to control the progress of the state transitions.
+Both of these are implemented with a finite state machine (FSM) like the [Knight Rider](knight_rider.md) demonstration. This time the `start` input moves away from the red stop light to the green proceed light, and the `stop` input moves away from the green to the red. So this FSM makes use of input buttons to control the progress of the state transitions. The `incr` is included in all transitions and is internally generated.
+
+<div class="mermaid">
+stateDiagram-v2
+    [*] --> 0
+    0 --> 1 : start = '1' and incr = '1'
+    1 --> 2 : incr = '1'
+    2 --> 3 : stop = '1' and incr = '1'
+    3 --> 4 : incr = '1'
+    4 --> 5 : start = '1' and incr = '1'
+    5 --> 6 : incr = '1'
+    6 --> 7 : stop = '1' and incr = '1'
+    7 --> 0 : incr = '1'
+</div>
+
+Output decoding based solely on the state variable's value.
+
+| state | `leds(3:0)` | Comment                        |
+|:-----:|:-----------:|:-------------------------------|
+|   0   |   "0001"    |                                |
+|   1   |   "0011"    |                                |
+|   2   |   "0100"    |                                |
+|   3   |   "0010"    |                                |
+|   4   |   "1001"    | Includes the lane filter light |
+|   5   |   "0011"    |                                |
+|   6   |   "0100"    |                                |
+|   7   |   "0010"    |                                |

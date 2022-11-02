@@ -32,3 +32,14 @@ stateDiagram-v2
 </div>
 
 As before `start` and `stop` toggle `running`. Now we just need to add the output assignments, e.g. using a `case` statement. Next make the output assignments run through the sequence of LEDs, decoding an integer value to a 4-bit vector assignment to `leds(3:0)`.
+
+Output decoding based solely on the state variable's value.
+
+| state | `leds(3:0)` |
+|:-----:|:-----------:|
+|   0   |   "0001"    |
+|   1   |   "0010"    |
+|   2   |   "0100"    |
+|   3   |   "1000"    |
+|   4   |   "0100"    |
+|   5   |   "0010"    |
