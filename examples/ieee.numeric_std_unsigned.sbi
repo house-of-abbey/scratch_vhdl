@@ -1,5 +1,5 @@
 ({
-    name: "ieee.numeric_std_undinged",
+    name: "ieee.numeric_std_unsigned",
     blocks: [
         {
             "block": {
@@ -16,7 +16,7 @@
                 "output": null,
             },
             "generator": function (block) {
-                return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", generator.ORDER_FUNCTION_CALL]
+                return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
             }
         }
     ]

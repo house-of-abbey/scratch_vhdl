@@ -149,6 +149,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         'kind': 'block',
                         'type': 'value_std_logic_vector',
                     },
+                    {
+                        'kind': 'block',
+                        'type': 'others_to',
+                    },
                 ]
             },
             {
@@ -253,6 +257,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         'kind': 'block',
                         'type': 'list_index',
+                        'inputs': {
+                            'INDEX': {
+                                'shadow': {
+                                    'type': 'math_number',
+                                    'fields': {
+                                        'NUM': 0,
+                                    },
+                                },
+                            }
+                        }
                     },
                     {
                         'kind': 'block',
@@ -265,6 +279,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     {
                         'kind': 'block',
                         'type': 'variables_set_index',
+                        'inputs': {
+                            'INDEX': {
+                                'shadow': {
+                                    'type': 'math_number',
+                                    'fields': {
+                                        'NUM': 0,
+                                    },
+                                },
+                            }
+                        }
                     },
                 ],
             },
@@ -497,6 +521,20 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         {
             "kind": "block",
+            "type": "others_to",
+            "message0": "others => %1",
+            "args0": [
+                {
+                    "type": "input_value",
+                    "name": "INPUT",
+                }
+            ],
+            "output": null,
+            "inputsInline": true,
+            "colour": "%{BKY_MATH_HUE}",
+        },
+        {
+            "kind": "block",
             "type": "logic_operation",
             "message0": "%1 %2 %3",
             "args0": [
@@ -536,13 +574,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     "name": "LIST"
                 },
                 {
-                    "type": "field_number",
+                    "type": "input_value",
                     "name": "INDEX",
-                    "min": 0,
-                    "value": 0,
                 }
             ],
             "output": null,
+            "inputsInline": true,
         },
         {
             "kind": "block",
@@ -606,16 +643,15 @@ document.addEventListener('DOMContentLoaded', function () {
                     // "variable": "%{BKY_VARIABLES_DEFAULT_NAME}"
                 },
                 {
-                    "type": "field_number",
+                    "type": "input_value",
                     "name": "INDEX",
-                    "min": 0,
-                    "value": 0,
                 },
                 {
                     "type": "input_value",    // This expects an input of any type
                     "name": "VALUE"
                 }
             ],
+            "inputsInline": true,
             "previousStatement": null,
             "nextStatement": null,
         },
@@ -957,6 +993,10 @@ document.addEventListener('DOMContentLoaded', function () {
         return ["others", VHDLGenerator.ORDER_ATOMIC];
     }
 
+    VHDLGenerator.others_to = function (block) {
+        return ["(others => " + VHDLGenerator.valueToCode(block, "INPUT", VHDLGenerator.ORDER_NONE) + ")", VHDLGenerator.ORDER_ATOMIC];
+    }
+
     VHDLGenerator.logic_or = function (block) {
         return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_NONE) + " | " + VHDLGenerator.valueToCode(block, 'B', VHDLGenerator.ORDER_NONE), VHDLGenerator.ORDER_ATOMIC];
     }
@@ -999,7 +1039,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     VHDLGenerator.variables_set_index = function (block) {
-        return block.getField("VAR").getVariable().name + "(" + block.getFieldValue("INDEX") + ') <= ' +
+        return block.getField("VAR").getVariable().name + "(" + VHDLGenerator.valueToCode(block, 'INDEX', VHDLGenerator.ORDER_NONE) + ') <= ' +
             VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
     }
 
@@ -1023,11 +1063,10 @@ document.addEventListener('DOMContentLoaded', function () {
     VHDLGenerator.math_arithmetic = function (block) {
         // Basic arithmetic operators, and power.
         const OPERATORS = {
-            'ADD': [' + ', Lua.ORDER_ADDITIVE],
-            'MINUS': [' - ', Lua.ORDER_ADDITIVE],
-            'MULTIPLY': [' * ', Lua.ORDER_MULTIPLICATIVE],
-            'DIVIDE': [' / ', Lua.ORDER_MULTIPLICATIVE],
-            'POWER': [' ^ ', Lua.ORDER_EXPONENTIATION],
+            'ADD': [' + ', VHDLGenerator.ORDER_ADD],
+            'MINUS': [' - ', VHDLGenerator.ORDER_SUB],
+            'MULTIPLY': [' * ', VHDLGenerator.ODER_MUL],
+            'DIVIDE': [' / ', VHDLGenerator.ORDER_DIV],
         };
         const tuple = OPERATORS[block.getFieldValue('OP')];
         const order = tuple[1];
@@ -1035,11 +1074,11 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     VHDLGenerator.list_index = function (block) {
-        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("INDEX") + ")", VHDLGenerator.ORDER_INDEX];
+        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + VHDLGenerator.valueToCode(block, 'INDEX', VHDLGenerator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? VHDLGenerator.ORDER_ATOMIC : VHDLGenerator.ORDER_INDEX];
     };
 
     VHDLGenerator.list_range = function (block) {
-        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("FROM") + " " + block.getFieldValue("ORDER") + " " + block.getFieldValue("TO") + ")", VHDLGenerator.ORDER_INDEX];
+        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("FROM") + " " + block.getFieldValue("ORDER") + " " + block.getFieldValue("TO") + ")", ["list_index", "list_range"].includes(block.getParent().type) ? VHDLGenerator.ORDER_ATOMIC : VHDLGenerator.ORDER_INDEX];
     };
 
     VHDLGenerator.list_concat = function (block) {

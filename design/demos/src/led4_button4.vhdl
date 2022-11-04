@@ -773,8 +773,8 @@ begin
                     when x"2"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))); -- cpy
                     when x"3"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= buttons; -- in
                     when x"4"   => leds <= mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))); -- out
-                    when x"5"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= code(to_integer(cnt))(7 downto 4) and code(to_integer(cnt))(3 downto 0); -- and
-                    when x"6"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= code(to_integer(cnt))(7 downto 4) or  code(to_integer(cnt))(3 downto 0); -- or
+                    when x"5"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))) and mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))); -- and
+                    when x"6"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))) or  mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))); -- or
                     when x"7"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= std_logic_vector(signed(mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4))))) + signed(mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))))); -- add
                     when x"8"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= std_logic_vector(signed(mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4))))) - signed(mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))))); -- sub
 
