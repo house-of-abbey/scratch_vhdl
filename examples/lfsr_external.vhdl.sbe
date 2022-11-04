@@ -21,6 +21,7 @@
             "std_logic_vector(3 downto 0)"
         ]
     },
+    "name": "led4_button4",
     "aliases": {
         "start": "buttons(0)",
         "stop": "buttons(1)"

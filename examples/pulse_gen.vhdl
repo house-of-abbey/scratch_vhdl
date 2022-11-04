@@ -1,18 +1,10 @@
 library ieee;
   use ieee.std_logic_1164.all;
 
-entity pulse_gen is
-  port(
-    clk : in std_logic;
-    reset : in std_logic;
-    incr : in std_logic;
-    buttons : in std_logic_vector(3 downto 0);
-    leds : out std_logic_vector(3 downto 0)
-  );
-end entity;
 
 
-architecture scratch of pulse_gen is
+
+architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 1;
 

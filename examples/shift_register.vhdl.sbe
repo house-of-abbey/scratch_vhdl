@@ -6,6 +6,7 @@
         "buttons" : ["in",  "std_logic_vector(3 downto 0)"],
         "leds"    : ["out", "std_logic_vector(3 downto 0)"]
     },
+    "name": "led4_button4",
     "constants": {
         "button_tab_c": ["natural", "1"]
     }
