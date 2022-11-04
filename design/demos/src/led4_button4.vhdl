@@ -653,8 +653,6 @@ architecture lfsr_external of led4_button4 is
 
   signal run : std_logic := '0';
 
-  constant taps_c : std_logic_vector(3 downto 0) := "1100";
-
 begin
 
   process(clk)

@@ -4,4 +4,4 @@ Zybo_Z7_10/ip/*
 # access to such a file, so let it manage this one and we'll ignore it.
 Zybo_Z7_10/constraints/managed.xdc
 # Updates to this file are expected as part of the automated code generation process.
-#scratch.vhdl
+scratch.vhdl

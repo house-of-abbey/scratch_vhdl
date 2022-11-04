@@ -30,10 +30,6 @@
         "button_tab_c": [
             "natural",
             "1"
-        ],
-        "taps_c": [
-            "std_logic_vector(3 downto 0)",
-            "\"1100\""
         ]
     }
 }
