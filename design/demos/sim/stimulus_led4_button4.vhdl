@@ -144,6 +144,20 @@ configuration test_logic_gates of test_led4_button4 is
   end for;
 end configuration;
 
+configuration test_risc_cpu of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(risc_cpu);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(logic_gates);
+    end for;
+
+  end for;
+end configuration;
+
 
 library local;
   use local.testbench_pkg.all;
@@ -680,7 +694,7 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(scratch);
+      use entity work.led4_button4(risc_cpu);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
