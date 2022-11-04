@@ -5,3 +5,4 @@ Thumbs.db
 vivado.*
 vivado_*.jou
 vivado_*.log
+vivado_pid*.str
