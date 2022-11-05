@@ -6,6 +6,7 @@ import { Disposable, disposeAll } from './dispose';
 interface ScratchVHDLDocumentDelegate {
     getFileData(): Promise<string>;
     getScratchData(): Promise<string>;
+    getEntityData(): Promise<string>;
 }
 
 /**
@@ -159,6 +160,7 @@ class ScratchVHDLDocument extends Disposable implements vscode.CustomDocument {
     ): Promise<void> {
         this._documentData = await this._delegate.getFileData();
         this._scratchData = await this._delegate.getScratchData();
+        this._entityData = await this._delegate.getEntityData();
         if (cancellation.isCancellationRequested) {
             return;
         }
@@ -263,6 +265,62 @@ export class ScratchVHDLEditorProvider
             }
         );
 
+        vscode.commands.registerCommand(
+            'scratch-vhdl-vscode.scratchVHDL.newFrom',
+            () => {
+                const config = vscode.workspace.getConfiguration();
+                const templates =
+                    config.get<{ [key: string]: object }>(
+                        'scratch-vhdl-vscode.templates'
+                    ) || {};
+
+                vscode.window
+                    .showQuickPick(Object.keys(templates), {
+                        canPickMany: false,
+                    })
+                    .then(async (value) => {
+                        if (!value) return;
+                        const workspaceFolders =
+                            vscode.workspace.workspaceFolders;
+                        if (!workspaceFolders) {
+                            vscode.window.showErrorMessage(
+                                'Creating new Scratch VHDL files currently requires opening a workspace'
+                            );
+                            return;
+                        }
+
+                        const uri = await vscode.window.showSaveDialog({
+                            filters: { VHDL: ['vhdl'] },
+                            saveLabel: 'Create',
+                            title: 'Where',
+                        });
+
+                        if (!uri) return;
+
+                        await vscode.workspace.fs.writeFile(
+                            uri,
+                            new TextEncoder().encode('')
+                        );
+                        await vscode.workspace.fs.writeFile(
+                            vscode.Uri.parse(uri.toString() + '.sbd'),
+                            new TextEncoder().encode('{}')
+                        );
+                        await vscode.workspace.fs.writeFile(
+                            vscode.Uri.parse(uri.toString() + '.sbe'),
+                            new TextEncoder().encode(
+                                JSON.stringify(templates[value])
+                            )
+                        );
+
+                        vscode.commands.executeCommand(
+                            'vscode.openWith',
+                            uri,
+                            ScratchVHDLEditorProvider.viewType
+                        );
+                    });
+            }
+        );
+
         return vscode.window.registerCustomEditorProvider(
             ScratchVHDLEditorProvider.viewType,
             new ScratchVHDLEditorProvider(context),
@@ -324,6 +382,21 @@ export class ScratchVHDLEditorProvider
                     const response = await this.postMessageWithResponse<string>(
                         panel,
                         'getScratchData',
+                        {}
+                    );
+                    return response;
+                },
+                getEntityData: async () => {
+                    const webviewsForDocument = Array.from(
+                        this.webviews.get(document.uri)
+                    );
+                    if (!webviewsForDocument.length) {
+                        throw new Error('Could not find webview to save for');
+                    }
+                    const panel = webviewsForDocument[0];
+                    const response = await this.postMessageWithResponse<string>(
+                        panel,
+                        'getEntityData',
                         {}
                     );
                     return response;
@@ -482,6 +555,11 @@ export class ScratchVHDLEditorProvider
                         .vscode-theme .blocklyContextMenu .blocklyMenuItem:not(.blocklyMenuItemDisabled) > .blocklyMenuItemContent {
                             color: var(--vscode-menu-foreground);
                         }
+
+                        .vscode-theme dialog {
+                            background-color: var(--vscode-menu-background);
+                            color: var(--vscode-menu-foreground);
+                        }
                     </style>
                 </head>
                 <body>
@@ -565,6 +643,13 @@ export class ScratchVHDLEditorProvider
                     'default'
                 );
                 return;
+
+            case 'cmd': {
+                const terminal = vscode.window.createTerminal('Run');
+                terminal.show();
+                terminal.sendText(message.cmd);
+                return;
+            }
 
             case 'getFile':
                 document.readLocalFile(message.path).then((value) =>

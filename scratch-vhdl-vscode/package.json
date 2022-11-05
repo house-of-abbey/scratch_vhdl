@@ -18,7 +18,8 @@
     ],
     "activationEvents": [
         "onCustomEditor:scratch-vhdl-vscode.scratchVHDL",
-        "onCommand:scratch-vhdl-vscode.scratchVHDL.new"
+        "onCommand:scratch-vhdl-vscode.scratchVHDL.new",
+        "onCommand:scratch-vhdl-vscode.scratchVHDL.newFrom"
     ],
     "repository": {
         "type": "git",
@@ -42,6 +43,11 @@
                 "command": "scratch-vhdl-vscode.scratchVHDL.new",
                 "title": "Create new Scratch VHDL Document",
                 "category": "Scratch VHDL"
+            },
+            {
+                "command": "scratch-vhdl-vscode.scratchVHDL.newFrom",
+                "title": "Create new Scratch VHDL Document From",
+                "category": "Scratch VHDL"
             }
         ],
         "languages": [
@@ -58,7 +64,18 @@
                     ".sbe"
                 ]
             }
-        ]
+        ],
+        "configuration": {
+            "title": "ScratchVHDL",
+            "properties": {
+                "scratch-vhdl-vscode.templates": {
+                    "type": "object",
+                    "default": {},
+                    "additionalProperties": true,
+                    "description": "The templates available from 'scratch-vhdl-vscode.ScratchVHDL.newFrom'."
+                }
+            }
+        }
     },
     "scripts": {
         "vscode:prepublish": "npm run compile",

@@ -8,9 +8,6 @@ architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 3;
 
-  signal state : integer range 0 to 7;
-  signal start_r : std_logic;
-  signal stop_r : std_logic;
 
   alias start is buttons(0);
   alias stop is buttons(1);
