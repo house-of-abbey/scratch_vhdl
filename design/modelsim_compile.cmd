@@ -60,6 +60,7 @@ for %%x in (%*) do (
 if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
 
 %MODELSIMBIN%\vcom -quiet -2008 ^
+  %SRC%\demos\src\risc_pkg.vhdl ^
   %SRC%\demos\src\led4_button4.vhdl ^
   %SRC%\demos\src\retime.vhdl ^
   %SRC%\Zybo_Z7_10\ip\pll\pll_sim_netlist.vhdl ^
