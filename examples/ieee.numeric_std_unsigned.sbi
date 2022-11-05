@@ -14,6 +14,7 @@
                     }
                 ],
                 "output": null,
+                "tooltip": "Converts unsigned to std_ulogic_vector"
             },
             "generator": function (block) {
                 return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]

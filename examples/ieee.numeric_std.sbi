@@ -14,6 +14,7 @@
                     }
                 ],
                 "output": null,
+                "tooltip": "Converts to an integer"
             },
             "generator": function (block) {
                 return ["to_integer(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
@@ -32,6 +33,7 @@
                     }
                 ],
                 "output": null,
+                "tooltip": "Converts to an unsigned"
             },
             "generator": function (block) {
                 return ["unsigned(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
@@ -50,6 +52,7 @@
                     }
                 ],
                 "output": null,
+                "tooltip": "Converts to a signed"
             },
             "generator": function (block) {
                 return ["signed(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
@@ -68,6 +71,7 @@
                     }
                 ],
                 "output": null,
+                "tooltip": "Converts to a std_logic_vector"
             },
             "generator": function (block) {
                 return ["ieee.std_logic_1164.std_logic_vector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]

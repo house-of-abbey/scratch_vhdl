@@ -408,6 +408,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             "colour": 190,
             "mutator": "process_mutator",
+            "tooltip": "A VHDL process"
         },
         {
             "kind": "block",
@@ -444,7 +445,8 @@ document.addEventListener('DOMContentLoaded', function () {
             "args0": [],
             "previousStatement": null,
             "nextStatement": null,
-            "colour": 190
+            "colour": 190,
+            "tooltip": "A VHDL wait statement"
         },
         {
             "type": "process_direct_set",
@@ -461,6 +463,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     "name": "VALUE"
                 }
             ],
+            "tooltip": "Create a process that is sensitive to all that does `VAR <= VALUE`"
         },
         {
             "kind": "block",
@@ -478,6 +481,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "output": null,
+            "tooltip": "STD_LOGIC input"
         },
         {
             "kind": "block",
@@ -491,6 +495,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "output": null,
+            "tooltip": "STD_LOGIC_VECTOR input"
         },
         {
             "kind": "block",
@@ -517,6 +522,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "output": "Boolean",
             "inputsInline": true,
             "style": "logic_blocks",
+            "tooltip": "Do a logic operation with the bits of the vector as input."
         },
         {
             "kind": "block",
@@ -531,6 +537,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "output": "Boolean",
             "inputsInline": true,
             "style": "logic_blocks",
+            "tooltip": "Inverts input"
         },
         {
             "kind": "block",
@@ -545,6 +552,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "output": null,
             "inputsInline": true,
             "colour": "%{BKY_MATH_HUE}",
+            "tooltip": "Creates a list of inferred length"
         },
         {
             "kind": "block",
@@ -575,6 +583,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "output": "Boolean",
             "style": "logic_blocks",
             "inputsInline": true,
+            "tooltip": "Do a logic operation with A and B as inputs"
         },
         {
             "kind": "block",
@@ -593,6 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             "output": null,
             "inputsInline": true,
+            "tooltip": "List index"
         },
         {
             "kind": "block",
@@ -626,6 +636,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "output": null,
+            "tooltip": "Logic range"
         },
         {
             "kind": "block",
@@ -644,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             "output": null,
             "inputsInline": true,
+            "tooltip": "Join 2 lists together"
         },
         {
             "type": "variables_set",
@@ -663,6 +675,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "inputsInline": true,
             "previousStatement": null,
             "nextStatement": null,
+            "tooltip": "Set a signal"
         },
         {
             "type": "variables_get",
@@ -676,7 +689,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "inputsInline": true,
-            "output": null
+            "output": null,
+            "tooltip": "Get a signal"
         },
         {
             "type": "math_change",
@@ -696,6 +710,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "inputsInline": true,
             "previousStatement": null,
             "nextStatement": null,
+            "tooltip": "Change a signal"
         },
         {
             "type": "variables_set_index",
@@ -719,6 +734,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "inputsInline": true,
             "previousStatement": null,
             "nextStatement": null,
+            "tooltip": "Set an index of a  signal"
         },
         {
             "kind": "block",
@@ -733,6 +749,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             "output": "Boolean",
             "style": "logic_blocks",
+            "tooltip": "Goes high in the rising edge of the variable"
         },
         {
             "kind": "block",
@@ -745,7 +762,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             ],
             "previousStatement": null,
-            "nextStatement": null
+            "nextStatement": null,
+            "tooltip": "print a message in the simulator (does not synthesise)"
         },
         {
             "kind": "block",
@@ -765,6 +783,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "previousStatement": null,
             "nextStatement": null,
             "inputsInline": true,
+            "tooltip": "case"
         },
         {
             "kind": "block",
@@ -783,6 +802,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "colour": "%{BKY_LOGIC_HUE}",
             "previousStatement": "controls_when",
             "nextStatement": "controls_when",
+            "tooltip": "when"
         },
         {
             "kind": "block",
@@ -791,6 +811,7 @@ document.addEventListener('DOMContentLoaded', function () {
             "colour": "%{BKY_LOGIC_HUE}",
             "args0": [],
             "output": null,
+            "tooltip": "The pattern for anything that doesn't match any other patterns"
         },
         {
             "kind": "block",
@@ -809,6 +830,7 @@ document.addEventListener('DOMContentLoaded', function () {
             ],
             "inputsInline": true,
             "output": null,
+            "tooltip": "The pattern that matches both of the patterns supplied"
         },
     ]);
 
