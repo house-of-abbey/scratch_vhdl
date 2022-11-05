@@ -556,9 +556,107 @@ export class ScratchVHDLEditorProvider
                             color: var(--vscode-menu-foreground);
                         }
 
-                        .vscode-theme dialog {
-                            background-color: var(--vscode-menu-background);
-                            color: var(--vscode-menu-foreground);
+                        /* Properties */
+                        :root {
+                            --container-paddding: 20px;
+                            --input-padding-vertical: 6px;
+                            --input-padding-horizontal: 4px;
+                            --input-margin-vertical: 4px;
+                            --input-margin-horizontal: 0;
+                        }
+
+                        dialog  {
+                            padding: var(--container-paddding) 0;
+                            color: var(--vscode-foreground);
+                            font-size: var(--vscode-font-size);
+                            font-weight: var(--vscode-font-weight);
+                            font-family: var(--vscode-font-family);
+                            background-color: var(--vscode-editor-background);
+                            border-color: var(--vscode-menu-selectionBackground);
+                            flex-direction: row;
+                            justify-items: center;
+                            display: flex;
+                            justify-content: space-evenly;
+                            flex-wrap: wrap;
+                        }
+
+                        dialog ol,
+                        dialog ul {
+                            padding-left: var(--container-paddding);
+                        }
+
+                        dialog > *,
+                        dialog form > * {
+                            margin-block-start: var(--input-margin-vertical);
+                            margin-block-end: var(--input-margin-vertical);
+                        }
+
+                        dialog *:focus {
+                            outline-color: var(--vscode-focusBorder) !important;
+                        }
+
+                        dialog a {
+                            color: var(--vscode-textLink-foreground);
+                        }
+
+                        dialog a:hover,
+                        dialog a:active {
+                            color: var(--vscode-textLink-activeForeground);
+                        }
+
+                        dialog code {
+                            font-size: var(--vscode-editor-font-size);
+                            font-family: var(--vscode-editor-font-family);
+                        }
+
+                        dialog button {
+                            border: none;
+                            padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+                            width: 100%;
+                            max-width: 10em;
+                            min-width: 2em;
+                            text-align: center;
+                            outline: 1px solid transparent;
+                            outline-offset: 2px !important;
+                            color: var(--vscode-button-foreground);
+                            background: var(--vscode-button-background);
+                            box-shadow: 3px 3px 10px rgba(0 0 0 / 0.5);
+                            border-radius: 2px;
+                        }
+
+                        dialog button:hover {
+                            cursor: pointer;
+                            background: var(--vscode-button-hoverBackground);
+                        }
+
+                        dialog button:focus {
+                            outline-color: var(--vscode-focusBorder);
+                        }
+
+                        dialog button.secondary {
+                            color: var(--vscode-button-secondaryForeground);
+                            background: var(--vscode-button-secondaryBackground);
+                        }
+
+                        dialog button.secondary:hover {
+                            background: var(--vscode-button-secondaryHoverBackground);
+                        }
+
+                        dialog input:not([type='checkbox']),
+                        dialog textarea {
+                            display: block;
+                            width: 100%;
+                            border: none;
+                            font-family: var(--vscode-font-family);
+                            padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+                            color: var(--vscode-input-foreground);
+                            outline-color: var(--vscode-input-border);
+                            background-color: var(--vscode-input-background);
+                        }
+
+                        dialog input::placeholder,
+                        dialog textarea::placeholder {
+                            color: var(--vscode-input-placeholderForeground);
                         }
                     </style>
                 </head>
