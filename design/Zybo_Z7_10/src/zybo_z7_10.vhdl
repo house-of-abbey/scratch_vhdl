@@ -41,9 +41,12 @@ architecture rtl of zybo_z7_10 is
     if sim then
       return 10;
     else
-      -- 500 ms / 8 ns, but Vivado is unable to perform this calculation even when the result
-      -- is assigned to a constant.
-      return 62500000;
+      -- ERROR: [Synth 8-27] Division of physical type values not supported
+      -- return positive(500 ms / 8 ns);
+      -- Vivado does not support division of physical quantites, even when the result is
+      -- assigned to a constant. You can't even convert to real by dividing by "1 ns".
+      -- Using real literals instead.
+      return positive(500.0e-3 / 8.0e-9);
     end if;
   end function;
 
