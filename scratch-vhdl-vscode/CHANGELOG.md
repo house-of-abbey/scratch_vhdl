@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Help messages for blocks
+
+### Changed
+
+- Styling of table editor modals
+
 ## [0.1.0] - *2022-11-05*
 
 ### Added
@@ -14,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [Changelog](https://github.com/house-of-abbey/scratch_vhdl/blob/main/scratch-vhdl-vscode/CHANGELOG.md)
 - Github community standards.
 - Entity templates
-- table editor for ports, signals, constants and aliases.
+- Table editor for ports, signals, constants and aliases.
 
 ## [0.0.8] - *2022-11-01*
 
