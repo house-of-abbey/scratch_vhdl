@@ -13,6 +13,21 @@
         "explorer.fileNesting.enabled": true,
         "material-icon-theme.languages.associations": {
             "vhdl": "Verilog"
+        },
+        "scratch-vhdl-vscode.templates": {
+            "led4_button4": {
+                "entity": {
+                    "clk": ["in", "std_logic"],
+                    "reset": ["in", "std_logic"],
+                    "incr": ["in", "std_logic"],
+                    "buttons": ["in", "std_logic_vector(3 downto 0)"],
+                    "leds": ["out", "std_logic_vector(3 downto 0)"]
+                },
+                "name": "led4_button4",
+                "constants": {
+                    "button_tab_c": ["natural", "1"]
+                }
+            }
         }
     },
     "extensions": {

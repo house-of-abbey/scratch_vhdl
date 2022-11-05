@@ -18,10 +18,10 @@ begin
       if reset = '1' then
         leds <= "0000";
       else
-        leds(0) <= and(buttons);
-        leds(1) <= or(buttons);
-        leds(2) <= xor(buttons);
-        leds(3) <= nor(buttons);
+        leds() <= and(buttons);
+        leds() <= or(buttons);
+        leds() <= xor(buttons);
+        leds() <= nor(buttons);
       end if;
     end if;
   end process;
