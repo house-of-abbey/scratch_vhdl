@@ -21,7 +21,8 @@ entity stimulus_led4_button4 is
     clk     : in  std_logic;
     incr    : in  std_logic;
     reset   : out std_logic;
-    buttons : out std_logic_vector(3 downto 0) := "0000"
+    buttons : out std_logic_vector(3 downto 0) := "0000";
+    leds    : in  std_logic_vector(3 downto 0)
   );
 end entity;
 
@@ -665,6 +666,54 @@ configuration test_lfsr_internal of test_led4_button4 is
 
     for stimulus_led4_button4_i : stimulus_led4_button4
       use entity work.stimulus_led4_button4(lfsr_counter);
+    end for;
+
+  end for;
+end configuration;
+
+
+library local;
+  use local.testbench_pkg.all;
+
+architecture risc_cpu of stimulus_led4_button4 is
+
+  alias fail is leds(0);
+  alias pass is leds(3);
+
+begin
+
+  stimulus : process
+  begin
+    reset <= '1';
+    wait_nr_ticks(clk, 2);
+    reset <= '0';
+
+    while leds(2 downto 1) = "00" loop
+      wait_nr_ticks(incr, 1);
+    end loop;
+    wait_nr_ticks(clk, 10);
+    
+    if pass = '1' then
+      report "Test PASS" severity note;
+    else
+      report "Tes FAIL" severity error;
+    end if;
+
+    stop_clocks;
+    wait;
+  end process;
+
+end architecture;
+
+configuration test_risc_cpu of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(risc_cpu);
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(risc_cpu);
     end for;
 
   end for;

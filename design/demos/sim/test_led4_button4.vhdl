@@ -45,7 +45,8 @@ architecture test of test_led4_button4 is
       clk     : in  std_logic;
       incr    : in  std_logic;
       reset   : out std_logic;
-      buttons : out std_logic_vector(3 downto 0)
+      buttons : out std_logic_vector(3 downto 0);
+      leds    : in  std_logic_vector(3 downto 0)
     );
   end component;
 
@@ -82,7 +83,8 @@ begin
       clk     => clk,
       incr    => incr,
       reset   => reset,
-      buttons => buttons
+      buttons => buttons,
+      leds    => leds
     );
 
 end architecture;

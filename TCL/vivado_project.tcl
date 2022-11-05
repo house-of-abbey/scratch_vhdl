@@ -52,7 +52,7 @@ set proj_src     [file normalize $env(USERPROFILE)/Xilinx/Workspace/scratch_vhdl
 set modelsim_lib [file normalize $env(USERPROFILE)/ModelSim/libraries]
 
 # Create 'unisim' library for ModelSim only if required
-if {![file isdirectory $modelsim_lib]} {
+if {![file isdirectory "$modelsim_lib/unisim"]} {
   compile_simlib \
     -simulator modelsim \
     -simulator_exec_path $modelsim_install \

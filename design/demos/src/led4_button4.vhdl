@@ -739,53 +739,249 @@ end architecture;
 
 
 library ieee;
-    use ieee.std_logic_1164.all;
-    use ieee.numeric_std.all;
+  use ieee.std_logic_1164.all;
+  use ieee.numeric_std.all;
+  use work.risc_pkg.all;
 
 architecture risc_cpu of led4_button4 is
 
-    type t_code is array (0 to 4) of std_logic_vector(15 downto 0);
-    constant code : t_code := (
-        x"1030",
-        x"3100",
-        x"7201",
-        x"4200",
-        x"e001"
-    );
-    signal cnt  : signed(11 downto 0) := (others => '0');
+  -- 1 - Push Switch tab
+  -- 2 - Toggle Switch tab
+  -- 3 - Traffic Lights tab
+  constant button_tab_c : natural := 2;
 
-    type t_mem is array (0 to 3) of std_logic_vector(3 downto 0);
-    signal mem : t_mem;
+  -- Infer a ROM
+  type code_t is array (natural range <>) of std_logic_vector(12 downto 0);
+  constant code : code_t := (
+    "0001111001000",
+    "0001000000000",
+    "0001001000001",
+    "1011000000000",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "1011000000001",
+    "1111001111110",
+    "0001111001000",
+    "1110000000001",
+    "1100000001000",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "1100000001001",
+    "1111001111110",
+    "0001111001000",
+    "1110000000001",
+    "1100000000001",
+    "1111001111110",
+    "0001111001000",
+    "1110000000001",
+    "1101000001001",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "1101000001000",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "1101000000001",
+    "1111001111110",
+    "0001111001000",
+    "1110000000001",
+    "0001000000101",
+    "0010001000000",
+    "1011000000001",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000101",
+    "0001001001100",
+    "0011010000001",
+    "0001011000100",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000101",
+    "0001001001100",
+    "0100010000001",
+    "0001011001101",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000101",
+    "0101010000000",
+    "0001011001010",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000101",
+    "0001001000111",
+    "0110010000001",
+    "0001011001100",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "0001001000001",
+    "0110010000001",
+    "0001011001000",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "0001001000101",
+    "0111010000001",
+    "0001011000010",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "0001001000001",
+    "0111010000001",
+    "0001011000110",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "1000010000000",
+    "0001011000011",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "1000010000001",
+    "0001011001011",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "1000010000010",
+    "0001011001110",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001000000111",
+    "1000010000011",
+    "0001011001111",
+    "1011000010011",
+    "0001111001000",
+    "1111001111110",
+    "1110000000001",
+    "0001111001110",
+    "1111001111101",
+    "0001111000111",
+    "1111001111111"
+  );
+
+  type reg_arr_t is array (0 to 7) of std_logic_vector(3 downto 0);
+  signal reg : reg_arr_t := (others => (others => '0'));
+
+  -- Program Counter
+  signal pc       : std_logic_vector(8 downto 0) := (others => '0');
+  signal pc_value : code_t'element := (others => '0');
+  signal pc_op    : op_t;
+  signal pc_dest  : natural range 0 to 7;
+  signal pc_src1  : natural range 0 to 7;
+  signal pc_src2  : natural range 0 to 7;
+  signal wi       : unsigned(8 downto 0); -- Wait for 'incr'
+  signal eif      : std_logic                    := '0'; -- skiping due to if
 
 begin
 
-    process(clk) is
-    begin
-        if rising_edge(clk) then
-            if reset = '1' then
-                cnt <= (others => '0');
-                mem <= (others => (others => '0'));
-            else
-                cnt <= cnt + 1;
+  leds <= reg(7);
 
-                case code(to_integer(cnt))(15 downto 12) is
-                    when x"1"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= code(to_integer(cnt))(7 downto 4); -- set
-                    when x"2"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))); -- cpy
-                    when x"3"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= buttons; -- in
-                    when x"4"   => leds <= mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))); -- out
-                    when x"5"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))) and mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))); -- and
-                    when x"6"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4)))) or  mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))); -- or
-                    when x"7"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= std_logic_vector(signed(mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4))))) + signed(mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))))); -- add
-                    when x"8"   => mem(to_integer(unsigned(code(to_integer(cnt))(11 downto 8)))) <= std_logic_vector(signed(mem(to_integer(unsigned(code(to_integer(cnt))(7 downto 4))))) - signed(mem(to_integer(unsigned(code(to_integer(cnt))(3 downto 0)))))); -- sub
+  -- Use signals here rather than variable inside the process for ease of
+  -- displaying their values in simulation.
+  pc_value <= code(to_integer(unsigned(pc)));
+  pc_op    <= to_op_code(pc_value(12 downto 9));
+  -- Register indexes                               Assembler 'ruledef'
+  pc_dest  <= to_integer(unsigned(pc_value(8 downto 6))); -- o
+  pc_src1  <= to_integer(unsigned(pc_value(5 downto 3))); -- a
+  pc_src2  <= to_integer(unsigned(pc_value(2 downto 0))); -- b
 
-                    when x"e"   => cnt <=       signed(code(to_integer(cnt))(11 downto 0)); -- goto
-                    when x"f"   => cnt <= cnt + signed(code(to_integer(cnt))(11 downto 0)); -- move
+  process(clk) is
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        pc  <= (others => '0');
+        reg <= (others => (others => '0'));
+        wi  <= (others => '0');
+        eif <= '0';
+      else
+        -- The assembler will prevent assignments to reg(6). If the assembled
+        -- instruction code does manage to assign reg(6), it will be overwritten
+        -- on the next clock cycle.
+        reg(6) <= buttons;
 
-                    when x"0"   =>                     -- noop
-                    when others =>                     -- noop
-                end case;
-            end if;
+        if incr = '1' then
+          if wi > 0 then
+            wi <= wi - 1;
+          end if;
         end if;
-    end process;
+
+        if nor(wi) then -- 'wi' is all zeros
+          if eif = '1' then
+            pc <= pc + 2;
+            eif <= '0';
+          else
+            pc <= pc + 1;
+          end if;
+
+          case pc_op is
+            when op_set  => reg(pc_dest) <= pc_value(3 downto 0);
+            when op_copy => reg(pc_dest) <= reg(pc_src1);
+            when op_and  => reg(pc_dest) <= reg(pc_src1) and reg(pc_src2);
+            when op_or   => reg(pc_dest) <= reg(pc_src1) or  reg(pc_src2);
+            when op_not  => reg(pc_dest) <= not reg(pc_src1);
+            when op_add  => reg(pc_dest) <= reg(pc_src1)  +  reg(pc_src2);
+            when op_sub  => reg(pc_dest) <= reg(pc_src1)  -  reg(pc_src2);
+
+            when op_shft =>
+              if pc_value(1) = '0' then
+                reg(pc_dest) <= pc_value(0) & reg(pc_src1)(3 downto 1);
+              else
+                reg(pc_dest) <= reg(pc_src1)(2 downto 0) & pc_value(0);
+              end if;
+
+            when op_ifeq =>
+              if reg(pc_src1) = reg(pc_src2) then
+                eif <= '1';
+              else
+                pc <= pc + 2;
+              end if;
+
+            when op_ifgt =>
+              if reg(pc_src1) > reg(pc_src2) then
+                eif <= '1';
+              else
+                pc <= pc + 2;
+              end if;
+
+            when op_ifge =>
+              if reg(pc_src1) >= reg(pc_src2) then
+                eif <= '1';
+              else
+                pc <= pc + 2;
+              end if;
+
+            when op_wi   => wi           <= unsigned(pc_value(8 downto 0));
+            when op_goto => pc           <=          pc_value(8 downto 0);
+            when others  => null;
+          end case;
+        end if;
+
+      end if;
+    end if;
+  end process;
 
 end architecture;
