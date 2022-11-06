@@ -50,14 +50,33 @@ proc set_warnings {bool} {
   set NumericStdNoWarnings $bool
 }
 
-proc resim {{time "-all"}} {
-  restart -f
-  if {$time eq "cursor"} {
-    run [getactivecursortime]
-  } else {
-    run $time
-    seetime wave [getactivecursortime]
+# Re-run the simulation
+#
+# Parameter:
+#  cursor - Re-run to the active cursor
+#  now    - Re-run to the current end of simulation time (not the same as 'all')
+#  all    - Re-run until the end of the simualtion. "-all" will also work.
+#  <time> - E.g. "200us". A second parameter is provided for the units in case a space is included, e.g. "2 ms".
+#
+proc resim {{time "all"} {units {}}} {
+  global now
+ 
+  # Concatenate
+  set time "${time}${units}"
+ 
+  switch -regexp -- $time {
+    cursor          {set time [getactivecursortime]}
+    now             {set time $now}
+    -all            {# Compatibility with 'run' command}
+    all             {set time "-all"}
+    [0-9]+[fpnum]?s {# A time like 30ms}
+    default         {error "Error - Argument '$time' not recognised." 1}
   }
+ 
+  restart -f
+  run $time
+  # $now is reassigned after the last command
+  seetime wave $now
 }
 
 proc scroll_cursor {} {

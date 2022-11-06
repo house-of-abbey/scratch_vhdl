@@ -62,6 +62,7 @@ op_ifeq:
     leds <- 0b1000 ; pass
 
   wincr
+
 op_ifgt:
   if r1 gt r0      ; 1 >  0
     leds <- 0b1000 ; pass
@@ -80,6 +81,7 @@ op_ifgt:
     leds <- 0b1000 ; pass
 
   wincr
+
 op_ifge:
   if r1 ge r1      ; 1 >= 1
     leds <- 0b1000 ; pass
@@ -98,6 +100,7 @@ op_ifge:
     leds <- 0b1000 ; pass
 
   wincr
+
 op_copy:
   r0 <- 0b0101
   r1 <- r0
@@ -106,6 +109,7 @@ op_copy:
     goto fail      ; fail
 
   wincr
+
 op_and:
   r0 <- 0b0101
   r1 <- 0b1100
@@ -116,6 +120,7 @@ op_and:
     goto fail      ; fail
 
   wincr
+
 op_or:
   r0 <- 0b0101
   r1 <- 0b1100
@@ -126,6 +131,7 @@ op_or:
     goto fail      ; fail
 
   wincr
+
 op_not:
   r0 <- 0b0101
   r2 <- not r0
@@ -135,6 +141,7 @@ op_not:
     goto fail      ; fail
 
   wincr
+
 op_add:
   r0 <- 0b0101
   r1 <- 0b0111
@@ -155,6 +162,7 @@ op_add:
     goto fail      ; fail
 
   wincr
+
 op_sub:
   r0 <- 0b0111
   r1 <- 0b0101
@@ -175,6 +183,7 @@ op_sub:
     goto fail      ; fail
 
   wincr
+
 op_shft:
   r0 <- 0b0111
   r2 <- 0 > r0

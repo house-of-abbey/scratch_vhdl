@@ -59,6 +59,7 @@ proc synth_my_design {{synth synth_1} {jobs 6}} {
   }
   # Open a schematic of the basic design
   show_schematic [get_cells {led4_button4_i/*}]
+  report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 10 -input_pins -routable_nets -name timing_synth
 }
 
 # Implement the design and wait for completion.
@@ -71,7 +72,7 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
       close_design
   }
   set synth_run [get_runs $synth]
-  set impl_run [get_runs $synth]
+  set impl_run [get_runs $impl]
   if {[get_property NEEDS_REFRESH $synth_run] || [string equal [get_property PROGRESS $synth_run] "0%"]} {
     reset_run $synth
   } elseif {[get_property NEEDS_REFRESH $impl_run] || [string equal [get_property PROGRESS $impl_run] "0%"]} {
@@ -89,20 +90,43 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
   }
   # Open a schematic of the basic design
   show_schematic [get_cells {led4_button4_i/*}]
+  report_timing_summary -delay_type min_max -report_unconstrained -check_timing_verbose -max_paths 10 -input_pins -routable_nets -name timing_impl
+  set wns [get_property STATS.WNS [get_runs $impl]]
+  if {$wns > 0} {
+    puts "Timing met, worst slack = ${wns} ns."
+  } {
+    puts "Failed timing closure, worst slack = ${wns} ns"
+  }
+}
+
+# Programme the Zybo Z7 development board.
+#
+proc prog_my_board {} {
   set bit_files [glob "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
   if {[llength $bit_files] == 1} {
     open_hw
-    connect_hw_server -quiet
-    if {[llength [get_hw_devices -quiet]] == 0} {
-      open_hw_target
+    if {[llength [current_hw_server -quiet]] == 0} {
+      connect_hw_server
     }
-    set hw_device [get_hw_devices xc7z010_1]
-    set_property PROBES.FILE {} $hw_device
-    set_property FULL_PROBES.FILE {} $hw_device
-    set_property PROGRAM.FILE [lindex $bit_files 0] $hw_device
-    program_hw_devices $hw_device
-    refresh_hw_device [lindex $hw_device 0]
-    puts "Zybo Z7 Development Board Programmed."
+    if {[llength [get_hw_targets -quiet]] > 0} {
+      open_hw_target
+      # Check xc7z010_1 is on the list
+      set hw_device [get_hw_devices xc7z010_1 -quiet]
+      if {[llength $hw_device] > 0} {
+        set_property PROBES.FILE {} $hw_device
+        set_property FULL_PROBES.FILE {} $hw_device
+        set_property PROGRAM.FILE [lindex $bit_files 0] $hw_device
+        program_hw_devices $hw_device
+        refresh_hw_device $hw_device
+        puts "Zybo Z7 Development Board Programmed."
+      } {
+        puts "Zybo Z7 Development Board not found."
+        close_hw_target
+      }
+    } {
+      puts "No hardware targets found."
+      disconnect_hw_server
+    }
   } {
     puts "Need a single BIT file, cannot automatically choose one."
   }
@@ -137,10 +161,19 @@ proc add_my_buttons {} {
       -toolbar_icon "$thisdir/vivado_icon_i.png" \
       -command impl_my_design
   }
+  if {[lsearch [get_gui_custom_commands -quiet] my_prog] < 0} {
+    create_gui_custom_command \
+      -name my_prog \
+      -description "Programme the development board." \
+      -menu_name "Programme" \
+      -show_on_toolbar \
+      -toolbar_icon "$thisdir/vivado_icon_p.png" \
+      -command prog_my_board
+  }
 }
 
 proc remove_my_buttons {} {
-  foreach i {my_elab my_synth my_impl} {
+  foreach i {my_elab my_synth my_impl my_prog} {
     if {[lsearch [get_gui_custom_commands -quiet] $i] >= 0} {
       remove_gui_custom_commands -name $i
     }
