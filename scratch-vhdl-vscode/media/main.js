@@ -1223,7 +1223,6 @@ document.addEventListener('DOMContentLoaded', function () {
         gen(MAPGenerator.workspaceToCode(ws));
         return map;
     }
-    window.generateMap = generateMap;
     function highlightCodePosition(line, column) {
         column = column || 0;
         const map = generateMap();
@@ -1242,7 +1241,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 [null, [[-Infinity, -Infinity]]]
             )[0]).select();
     }
-    window.highlightCodePosition = highlightCodePosition;
 
     // TODO: finish
     // VHDLGenerator.procedures_defreturn = function (block) {

@@ -2,18 +2,6 @@ import path = require('path');
 import { TextDecoder, TextEncoder } from 'util';
 import * as vscode from 'vscode';
 
-/**
- * Provider for cat scratch editors.
- *
- * Cat scratch editors are used for `.cscratch` files, which are just json files.
- * To get started, run this extension and open an empty `.cscratch` file in VS Code.
- *
- * This provider demonstrates:
- *
- * - Setting up the initial webview for a custom editor.
- * - Loading scripts and styles in a custom editor.
- * - Synchronizing changes between a text document and a custom editor.
- */
 export class ScratchVHDLEditorProvider
     implements vscode.CustomTextEditorProvider
 {
@@ -566,7 +554,7 @@ export class ScratchVHDLEditorProvider
     }
 
     /**
-     * Write out the json to a given document.
+     * Write out the text to a given document.
      */
     private updateTextDocument(document: vscode.TextDocument, text: any) {
         const edit = new vscode.WorkspaceEdit();
