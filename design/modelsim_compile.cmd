@@ -23,7 +23,7 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
-rem Directory the batch file was run from
+rem Directory the batch file was run from, does not always equal SRC
 set DIR=%CD%
 
 title Compiling for Modelsim
@@ -72,9 +72,18 @@ if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (goto error)
 
+rem Assemble each file in %SRC%\demos\asm\*.asm
 mkdir %DEST%\instr_files
-rem Compile any required ASM files to %DEST%\instr_files
-cp %SRC%\demos\asm\tests.txt %DEST%\instr_files
+for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm') do (
+  echo.
+  echo Assembling %%G:
+  %SRC%\..\bin\customasm ^
+    --format=binline ^
+    --output=%DEST%\instr_files\%%~nG.txt ^
+    %SRC%\demos\asm\%%G
+  if %ec% NEQ 0 (goto error)
+  echo.
+)
 
 echo.
 echo Compilation SUCCEEDED
