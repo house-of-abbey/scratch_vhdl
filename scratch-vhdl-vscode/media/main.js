@@ -973,41 +973,42 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
+    const MAPGenerator = new Blockly.Generator("MAP");
     const VHDLGenerator = new Blockly.Generator("VHDL");
-    // TODO: VHDL keyword list
 
-    VHDLGenerator.ORDER_ATOMIC   /**/ = 0;
-    VHDLGenerator.ORDER_FUNCTION_CALL = 1;
-    VHDLGenerator.ORDER_INDEX    /**/ = 1.1;
-    VHDLGenerator.ORDER_CONCAT   /**/ = 2;
-    VHDLGenerator.ORDER_MUL      /**/ = 3.0;
-    VHDLGenerator.ORDER_DIV      /**/ = 3.1;
-    VHDLGenerator.ORDER_SUB      /**/ = 4.1;
-    VHDLGenerator.ORDER_ADD      /**/ = 4.2;
-    VHDLGenerator.ORDER_NOT      /**/ = 5;
-    VHDLGenerator.ORDER_COMPARE  /**/ = 6;
-    VHDLGenerator.ORDER_LOGIC    /**/ = 7;
-    VHDLGenerator.ORDER_NONE     /**/ = 99;
+    MAPGenerator.ORDER_ATOMIC   /**/ = VHDLGenerator.ORDER_ATOMIC   /**/ = 0;
+    MAPGenerator.ORDER_FUNCTION_CALL = VHDLGenerator.ORDER_FUNCTION_CALL = 1;
+    MAPGenerator.ORDER_INDEX    /**/ = VHDLGenerator.ORDER_INDEX    /**/ = 1.1;
+    MAPGenerator.ORDER_CONCAT   /**/ = VHDLGenerator.ORDER_CONCAT   /**/ = 2;
+    MAPGenerator.ORDER_MUL      /**/ = VHDLGenerator.ORDER_MUL      /**/ = 3.0;
+    MAPGenerator.ORDER_DIV      /**/ = VHDLGenerator.ORDER_DIV      /**/ = 3.1;
+    MAPGenerator.ORDER_SUB      /**/ = VHDLGenerator.ORDER_SUB      /**/ = 4.1;
+    MAPGenerator.ORDER_ADD      /**/ = VHDLGenerator.ORDER_ADD      /**/ = 4.2;
+    MAPGenerator.ORDER_NOT      /**/ = VHDLGenerator.ORDER_NOT      /**/ = 5;
+    MAPGenerator.ORDER_COMPARE  /**/ = VHDLGenerator.ORDER_COMPARE  /**/ = 6;
+    MAPGenerator.ORDER_LOGIC    /**/ = VHDLGenerator.ORDER_LOGIC    /**/ = 7;
+    MAPGenerator.ORDER_NONE     /**/ = VHDLGenerator.ORDER_NONE     /**/ = 99;
 
+    const Generator = {};
 
-    VHDLGenerator.finish = function (code) {
+    Generator.finish = function (generator, code) {
         function gen_signals(signals) {
             return Object.keys(signals).map((n) =>
                 "\n  signal " + n + " : " + signals[n] + ";"
             ).join("");
         }
-        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + constantsCode + "\n" + gen_signals(signals) + "\n" + aliasesCode + "\n\nbegin\n" + Object.getPrototypeOf(this).finish.call(this, code) + "\n\nend architecture;\n";
+        return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + constantsCode + "\n" + gen_signals(entity.signals) + "\n" + aliasesCode + "\n\nbegin\n" + Object.getPrototypeOf(generator).finish.call(generator, code) + "\n\nend architecture;\n";
     }
 
-    VHDLGenerator.scrub_ = function (block, code, opt_thisOnly) {
+    Generator.scrub_ = function (generator, block, code, opt_thisOnly) {
         let commentCode = '';
         // Only collect comments for blocks that aren't inline.
         if (!block.outputConnection || !block.outputConnection.targetConnection) {
             // Collect comment for this block.
             let comment = block.getCommentText();
             if (comment) {
-                comment = Blockly.utils.string.wrap(comment, this.COMMENT_WRAP - 3);
-                commentCode += this.prefixLines(comment, '-- ') + '\n';
+                comment = Blockly.utils.string.wrap(comment, generator.COMMENT_WRAP - 3);
+                commentCode += generator.prefixLines(comment, '-- ') + '\n';
             }
             // Collect comments for all value arguments.
             // Don't collect comments for nested statements.
@@ -1015,20 +1016,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (block.inputList[i].type === Blockly.inputTypes.VALUE) {
                     const childBlock = block.inputList[i].connection.targetBlock();
                     if (childBlock) {
-                        comment = this.allNestedComments(childBlock);
+                        comment = generator.allNestedComments(childBlock);
                         if (comment) {
-                            commentCode += this.prefixLines(comment, '-- ');
+                            commentCode += generator.prefixLines(comment, '-- ');
                         }
                     }
                 }
             }
         }
         const nextBlock = block.nextConnection && block.nextConnection.targetBlock();
-        const nextCode = opt_thisOnly ? '' : this.blockToCode(nextBlock);
+        const nextCode = opt_thisOnly ? '' : generator.blockToCode(nextBlock);
         return commentCode + code + nextCode;
     };
 
-    VHDLGenerator.process = function (block) {
+    Generator.process = function (generator, block) {
         return "\n  process" + ((a) => a.length > 0 ? "(" + a + ")" : "")(
             block.all_ ? "all" : block.inputList[0]
                 .fieldRow.filter(
@@ -1036,145 +1037,212 @@ document.addEventListener('DOMContentLoaded', function () {
                 ).map(
                     (a) => a.getVariable().name
                 ).join(", ")) + "\n  begin\n  " +
-            VHDLGenerator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
+            generator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
             "end process;";
     }
 
-    VHDLGenerator.process_wait = function (block) {
+    Generator.process_wait = function (generator, block) {
         return 'wait;\n';
     }
 
-    VHDLGenerator.process_direct_set = function (block) {
+    Generator.process_direct_set = function (generator, block) {
         return "\n  " + block.getField("VAR").getVariable().name + ' <= ' +
-            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';';
+            generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';';
     }
 
-    VHDLGenerator.controls_if = function (block) {
+    Generator.controls_if = function (generator, block) {
         let n = 0;
         let code = '';
         while (block.getInput('IF' + n)) {
             const conditionCode =
-                VHDLGenerator.valueToCode(block, 'IF' + n, VHDLGenerator.ORDER_NONE) || 'false';
-            let branchCode = VHDLGenerator.statementToCode(block, 'DO' + n);
+                generator.valueToCode(block, 'IF' + n, generator.ORDER_NONE) || 'false';
+            let branchCode = generator.statementToCode(block, 'DO' + n);
             code +=
                 (n > 0 ? 'els' : '') + 'if ' + conditionCode + ' then\n' + branchCode;
             n++;
         }
 
         if (block.getInput('ELSE')) {
-            let branchCode = VHDLGenerator.statementToCode(block, 'ELSE');
+            let branchCode = generator.statementToCode(block, 'ELSE');
             code += 'else\n' + branchCode;
         }
         return code + 'end if;\n';
     }
 
-    VHDLGenerator.controls_case = function (block) {
-        return "case " + VHDLGenerator.valueToCode(block, "ON", VHDLGenerator.ORDER_NONE) + " is\n" + VHDLGenerator.statementToCode(block, 'body') + "end case;\n";
+    Generator.controls_case = function (generator, block) {
+        return "case " + generator.valueToCode(block, "ON", generator.ORDER_NONE) + " is\n" + generator.statementToCode(block, 'body') + "end case;\n";
     }
 
-    VHDLGenerator.controls_when = function (block) {
-        return "when " + VHDLGenerator.valueToCode(block, "TEST", VHDLGenerator.ORDER_NONE) + " =>\n" + VHDLGenerator.statementToCode(block, 'body') + "\n";
+    Generator.controls_when = function (generator, block) {
+        return "when " + generator.valueToCode(block, "TEST", generator.ORDER_NONE) + " =>\n" + generator.statementToCode(block, 'body') + "\n";
     }
 
-    VHDLGenerator.logic_others = function (block) {
-        return ["others", VHDLGenerator.ORDER_ATOMIC];
+    Generator.logic_others = function (generator, block) {
+        return ["others", generator.ORDER_ATOMIC];
     }
 
-    VHDLGenerator.others_to = function (block) {
-        return ["(others => " + VHDLGenerator.valueToCode(block, "INPUT", VHDLGenerator.ORDER_NONE) + ")", VHDLGenerator.ORDER_ATOMIC];
+    Generator.others_to = function (generator, block) {
+        return ["(others => " + generator.valueToCode(block, "INPUT", generator.ORDER_NONE) + ")", generator.ORDER_ATOMIC];
     }
 
-    VHDLGenerator.logic_or = function (block) {
-        return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_NONE) + " | " + VHDLGenerator.valueToCode(block, 'B', VHDLGenerator.ORDER_NONE), VHDLGenerator.ORDER_ATOMIC];
+    Generator.logic_or = function (generator, block) {
+        return [generator.valueToCode(block, "A", generator.ORDER_NONE) + " | " + generator.valueToCode(block, 'B', generator.ORDER_NONE), generator.ORDER_ATOMIC];
     }
 
-    VHDLGenerator.logic_rising_edge = function (block) {
-        return ["rising_edge(" + block.getField("dep").getVariable().name + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
+    Generator.logic_rising_edge = function (generator, block) {
+        return ["rising_edge(" + block.getField("dep").getVariable().name + ")", generator.ORDER_FUNCTION_CALL]
     }
 
-    VHDLGenerator.logic_not = function (block) {
-        return ["not " + VHDLGenerator.valueToCode(block, "INPUT", VHDLGenerator.ORDER_NOT), VHDLGenerator.ORDER_NOT]
+    Generator.logic_not = function (generator, block) {
+        return ["not " + generator.valueToCode(block, "INPUT", generator.ORDER_NOT), generator.ORDER_NOT]
     }
 
-    VHDLGenerator.logic_boolean = function (block) {
-        return [block.getFieldValue(""), VHDLGenerator.ORDER_ATOMIC]
+    Generator.logic_boolean = function (generator, block) {
+        return [block.getFieldValue(""), generator.ORDER_ATOMIC]
     }
 
-    VHDLGenerator.logic_operation = function (block) {
-        return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_LOGIC) + " " + block.getFieldValue("OPERATION") + " " + VHDLGenerator.valueToCode(block, "B", VHDLGenerator.ORDER_LOGIC), VHDLGenerator.ORDER_LOGIC]
+    Generator.logic_operation = function (generator, block) {
+        return [generator.valueToCode(block, "A", generator.ORDER_LOGIC) + " " + block.getFieldValue("OPERATION") + " " + generator.valueToCode(block, "B", generator.ORDER_LOGIC), generator.ORDER_LOGIC]
     }
 
-    VHDLGenerator.logic_operation_vector = function (block) {
-        return [block.getFieldValue("OPERATION") + "(" + VHDLGenerator.valueToCode(block, "LIST", VHDLGenerator.ORDER_NONE) + ")", VHDLGenerator.ORDER_FUNCTION_CALL]
+    Generator.logic_operation_vector = function (generator, block) {
+        return [block.getFieldValue("OPERATION") + "(" + generator.valueToCode(block, "LIST", generator.ORDER_NONE) + ")", generator.ORDER_FUNCTION_CALL]
     }
 
-    VHDLGenerator.logic_compare = function (block) {
-        return [VHDLGenerator.valueToCode(block, "A", VHDLGenerator.ORDER_COMPARE) + " = " + VHDLGenerator.valueToCode(block, "B", VHDLGenerator.ORDER_COMPARE), VHDLGenerator.ORDER_COMPARE]
+    Generator.logic_compare = function (generator, block) {
+        return [generator.valueToCode(block, "A", generator.ORDER_COMPARE) + " = " + generator.valueToCode(block, "B", generator.ORDER_COMPARE), generator.ORDER_COMPARE]
     }
 
-    VHDLGenerator.variables_get = function (block) {
-        return [block.getField("VAR").getVariable().name, VHDLGenerator.ORDER_ATOMIC];
+    Generator.variables_get = function (generator, block) {
+        return [block.getField("VAR").getVariable().name, generator.ORDER_ATOMIC];
     }
 
-    VHDLGenerator.constant = function (block) {
-        return [block.getFieldValue("NAME"), VHDLGenerator.ORDER_ATOMIC];
+    Generator.constant = function (generator, block) {
+        return [block.getFieldValue("NAME"), generator.ORDER_ATOMIC];
     }
 
-    VHDLGenerator.variables_set = function (block) {
+    Generator.variables_set = function (generator, block) {
         return block.getField("VAR").getVariable().name + ' <= ' +
-            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
+            generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';\n';
     }
 
-    VHDLGenerator.variables_set_index = function (block) {
-        return block.getField("VAR").getVariable().name + "(" + VHDLGenerator.valueToCode(block, 'INDEX', VHDLGenerator.ORDER_NONE) + ') <= ' +
-            VHDLGenerator.valueToCode(block, 'VALUE', VHDLGenerator.ORDER_NONE) + ';\n';
+    Generator.variables_set_index = function (generator, block) {
+        return block.getField("VAR").getVariable().name + "(" + generator.valueToCode(block, 'INDEX', generator.ORDER_NONE) + ') <= ' +
+            generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';\n';
     }
 
-    VHDLGenerator.math_change = function (block) {
+    Generator.math_change = function (generator, block) {
         return block.getField("VAR").getVariable().name + ' <= ' +
-            block.getField("VAR").getVariable().name + " + " + VHDLGenerator.valueToCode(block, 'DELTA', VHDLGenerator.ORDER_ADD) + ';\n';
+            block.getField("VAR").getVariable().name + " + " + generator.valueToCode(block, 'DELTA', generator.ORDER_ADD) + ';\n';
     }
 
-    VHDLGenerator.value_std_logic = function (block) {
-        return ["'" + block.getFieldValue("VALUE") + "'", VHDLGenerator.ORDER_ATOMIC];
+    Generator.value_std_logic = function (generator, block) {
+        return ["'" + block.getFieldValue("VALUE") + "'", generator.ORDER_ATOMIC];
     };
 
-    VHDLGenerator.value_std_logic_vector = function (block) {
-        return ['"' + block.getFieldValue("VALUE") + '"', VHDLGenerator.ORDER_ATOMIC];
+    Generator.value_std_logic_vector = function (generator, block) {
+        return ['"' + block.getFieldValue("VALUE") + '"', generator.ORDER_ATOMIC];
     };
 
-    VHDLGenerator.math_number = function (block) {
-        return [block.getFieldValue("NUM"), VHDLGenerator.ORDER_ATOMIC];
+    Generator.math_number = function (generator, block) {
+        return [block.getFieldValue("NUM"), generator.ORDER_ATOMIC];
     };
 
-    VHDLGenerator.math_arithmetic = function (block) {
+    Generator.math_arithmetic = function (generator, block) {
         // Basic arithmetic operators, and power.
         const OPERATORS = {
-            'ADD': [' + ', VHDLGenerator.ORDER_ADD],
-            'MINUS': [' - ', VHDLGenerator.ORDER_SUB],
-            'MULTIPLY': [' * ', VHDLGenerator.ODER_MUL],
-            'DIVIDE': [' / ', VHDLGenerator.ORDER_DIV],
+            'ADD': [' + ', generator.ORDER_ADD],
+            'MINUS': [' - ', generator.ORDER_SUB],
+            'MULTIPLY': [' * ', generator.ODER_MUL],
+            'DIVIDE': [' / ', generator.ORDER_DIV],
         };
         const tuple = OPERATORS[block.getFieldValue('OP')];
         const order = tuple[1];
-        return [VHDLGenerator.valueToCode(block, 'A', order) || '0' + tuple[0] + VHDLGenerator.valueToCode(block, 'B', order) || '0', order];
+        return [generator.valueToCode(block, 'A', order) || '0' + tuple[0] + generator.valueToCode(block, 'B', order) || '0', order];
     };
 
-    VHDLGenerator.list_index = function (block) {
-        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + VHDLGenerator.valueToCode(block, 'INDEX', VHDLGenerator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? VHDLGenerator.ORDER_ATOMIC : VHDLGenerator.ORDER_INDEX];
+    Generator.list_index = function (generator, block) {
+        return [generator.valueToCode(block, 'LIST', generator.ORDER_INDEX) + "(" + generator.valueToCode(block, 'INDEX', generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_INDEX];
     };
 
-    VHDLGenerator.list_range = function (block) {
-        return [VHDLGenerator.valueToCode(block, 'LIST', VHDLGenerator.ORDER_INDEX) + "(" + block.getFieldValue("FROM") + " " + block.getFieldValue("ORDER") + " " + block.getFieldValue("TO") + ")", ["list_index", "list_range"].includes(block.getParent().type) ? VHDLGenerator.ORDER_ATOMIC : VHDLGenerator.ORDER_INDEX];
+    Generator.list_range = function (generator, block) {
+        return [generator.valueToCode(block, 'LIST', generator.ORDER_INDEX) + "(" + block.getFieldValue("FROM") + " " + block.getFieldValue("ORDER") + " " + block.getFieldValue("TO") + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_INDEX];
     };
 
-    VHDLGenerator.list_concat = function (block) {
-        return [VHDLGenerator.valueToCode(block, 'A', VHDLGenerator.ORDER_CONCAT) + " & " + VHDLGenerator.valueToCode(block, 'B', VHDLGenerator.ORDER_CONCAT), VHDLGenerator.ORDER_CONCAT];
+    Generator.list_concat = function (generator, block) {
+        return [generator.valueToCode(block, 'A', generator.ORDER_CONCAT) + " & " + generator.valueToCode(block, 'B', generator.ORDER_CONCAT), generator.ORDER_CONCAT];
     };
 
-    VHDLGenerator.report = function (block) {
+    Generator.report = function (generator, block) {
         return "report " + block.getFieldValue("S") + ";\n";
     };
+
+    const u = String.fromCharCode;
+
+    Object.keys(Generator).forEach((b) => {
+        VHDLGenerator[b] = Generator[b].bind(undefined, VHDLGenerator);
+        MAPGenerator[b] = function (block) {
+            const c = Generator[b].bind(this)(MAPGenerator, block);
+            if (c instanceof Array) return [u(0x200B) + block.id + u(0x200B) + c[0] + u(0xFEFF), c[1]];
+            else return u(0x200B) + block.id + u(0x200B) + c + u(0xFEFF);
+        };
+    });
+    MAPGenerator.scrub_ = Generator.scrub_.bind(undefined, MAPGenerator);
+    MAPGenerator.finish = Generator.finish.bind(undefined, MAPGenerator);
+
+    function generateMap() {
+        const map = {};
+        var i = 0;
+        var l = 1;
+        var c = 1;
+        function gen(code) {
+            while (i < code.length) {
+                if (code[i] === '\n') {
+                    l++;
+                    c = 1;
+                } else c++;
+                if (code[i] === u(0x200B)) {
+                    i++;
+                    c--;
+                    var id = "";
+                    var s = [l, c];
+                    while (code[i] !== u(0x200B)) {
+                        id += code[i];
+                        i++;
+                    }
+                    i++;
+                    gen(code);
+                    map[id] = [s, [l, c]]
+                } else if (code[i] === u(0xFEFF)) {
+                    c--;
+                    return;
+                }
+                i++;
+            }
+        }
+        gen(MAPGenerator.workspaceToCode(ws));
+        return map;
+    }
+    window.generateMap = generateMap;
+    function highlightCodePosition(line, column) {
+        column = column || 0;
+        const map = generateMap();
+        ws.getBlockById(Object.entries(map)
+            .filter(([_, range]) =>
+                (range[0][0] < line &&
+                    range[1][0] > line) ||
+                (range[0][0] === line &&
+                    column > range[0][1]) ||
+                (range[1][0] === line &&
+                    column < range[1][1])
+            ).reduce(
+                (a, b) =>
+                    (a[1][0][0] > b[1][0][0] ||
+                        (a[1][0][0] === b[1][0][0] && a[1][0][1] > b[1][0][1])) ? a : b,
+                [null, [[-Infinity, -Infinity]]]
+            )[0]).select();
+    }
+    window.highlightCodePosition = highlightCodePosition;
 
     // TODO: finish
     // VHDLGenerator.procedures_defreturn = function (block) {
@@ -1584,7 +1652,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Blockly.Events.disable(),
             Blockly.serialization.workspaces.load(JSON.parse(message.data.body), ws, { registerUndo: false }),
             Blockly.Events.enable(),
-            generateEntity(), generateAliases()
+            generateEntity(), generateAliases(), generateSignals
         ));
     window.addEventListener('message',
         async (message) => {
