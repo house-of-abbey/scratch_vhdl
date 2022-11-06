@@ -102,7 +102,7 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
 # Programme the Zybo Z7 development board.
 #
 proc prog_my_board {} {
-  set bit_files [glob "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
+  set bit_files [glob -nocomplain "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
   if {[llength $bit_files] == 1} {
     open_hw
     if {[llength [current_hw_server -quiet]] == 0} {
@@ -128,7 +128,8 @@ proc prog_my_board {} {
       disconnect_hw_server
     }
   } {
-    puts "Need a single BIT file, cannot automatically choose one."
+    puts "Need a single BIT file, none found, or too many and cannot automatically choose one."
+    puts "Try running the implementation step, 'impl_my_design'."
   }
 }
 
