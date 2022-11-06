@@ -1591,27 +1591,27 @@ document.addEventListener('DOMContentLoaded', function () {
 
     let name = "hi";
 
-    window.addEventListener('message',
-        (message) => message.data.type == "getFileData" &&
-            vscode.postMessage({
-                type: 'response',
-                requestId: message.data.requestId,
-                body: VHDLGenerator.workspaceToCode(ws)
-            }));
-    window.addEventListener('message',
-        (message) => message.data.type == "getScratchData" &&
-            vscode.postMessage({
-                type: 'response',
-                requestId: message.data.requestId,
-                body: JSON.stringify(Blockly.serialization.workspaces.save(ws))
-            }));
-    window.addEventListener('message',
-        (message) => message.data.type == "getEntityData" &&
-            vscode.postMessage({
-                type: 'response',
-                requestId: message.data.requestId,
-                body: JSON.stringify(entity)
-            }));
+    // window.addEventListener('message',
+    //     (message) => message.data.type == "getFileData" &&
+    //         vscode.postMessage({
+    //             type: 'response',
+    //             requestId: message.data.requestId,
+    //             body: VHDLGenerator.workspaceToCode(ws)
+    //         }));
+    // window.addEventListener('message',
+    //     (message) => message.data.type == "getScratchData" &&
+    //         vscode.postMessage({
+    //             type: 'response',
+    //             requestId: message.data.requestId,
+    //             body: JSON.stringify(Blockly.serialization.workspaces.save(ws))
+    //         }));
+    // window.addEventListener('message',
+    //     (message) => message.data.type == "getEntityData" &&
+    //         vscode.postMessage({
+    //             type: 'response',
+    //             requestId: message.data.requestId,
+    //             body: JSON.stringify(entity)
+    //         }));
     function generateEntity() {
         Blockly.Events.disable();
         for (const n in entity.entity) {
@@ -1800,7 +1800,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         vscode.postMessage({
             type: "update",
-            body: JSON.stringify(Blockly.serialization.workspaces.save(ws))
+            body: [JSON.stringify(Blockly.serialization.workspaces.save(ws)), VHDLGenerator.workspaceToCode(ws)]
         });
     });
 
