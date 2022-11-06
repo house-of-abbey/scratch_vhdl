@@ -6,3 +6,6 @@ vivado.*
 vivado_*.jou
 vivado_*.log
 vivado_pid*.str
+bin/*
+!bin/default_text_override.js
+**/*.vsix
