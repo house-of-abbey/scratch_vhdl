@@ -72,6 +72,10 @@ if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (goto error)
 
+mkdir %DEST%\instr_files
+rem Compile any required ASM files to %DEST%\instr_files
+cp %SRC%\demos\asm\tests.txt %DEST%\instr_files
+
 echo.
 echo Compilation SUCCEEDED
 echo.
