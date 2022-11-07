@@ -857,11 +857,13 @@ begin
                 pc <= pc + 2;
               end if;
 
-            when op_wi   => 
+            when op_wi   =>
                 wi  <= unsigned(pc_value(8 downto 0));
-            when op_goto => 
+
+            when op_goto =>
                 pc  <= pc_value(8 downto 0);
                 eif <= '0';
+
             when others  => null;
           end case;
         end if;
