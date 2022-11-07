@@ -43,19 +43,56 @@
   goto  {l:u9}                    => 0xf @         l`9              ; op_goto
 }
 
-; These can be used for LEDs or buttons
-           ; bit
-bit0 = 0x1 ; 0
-bit1 = 0x2 ; 1
-bit2 = 0x4 ; 2
-bit3 = 0x8 ; 3
 
-r0 <- 3
-r1 <- 0b0000
 
-loop:
-  leds <- r0 + btns
-  wincr 3
-  leds <- btns and r1
-  wincr 1
-  goto loop
+traffic_lights:
+  .s0:
+    leds <- 0b0001
+    wincr
+    .s0_loop:
+      r0 <- 0b0001
+      r1 <- btns and r0
+      if r1 eq r0
+        goto .s1
+        goto .s0_loop
+  .s1:
+    leds <- 0b0011
+    wincr
+  .s2:
+    leds <- 0b0100
+    wincr
+    .s2_loop:
+      r0 <- 0b0010
+      r1 <- btns and r0
+      if r1 eq r0
+        goto .s3
+        goto .s2_loop
+  .s3:
+    leds <- 0b0010
+    wincr
+  .s4:
+    leds <- 0b1001
+    wincr
+    .s5_loop:
+      r0 <- 0b0001
+      r1 <- btns and r0
+      if r1 eq r0
+        goto .s5
+        goto .s5_loop
+  .s5:
+    leds <- 0b0011
+    wincr
+  .s6:
+    leds <- 0b0100
+    wincr
+    .s6_loop:
+      r0 <- 0b0010
+      r1 <- btns and r0
+      if r1 eq r0
+        goto .s7
+        goto .s6_loop
+  .s7:
+    leds <- 0b0010
+    wincr
+  goto traffic_lights
+  
