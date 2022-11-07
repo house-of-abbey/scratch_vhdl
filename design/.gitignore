@@ -5,3 +5,5 @@ Zybo_Z7_10/ip/*
 Zybo_Z7_10/constraints/managed.xdc
 # Updates to this file are expected as part of the automated code generation process.
 scratch.vhdl
+hs_err_pid*.dmp
+hs_err_pid*.log

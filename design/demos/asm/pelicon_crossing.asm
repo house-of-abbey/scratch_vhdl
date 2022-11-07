@@ -82,4 +82,4 @@ pelicon_crossing:
   .s7:
     leds <- 0b0010
     wincr
-  goto traffic_lights
+  goto pelicon_crossing

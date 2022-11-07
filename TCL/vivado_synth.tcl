@@ -185,7 +185,7 @@ proc remove_my_buttons {} {
 remove_my_buttons
 add_my_buttons
 
-if {[llength [get_projects]] == 0} {
+if {[llength [get_projects -quiet]] == 0} {
   set proj_src [file normalize $env(USERPROFILE)/Xilinx/Workspace/scratch_vhdl]
   open_project $proj_src/scratch_vhdl.xpr
   unset proj_src
