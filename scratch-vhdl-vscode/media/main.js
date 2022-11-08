@@ -934,7 +934,6 @@ document.addEventListener('DOMContentLoaded', function () {
     (() => {
         Blockly.fieldRegistry.unregister("field_variable");
         Blockly.fieldRegistry.register("field_variable", Blockly.FieldVariable = class extends Blockly.FieldVariable {
-            // TODO: Prevent deleting and renaming entity signals by removing the dropdown option for entities
             renderSelectedText_() {
                 super.renderSelectedText_();
                 if (["variables_get", "variables_set", "variables_set_index", "math_change", "process_direct_set"].indexOf(this.sourceBlock_.type) !== -1) {
