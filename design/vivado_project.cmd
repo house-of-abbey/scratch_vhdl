@@ -52,6 +52,7 @@ rem
 title Running Vivado Project Creation
 rem Setup paths to local installations
 set VIVADO_INSTALL=D:\Xilinx\Vivado\2019.1\bin
+
 %VIVADO_INSTALL%\vivado.bat ^
   -mode gui ^
   -tempDir %TEMP% ^
@@ -61,4 +62,4 @@ set VIVADO_INSTALL=D:\Xilinx\Vivado\2019.1\bin
   -source ..\TCL\vivado_project.tcl
 
 rem Clean up junk
-del vivado_pid*.str
+del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log

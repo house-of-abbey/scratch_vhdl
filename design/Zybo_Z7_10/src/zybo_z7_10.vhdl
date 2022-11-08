@@ -23,7 +23,8 @@ library ieee;
 
 entity zybo_z7_10 is
   generic(
-    sim_g : boolean := false
+    sim_g      : boolean := false;
+    rom_file_g : string  := ""
   );
   port(
     clk_port : in  std_logic; -- 125 MHz External Clock
@@ -133,6 +134,9 @@ begin
   end process;
 
   led4_button4_i : entity work.led4_button4(scratch)
+    generic map (
+      rom_file_g => rom_file_g
+    )
     port map (
       clk     => clk,
       reset   => reset,

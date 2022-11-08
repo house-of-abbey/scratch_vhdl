@@ -88,7 +88,10 @@ set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -con
 
 set_property top zybo_z7_10 [current_fileset]
 update_compile_order -fileset [current_fileset]
-set_property generic sim_g=false [current_fileset]
+set_property generic [list \
+  sim_g=false \
+  rom_file_g=[file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/tests.txt"] \
+] [current_fileset]
 
 set ip_inst pll
 set ip_dest_file $scratch_vhdl_src/design/Zybo_Z7_10/ip

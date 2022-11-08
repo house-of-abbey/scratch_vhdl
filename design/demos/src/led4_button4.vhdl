@@ -773,7 +773,10 @@ architecture risc_cpu of led4_button4 is
   --
   -- A Xilinx IP Core could be made with 13-bit data and a depth of 512 words
   -- from one 18k BlockRAM if required. Or we could use an unregistered LUT RAM
-  -- Both can be initialised from a file (MIF format).
+  -- Both can be initialised from a file (MIF format). The LUT RAM's slack is worse.
+  --  * LUT RAM:        0.599 ns slack
+  --  * constant code : 1.767 ns slack (might be code length dependent)
+  --
   constant code : code_t := read_code_from_file(
     filename => rom_file_g,
     arr_size => 2**pc'length
@@ -858,7 +861,7 @@ begin
               end if;
 
             when op_wi   =>
-                wi  <= unsigned(pc_value(8 downto 0));
+                wi <= unsigned(pc_value(8 downto 0));
 
             when op_goto =>
                 pc  <= pc_value(8 downto 0);

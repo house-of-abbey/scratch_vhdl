@@ -61,4 +61,5 @@ set VIVADO_INSTALL=D:\Xilinx\Vivado\2019.1\bin
   -source "..\TCL\vivado_synth.tcl"
 
 rem Clean up junk
-del vivado_pid*.str
+del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log
+
