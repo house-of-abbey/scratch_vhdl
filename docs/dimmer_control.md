@@ -5,6 +5,7 @@ This is not provided as a demo with a solution as it is sufficiently similar to 
 ![Dimmer Controller Sequence](./images/sim_controls/dimmer_control_demo.gif)
 
 Choose two buttons for `up` and `down` functions to manually advance through states. This example has two immediately obvious implementations.
+
 1. Use an integer counter in the range 0 to 4 and add or subtract 1 for each change. Make sure the actions on values of 0 and 4 are constrained.
 2. Use a state machine like the following to explicitly enumerate each state.
 
