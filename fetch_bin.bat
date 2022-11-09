@@ -19,7 +19,7 @@ rem Assumes 'C:\Windows\System32' is on the PATH
 if exist %SRC%\bin (
   echo Deleting old bin downloads
   pushd %SRC%\bin
-  for %%F IN (customasm customasm.exe customasm.html) do (
+  for %%F IN (customasm customasm.exe customasm.html default_text_override.js) do (
     if exist %%F ( del /f %%F )
   )
   popd
@@ -36,6 +36,13 @@ curl ^
 tar ^
   -C %SRC%\bin ^
   -xf %TEMP%\customasm.zip
+
+set ASM=%SRC%\design\demos\asm\ruledef.asm
+set DEST=%SRC%\bin\default_text_override.js
+
+echo|set /p="window.default_text_override=`" > %DEST%
+powershell -Command "(Get-Content %ASM%) -replace '`', '\`' | Out-File -encoding ASCII -Append %DEST%"
+echo `>> %DEST%
 
 del /f %TEMP%\customasm.zip
 
