@@ -74,7 +74,7 @@ if %ec% NEQ 0 (goto error)
 
 rem Assemble each file in %SRC%\demos\asm\*.asm
 mkdir %DEST%\instr_files
-for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm') do (
+for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm ^| findstr /v ruledef.asm') do (
   echo.
   echo Assembling %%G:
   %SRC%\..\bin\customasm ^
