@@ -88,14 +88,16 @@ set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -con
 
 set_property top zybo_z7_10 [current_fileset]
 update_compile_order -fileset [current_fileset]
+
+set user_profile [file normalize $env(USERPROFILE)]
+
 set_property generic [list \
   sim_g=false \
-  rom_file_g=[file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/tests.txt"] \
+  rom_file_g="${user_profile}/ModelSim/projects/button_leds/instr_files/tests.txt" \
 ] [current_fileset]
 
 set ip_inst pll
 set ip_dest_file $scratch_vhdl_src/design/Zybo_Z7_10/ip
-set user_profile [file normalize $env(USERPROFILE)]
 set ip_xci $ip_dest_file/$ip_inst/$ip_inst.xci
 
 # Delete the old version of the PLL before recreating a new

@@ -99,6 +99,29 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
   }
 }
 
+# Set the RISC CPU ROM contents to this file
+#
+# Parameter:
+#  1. A file name 'f'. Must contain neither path nor extension as these get added, as
+#     in "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.txt".
+#
+# Usage: set_asm_file traffic_lights
+#
+proc set_asm_file {f} {
+  global env
+
+  set ff [file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.txt"]
+
+  if {![file exists $ff]} {
+    error "File '$ff' does not exist." 1
+  }
+
+  set_property generic [list \
+    sim_g=false \
+    rom_file_g=[file normalize $ff] \
+  ] [current_fileset]
+}
+
 # Programme the Zybo Z7 development board.
 #
 proc prog_my_board {} {
