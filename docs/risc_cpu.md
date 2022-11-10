@@ -81,3 +81,17 @@ These are the scripts that you need to use to manage this process:
 |:----------|:-------|:------------|
 | Simulation|        |             |
 | Synthesis |        |             |
+
+# And Finally...
+
+Just pause for a moment and think about what we have done here. All the demonstrations for creating firmware to drive the LEDs can be implemented in one general purpose processor. If the ROM was actually RAM, we would be able to re-programme the LED operations without the synthesis step. But more to the point, software (a collection of assembled instructions) is just one great big finite state machine. It is still 'finite' because the storage space for code in the memory (ROM) is limited. In this case the limit is 2<sup>9</sup> = 512 states. But the states might not be used as efficiently if multiple instructions are required to achieve what one state in a pure firmware implementation can achieve.
+
+There's a trade here between generality of purpose and optimal calculation. This is a trade that is conventionally driven by economics, the (additional) cost of writing an optimal design in firmware versus the re-usability and flexibility of a single solution that does many things that does not achieve quite the same performance. If you want the highest performance then you'll need to turn to Application Specific Integrated Circuits (ASIC), where the logic is hard coded and sometimes carved and chiselled to perfection. Taking away the reprogrammability of FPGAs leads to greater clock speeds and yet higher performance.
+
+| Feature     | ASIC | FPGA | Software |
+|:------------|:----:|:----:|:--------:|
+| Flexibility | Low  |  -   | High     |
+| Performance | High |  -   | Low      |
+| £ Price     | High |  -   | Low      |
+
+FPGAs sit in the middle, with the elements of the reprogrammability of software and the performance of application specific devices. The remaining amusing anecdote is that both microprocessors and FPGAs are themselves ASICs.
