@@ -111,6 +111,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
   ![Traffic Lights](./images/sim_controls/traffic_lights_demo.gif)
 9. **[Dimmer Controller](dimmer_controller.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
 10. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
+11. **[RISC CPU](risc_cpu.md)** - A simple "Reduce Instruction Set Computer" "Central Processing Unit" to read the buttons and drive the LEDs. Now you can re-write all the examples in assembly code!
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
 
