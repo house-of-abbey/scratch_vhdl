@@ -82,7 +82,7 @@ These are the scripts that you need to use to manage this process:
 | Simulation|        |             |
 | Synthesis |        |             |
 
-# And Finally...
+## And Finally
 
 Just pause for a moment and think about what we have done here. All the demonstrations for creating firmware to drive the LEDs can be implemented in one general purpose processor. If the ROM was actually RAM, we would be able to re-programme the LED operations without the synthesis step. But more to the point, software (a collection of assembled instructions) is just one great big finite state machine. It is still 'finite' because the storage space for code in the memory (ROM) is limited. In this case the limit is 2<sup>9</sup> = 512 states. But the states might not be used as efficiently if multiple instructions are required to achieve what one state in a pure firmware implementation can achieve.
 
