@@ -50,7 +50,8 @@ rem Categories:
 rem
 
 title Running Vivado
-set VIVADO_INSTALL=D:\Xilinx\Vivado\2019.1\bin
+call config.cmd
+if not defined VIVADO_INSTALL (goto error)
 
 %VIVADO_INSTALL%\vivado.bat ^
   -mode gui ^
@@ -63,3 +64,7 @@ set VIVADO_INSTALL=D:\Xilinx\Vivado\2019.1\bin
 rem Clean up junk
 del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log
 
+:error
+  echo.
+  echo Variable 'VIVADO_INSTALL' not set
+  exit /b 1

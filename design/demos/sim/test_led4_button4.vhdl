@@ -23,22 +23,20 @@ library local;
 
 architecture test of test_led4_button4 is
 
-  signal clk     : std_logic := '0';
-  signal reset   : std_logic := '0';
-  signal incr    : std_logic := '0';
-  signal buttons : std_logic_vector(3 downto 0) := "0000";
-  signal leds    : std_logic_vector(3 downto 0);
-
   -- Component declarations must be used when configurations are also used.
   component led4_button4 is
+    generic(
+      rom_file_g : string := ""
+    );
     port(
       clk     : in  std_logic;
       reset   : in  std_logic;
       incr    : in  std_logic;
       buttons : in  std_logic_vector(3 downto 0);
-      leds    : out std_logic_vector(3 downto 0)
+      leds    : out std_logic_vector(3 downto 0) := "0000"
     );
   end component;
+
 
   component stimulus_led4_button4 is
     port(
@@ -49,6 +47,12 @@ architecture test of test_led4_button4 is
       leds    : in  std_logic_vector(3 downto 0)
     );
   end component;
+
+  signal clk     : std_logic := '0';
+  signal reset   : std_logic := '0';
+  signal incr    : std_logic := '0';
+  signal buttons : std_logic_vector(3 downto 0) := "0000";
+  signal leds    : std_logic_vector(3 downto 0);
 
 begin
 

@@ -103,18 +103,20 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
 #
 # Parameter:
 #  1. A file name 'f'. Must contain neither path nor extension as these get added, as
-#     in "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.txt".
+#     in "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.o".
 #
 # Usage: set_asm_file traffic_lights
 #
 proc set_asm_file {f} {
   global env
 
-  set ff [file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.txt"]
-
+  set ff [file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.o"]
   if {![file exists $ff]} {
     error "File '$ff' does not exist." 1
   }
+
+  # Make sure we're using the RISC CPU. This does override the use of Scratch to produce the same.
+  set_property top zybo_risc_cpu [current_fileset]
 
   set_property generic [list \
     sim_g=false \
@@ -124,7 +126,16 @@ proc set_asm_file {f} {
 
 # Programme the Zybo Z7 development board.
 #
-proc prog_my_board {} {
+proc prog_my_board {{impl impl_1}} {
+  set bit_files [glob -nocomplain "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
+  set impl_run [get_runs $impl]
+  if {
+    [llength $bit_files] == 0 ||
+    [get_property NEEDS_REFRESH $impl_run] ||
+    [string equal [get_property PROGRESS $impl_run] "0%"]
+  } {
+    impl_my_design
+  }
   set bit_files [glob -nocomplain "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
   if {[llength $bit_files] == 1} {
     open_hw
@@ -194,10 +205,23 @@ proc add_my_buttons {} {
       -toolbar_icon "$thisdir/vivado_icon_p.png" \
       -command prog_my_board
   }
+  if {[lsearch [get_gui_custom_commands -quiet] asm_file] < 0} {
+    create_gui_custom_command \
+      -name asm_file \
+      -description "Assembled Code File for ROM." \
+      -menu_name "Code File" \
+      -show_on_toolbar \
+      -toolbar_icon "$thisdir/vivado_icon_a.png" \
+      -command set_asm_file
+    create_gui_custom_command_arg \
+      -command_name asm_file \
+      -arg_name f \
+      -comment ".o File"
+  }
 }
 
 proc remove_my_buttons {} {
-  foreach i {my_elab my_synth my_impl my_prog} {
+  foreach i {my_elab my_synth my_impl my_prog asm_file} {
     if {[lsearch [get_gui_custom_commands -quiet] $i] >= 0} {
       remove_gui_custom_commands -name $i
     }

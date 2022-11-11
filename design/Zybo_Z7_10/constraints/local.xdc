@@ -17,7 +17,7 @@
 #
 #####################################################################################
 
-create_clock -add -name clk_port -period 8.000 -waveform {0 4} [get_ports {clk_port}];
+create_clock -add -name clk_port -period 8.000 -waveform {0 4} [get_ports {clk_port}]
 
 # Keep the mapping from hierarchy to code clear.
 set_property keep_hierarchy true [get_cells {retime_btn retime_sw led4_button4_i}]

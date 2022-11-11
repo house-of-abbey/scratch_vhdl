@@ -78,22 +78,26 @@ set_property default_lib work [current_project]
 
 # Add project files
 add_files -fileset [current_fileset] $scratch_vhdl_src/design/demos/src
-add_files -fileset [current_fileset] $scratch_vhdl_src/design/Zybo_Z7_10/src
 add_files -fileset [current_fileset] $scratch_vhdl_src/design/scratch.vhdl
-set_property file_type {VHDL 2008} [get_files {*.vhdl}]
+add_files -fileset [current_fileset] $scratch_vhdl_src/design/Zybo_Z7_10/src
 add_files -fileset [current_fileset -constrset] $scratch_vhdl_src/design/Zybo_Z7_10/constraints
+set_property file_type {VHDL 2008} [get_files {*.vhdl}]
+# Turn on manual file ordering before reordering
+set_property source_mgmt_mode DisplayOnly [current_project]
+reorder_files -after [get_files $scratch_vhdl_src/design/demos/src/led4_button4.vhdl] [get_files $scratch_vhdl_src/design/scratch.vhdl]
 # Vivado bleats if it can't manage a constraints file, so we've added one, but we're going to ignore it. Order is important here.
 set_property is_enabled false [get_files {managed.xdc}]
 set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -constrset]
 
-set_property top zybo_z7_10 [current_fileset]
-update_compile_order -fileset [current_fileset]
+#set_property top zybo_z7_10 [current_fileset]
+#set_property top zybo_risc_cpu [current_fileset]
+set_property top zybo_scratch [current_fileset]
 
 set user_profile [file normalize $env(USERPROFILE)]
 
 set_property generic [list \
   sim_g=false \
-  rom_file_g="${user_profile}/ModelSim/projects/button_leds/instr_files/tests.txt" \
+  rom_file_g="${user_profile}/ModelSim/projects/button_leds/instr_files/tests.o" \
 ] [current_fileset]
 
 set ip_inst pll
@@ -145,6 +149,20 @@ export_ip_user_files \
   -sync \
   -force \
   -quiet
+
+# if {[llength [get_cells pll_i/inst/* -filter {SIM_DEVICE != 7SERIES} -quiet]] > 0} {
+#   set_property SIM_DEVICE 7SERIES [get_cells pll_i/inst/* -filter {SIM_DEVICE != 7SERIES}]
+# }
+#
+# There does not seem to be a way to set the SIM_DEVICE property before this "Netlist 29-345"
+# warning is issued, so squelch it.
+set_msg_config -suppress -id {Netlist 29-345}
+set_msg_config -suppress -id {Common 17-576}
+set_msg_config -suppress -id {Synth 8-3301} 
+set_msg_config -suppress -id {Constraints 18-5210}
+# Not using thr PS7
+set_msg_config -suppress -id {DRC ZPS7-1}
+set_msg_config -suppress -id {Synth 8-565}
 
 create_ip_run $ip_xci
 launch_runs -jobs 6 ${ip_inst}_synth_1

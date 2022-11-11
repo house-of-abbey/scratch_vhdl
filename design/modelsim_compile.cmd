@@ -8,6 +8,8 @@ rem  J D Abbey & P A Abbey, 14 October 2022
 rem
 rem ---------------------------------------------------------------------------------
 
+title Compiling for Modelsim
+
 rem Setup paths to local installations
 rem
 rem Do not call this variable MODELSIM
@@ -25,8 +27,6 @@ set SRC=%SRC:~0,-1%
 
 rem Directory the batch file was run from, does not always equal SRC
 set DIR=%CD%
-
-title Compiling for Modelsim
 
 echo Compile Source:   %SRC%\*
 echo Into Destination: %DEST%
@@ -71,19 +71,6 @@ if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
   !includeFiles!
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (goto error)
-
-rem Assemble each file in %SRC%\demos\asm\*.asm
-mkdir %DEST%\instr_files
-for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm ^| findstr /v ruledef.asm') do (
-  echo.
-  echo Assembling %%G:
-  %SRC%\..\bin\customasm ^
-    --format=binline ^
-    --output=%DEST%\instr_files\%%~nG.txt ^
-    %SRC%\demos\asm\%%G
-  if %ec% NEQ 0 (goto error)
-  echo.
-)
 
 echo.
 echo Compilation SUCCEEDED

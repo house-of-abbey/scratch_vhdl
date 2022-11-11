@@ -37,6 +37,30 @@ end entity;
 
 architecture rtl of zybo_z7_10 is
 
+  -- Component declarations must be used when configurations are also used.
+  component led4_button4 is
+    generic(
+      rom_file_g : string := ""
+    );
+    port(
+      clk     : in  std_logic;
+      reset   : in  std_logic;
+      incr    : in  std_logic;
+      buttons : in  std_logic_vector(3 downto 0);
+      leds    : out std_logic_vector(3 downto 0) := "0000"
+    );
+  end component;
+
+  -- When using configurations this must be instantiated via a component rather
+  -- than entity work.pll or Vivado bleats.
+  component pll
+    port (
+      clk_in  : in  std_logic;
+      clk_out : out std_logic;
+      locked  : out std_logic
+    );
+  end component;
+
   function divide(sim : boolean) return positive is
   begin
     if sim then
@@ -65,7 +89,7 @@ architecture rtl of zybo_z7_10 is
 
 begin
 
-  pll_i : entity work.pll
+  pll_i : pll
     port map (
       -- Clock in ports
       clk_in  => clk_port,
@@ -133,7 +157,7 @@ begin
     end if;
   end process;
 
-  led4_button4_i : entity work.led4_button4(scratch)
+  led4_button4_i : led4_button4
     generic map (
       rom_file_g => rom_file_g
     )
@@ -146,3 +170,20 @@ begin
     );
 
 end architecture;
+
+
+configuration zybo_scratch of zybo_z7_10 is
+  for rtl
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(scratch);
+    end for;
+  end for;
+end configuration;
+
+configuration zybo_risc_cpu of zybo_z7_10 is
+  for rtl
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(risc_cpu);
+    end for;
+  end for;
+end configuration;
