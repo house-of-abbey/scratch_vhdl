@@ -126,6 +126,7 @@ These are split into separate pages as follows:
   * Visual Studio Code, including:
     * Scratch VHDL plugin
     * VHDL editor plugin
+  * [Script Reference](scripts.md)
 * [Project creation](project_creation.md)
   * Vivado project generation
   * ModelSim compilation
