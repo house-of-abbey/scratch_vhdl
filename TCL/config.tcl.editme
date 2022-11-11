@@ -7,7 +7,7 @@
 #
 # TCL script to setup the local configuration. Read by start_sim.tcl.
 #
-# Edit thei file and rename to 'config.tcl'.
+# Edit the file and rename to 'config.tcl'.
 #
 # J D Abbey & P A Abbey, 15 October 2022
 #
@@ -15,4 +15,4 @@
 
 # Set this to your local Git clone
 set scratch_vhdl_src [file normalize {path\to\scratch_vhdl}]
-set modelsim_install [file normalize {C:\intelFPGA_lite\20.1\modelsim_ase\win32aloem}]
+set modelsim_install [file normalize {C:\intelFPGA_lite\<ver>\modelsim_ase\win32aloem}]

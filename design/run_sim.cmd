@@ -9,8 +9,10 @@ rem
 rem ---------------------------------------------------------------------------------
 
 title Running Modelsim
-set MODELSIM_INSTALL="D:\intelFPGA_lite\20.1\modelsim_ase\win32aloem"
+call config.cmd
+if not defined MODELSIMDIR (goto error)
+set MODELSIMBIN=%MODELSIMDIR%\modelsim_ase\win32aloem
 
-%MODELSIM_INSTALL%\vsim -do "source {../TCL/start_sim.tcl}"
+%MODELSIMBIN%\vsim -do "source {../TCL/start_sim.tcl}"
 rem This file can be reported as in use by another process when it is not, so just clean it up.
-del /f %USERPROFILE%\ModelSim\projects\button_leds\vsim.wlf
+del /f %USERPROFILE%\ModelSim\projects\button_leds\vsim.wlf transcript

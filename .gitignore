@@ -1,4 +1,5 @@
 TCL/config.tcl
+design/config.cmd
 transcript
 Thumbs.db
 .Xil

@@ -10,20 +10,20 @@ rem ----------------------------------------------------------------------------
 
 title Compiling for Modelsim
 
+rem Batch file's directory where the source code is
+set SRC=%~dp0
+rem drop last character '\'
+set SRC=%SRC:~0,-1%
+
 rem Setup paths to local installations
 rem
-rem Do not call this variable MODELSIM
-set MODELSIMDIR=D:\intelFPGA_lite\20.1
+call %SRC%\config.cmd
+if not defined MODELSIMDIR (goto error)
 set MODELSIMBIN=%MODELSIMDIR%\modelsim_ase\win32aloem
 
 rem Set the path to the compilation products
 set SIM=%USERPROFILE%\ModelSim
 set DEST=%SIM%\projects\button_leds
-
-rem Batch file's directory where the source code is
-set SRC=%~dp0
-rem drop last character '\'
-set SRC=%SRC:~0,-1%
 
 rem Directory the batch file was run from, does not always equal SRC
 set DIR=%CD%
@@ -62,6 +62,7 @@ if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
 %MODELSIMBIN%\vcom -quiet -2008 ^
   %SRC%\demos\src\risc_pkg.vhdl ^
   %SRC%\demos\src\led4_button4.vhdl ^
+  %SRC%\scratch.vhdl ^
   %SRC%\demos\src\retime.vhdl ^
   %SRC%\Zybo_Z7_10\ip\pll\pll_sim_netlist.vhdl ^
   %SRC%\Zybo_Z7_10\src\zybo_z7_10.vhdl ^
