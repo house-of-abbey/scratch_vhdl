@@ -1,0 +1,17 @@
+@echo off
+rem ---------------------------------------------------------------------------------
+rem 
+rem  Distributed under MIT Licence
+rem    See https://github.com/house-of-abbey/scratch_vhdl/blob/main/LICENCE.
+rem 
+rem CMD script to setup the local configuration. Read by *.cmd.
+rem
+rem Edit the file and rename to 'config.cmd'.
+rem
+rem  J D Abbey & P A Abbey, 11 November 2022
+rem 
+rem ---------------------------------------------------------------------------------
+
+set VIVADO_INSTALL=C:\Xilinx\Vivado\<ver>\bin
+rem Do not call this variable MODELSIM
+set MODELSIMDIR=C:\intelFPGA_lite\<ver>
