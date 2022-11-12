@@ -7,7 +7,7 @@ export function activate(context: vscode.ExtensionContext) {
     configuration.update(
         'explorer.fileNesting.patterns',
         {
-            '*.vhdl': '${capture}.vhdl.sbd, ${capture}.vhdl.sbe',
+            '*.vhdl': '${capture}.vhdl.sbd, ${capture}.vhdl.sbe, ${capture}.vhdl.sbi',
             ...configuration.get('explorer.fileNesting.patterns', {}),
         },
         true
