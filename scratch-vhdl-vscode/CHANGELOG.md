@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Map for generated lines in code to the block that generated it.
+  - Accompanying context menu item.
+- Migrated to VSCode CustomTextDocument from CustomDocument.
+
+### Fixed
+
+- Generation of arithmetic and comparison operators.
+- Duplicate categories for libraries.
+
 ## [0.1.1]
 
 ### Added
