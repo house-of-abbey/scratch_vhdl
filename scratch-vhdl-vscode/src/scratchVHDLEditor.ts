@@ -169,9 +169,11 @@ export class ScratchVHDLEditorProvider
         // Remember that a single text document can also be shared between multiple custom
         // editors (this happens for example when you split a custom editor)
 
+        let acceptChanges = true;
         const changeDocumentSubscription =
             vscode.workspace.onDidChangeTextDocument((e) => {
                 if (
+                    acceptChanges &&
                     [
                         document.uri.toString(),
                         scratchDocument.uri.toString(),
@@ -222,8 +224,14 @@ export class ScratchVHDLEditorProvider
                 // }
 
                 case 'update':
-                    this.updateTextDocument(scratchDocument, message.body[0]);
-                    this.updateTextDocument(document, message.body[1]);
+                    acceptChanges = false;
+                    Promise.all([
+                        this.updateTextDocument(
+                            scratchDocument,
+                            message.body[0]
+                        ),
+                        this.updateTextDocument(document, message.body[1]),
+                    ]).then(() => (acceptChanges = true));
                     return;
 
                 case 'requestEntity':
@@ -285,7 +293,10 @@ export class ScratchVHDLEditorProvider
 
                 case 'prompt':
                     vscode.window
-                        .showInputBox({ prompt: message.body })
+                        .showInputBox({
+                            prompt: message.body,
+                            value: message.default,
+                        })
                         .then((value) =>
                             webviewPanel.webview.postMessage({
                                 type: 'prompt',

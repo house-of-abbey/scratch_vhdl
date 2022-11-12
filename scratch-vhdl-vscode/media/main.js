@@ -40,10 +40,11 @@ document.addEventListener('DOMContentLoaded', function () {
         body: m
     });
     window.addEventListener("message", (message) => message.data.type == "prompt" && requests[message.data.id](message.data.body));
-    const prompt = (m) => {
+    const prompt = (m, d) => {
         vscode.postMessage({
             type: "prompt",
             body: m,
+            default: d,
             id: rid
         });
         return new Promise((resolve) => requests[rid++] = resolve);
@@ -1109,7 +1110,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     Generator.logic_compare = function (generator, block) {
-        return [generator.valueToCode(block, "A", generator.ORDER_COMPARE) + " = " + generator.valueToCode(block, "B", generator.ORDER_COMPARE), generator.ORDER_COMPARE]
+        const OPERATORS = { 'EQ': '=', 'NEQ': '/=', 'LT': '<', 'LTE': '<=', 'GT': '>', 'GTE': '>=' };
+        return [generator.valueToCode(block, "A", generator.ORDER_COMPARE) + ' ' + OPERATORS[block.getFieldValue('OP')] + ' ' + generator.valueToCode(block, "B", generator.ORDER_COMPARE), generator.ORDER_COMPARE]
     }
 
     Generator.variables_get = function (generator, block) {
@@ -1157,7 +1159,7 @@ document.addEventListener('DOMContentLoaded', function () {
         };
         const tuple = OPERATORS[block.getFieldValue('OP')];
         const order = tuple[1];
-        return [generator.valueToCode(block, 'A', order) || '0' + tuple[0] + generator.valueToCode(block, 'B', order) || '0', order];
+        return [(generator.valueToCode(block, 'A', order) || '0') + tuple[0] + (generator.valueToCode(block, 'B', order) || '0'), order];
     };
 
     Generator.list_index = function (generator, block) {
@@ -1337,7 +1339,6 @@ document.addEventListener('DOMContentLoaded', function () {
     bp.init();
 
     let entity = {};
-    let libraries = {};
     let entityCode = "";
     let librariesCode = "";
     let constantsCode = "";
@@ -1386,6 +1387,46 @@ document.addEventListener('DOMContentLoaded', function () {
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
         id: 'run',
         weight: -0.8,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Change entity name",
+        preconditionFn() {
+            return "enabled";
+        },
+        async callback() {
+            var a = await prompt("New name: ", entity.name);
+            if (a) {
+                entity.name = a;
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            }
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'name',
+        weight: -0.7,
+    });
+
+    Blockly.ContextMenuRegistry.registry.register({
+        displayText: "Change run command",
+        preconditionFn() {
+            return "enabled";
+        },
+        async callback() {
+            var a = await prompt("New command: ", entity.command);
+            if (a) {
+                entity.command = a;
+                vscode.postMessage({
+                    type: "updateEntity",
+                    body: JSON.stringify(entity)
+                });
+            }
+        },
+        scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
+        id: 'cmd',
+        weight: -0.6,
     });
 
     // const notExists = (n) => !(entity.entity.hasOwnProperty(n) || signals.hasOwnProperty(n) || constants.hasOwnProperty(n) || aliases.hasOwnProperty(n));
@@ -1507,8 +1548,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const submit = document.createElement("button");
             submit.innerText = "Submit";
             submit.addEventListener("click", () => {
-                modal.removeEventListener("close", () => resolve(data));
+                modal.removeEventListener("close", () => (modal.remove(), resolve(data)));
                 modal.close();
+                modal.remove();
                 if (isArray) {
                     const arraySplit = (array) => [array[0], array.slice(1)];
                     resolve(Object.fromEntries(rows.map((cols) => arraySplit(cols.map(c => c.value)))));
@@ -1519,8 +1561,9 @@ document.addEventListener('DOMContentLoaded', function () {
             modal.appendChild(submit);
 
             document.body.appendChild(modal);
+            modal.setAttribute("hidden", "true");
             modal.showModal();
-            modal.addEventListener("close", () => resolve(data));
+            modal.addEventListener("close", () => (modal.remove(), resolve(data)));
         })
     }
 
@@ -1663,7 +1706,7 @@ document.addEventListener('DOMContentLoaded', function () {
             Blockly.Events.disable(),
             Blockly.serialization.workspaces.load(JSON.parse(message.data.body), ws, { registerUndo: false }),
             Blockly.Events.enable(),
-            generateEntity(), generateAliases(), generateSignals
+            generateEntity(), generateAliases(), generateSignals()
         ));
     window.addEventListener('message',
         async (message) => {
@@ -1673,9 +1716,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 entity.signals = entity.signals || {};
                 entity.constants = entity.constants || {};
                 entity.aliases = entity.aliases || {};
+                entityCode = "";
+                librariesCode = "";
+                constantsCode = "";
+                aliasesCode = "";
 
                 // reset toolbox
-                ws.updateToolbox(structuredClone(toolbox));
+                const tb = structuredClone(toolbox);
 
                 if (entity.constants) {
                     Blockly.defineBlocksWithJsonArray([{
@@ -1692,7 +1739,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         "inputsInline": true,
                         "output": null
                     }]);
-                    const tb = ws.getToolbox().toolboxDef_;
                     tb.contents = [
                         ...tb.contents,
                         {
@@ -1708,17 +1754,10 @@ document.addEventListener('DOMContentLoaded', function () {
                             name: "Constants"
                         }
                     ];
-                    ws.updateToolbox(tb);
                     constantsCode = Object.keys(entity.constants).map((n) =>
                         "\n  constant " + n + " : " + entity.constants[n][0] + " := " + entity.constants[n][1] + ";"
                     ).join("");
                 }
-
-                libraries = {
-                    "ieee": {
-                        "std_logic_1164": null
-                    }
-                };
 
                 if (entity.libraries) {
                     function libraryDef(def) {
@@ -1730,7 +1769,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         }));
                     }
 
-                    libraries = mergeDeep(libraries, entity.libraries);
+                    const libraries = mergeDeep({
+                        "ieee": {
+                            "std_logic_1164": null
+                        }
+                    }, entity.libraries);
                     categories = [];
 
                     for (const a in libraries) {
@@ -1759,7 +1802,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             });
                     }
 
-                    const tb = ws.getToolbox().toolboxDef_;
                     tb.contents = [
                         ...tb.contents,
                         {
@@ -1767,18 +1809,21 @@ document.addEventListener('DOMContentLoaded', function () {
                         },
                         ...categories
                     ];
-                    ws.updateToolbox(tb);
+
+                    librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
                 }
 
-                vscode.postMessage({ type: 'requestUpdate' });
+                ws.updateToolbox(tb);
 
-                librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
+                vscode.postMessage({ type: 'requestUpdate' });
             }
         }
     );
 
     ws.addChangeListener((e) => {
         if (e.isUiEvent) return;
+        if (e.oldInputName && !e.newInputName) return;
+        if (e.type == Blockly.Events.BLOCK_CREATE) return;
 
         if (e.type == Blockly.Events.VAR_DELETE) {
             if (entity.signals[e.varName])
