@@ -11,8 +11,8 @@
             "titleBar.activeForeground": "#ECFFF0"
         },
         "explorer.fileNesting.enabled": true,
-        "material-icon-theme.languages.associations": {
-            "vhdl": "Verilog"
+        "material-icon-theme.files.associations": {
+            "*.vhdl": "Verilog"
         },
         "scratch-vhdl-vscode.templates": {
             "led4_button4": {
@@ -31,8 +31,6 @@
         }
     },
     "extensions": {
-        "recommendations": [
-            "JosephAbbey.scratch-vhdl-vscode"
-        ]
+        "recommendations": ["JosephAbbey.scratch-vhdl-vscode"]
     }
 }

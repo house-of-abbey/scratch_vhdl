@@ -315,7 +315,7 @@ pack .controls.body.sim.reload -side left -pady $butgap -padx $butgap
 button .controls.body.sim.asm \
   -text "Change ASM" \
   -font "Helvetica $btnfontsize bold" \
-  -command {change_asm [tk_getOpenFile -initialdir {D:\Users\Philip\ModelSim\projects\button_leds\instr_files} -filetypes {{bin {.o}}}]}
+  -command {change_asm [tk_getOpenFile -initialdir {./instr_files} -filetypes {{bin {.o}}}]}
 pack .controls.body.sim.asm -side left -pady $butgap -padx $butgap
 
 button .controls.body.sim.step \
