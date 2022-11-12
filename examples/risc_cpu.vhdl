@@ -1,6 +1,8 @@
 library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
+library work;
+  use work.risc_cpu_pkg.all;
 
 
 
@@ -8,11 +10,11 @@ library ieee;
 architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 2;
-  constant code : work.risc_cpu_pkg.t_code := (x"1030",x"3100",x"7201",x"4200",x"e001");
+  constant code : code_t := read_code_from_file(filename => rom_file_g, arr_size => 512);
 
   signal pc : std_logic_vector(8 downto 0);
   signal pc_value : work.risc_cpu_pkg.code_t'element;
-  signal pc_op : work.risc_cpu_pkg.op_t;
+  signal pc_op : std_logic_vector(3 downto 0);
   signal pc_dest : natural range 0 to 7;
   signal pc_src1 : natural range 0 to 7;
   signal pc_src2 : natural range 0 to 7;
@@ -63,7 +65,7 @@ begin
           end if;
           case pc_op is
             when "0001" =>
-              reg(pc_dest) <= pc_value(3 to 0);
+              reg(pc_dest) <= pc_value(3 downto 0);
 
             when "0010" =>
               reg(pc_dest) <= reg(pc_src1);
@@ -78,10 +80,10 @@ begin
               reg(pc_dest) <= not reg(pc_src1);
 
             when "0110" =>
-              reg(pc_dest) <= reg(pc_src1) + reg(pc_src1);
+              reg(pc_dest) <= reg(pc_src1) + reg(pc_src2);
 
             when "0111" =>
-              reg(pc_dest) <= reg(pc_src1) - reg(pc_src1);
+              reg(pc_dest) <= reg(pc_src1) - reg(pc_src2);
 
             when "1000" =>
               if pc_value(1) = '0' then
@@ -125,9 +127,5 @@ begin
       end if;
     end if;
   end process;
-pc <= pc + 1;
-
-pc <= pc + 1;
-
 
 end architecture;

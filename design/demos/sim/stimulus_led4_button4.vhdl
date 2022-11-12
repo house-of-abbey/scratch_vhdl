@@ -746,7 +746,10 @@ configuration test_interactive of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(scratch);
+      use entity work.led4_button4(scratch)
+        generic map(
+          rom_file_g => "./instr_files/tests.o"
+        );
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4

@@ -116,7 +116,7 @@ proc set_asm_file {f} {
   }
 
   # Make sure we're using the RISC CPU. This does override the use of Scratch to produce the same.
-  set_property top zybo_risc_cpu [current_fileset]
+  # set_property top zybo_risc_cpu [current_fileset]
 
   set_property generic [list \
     sim_g=false \

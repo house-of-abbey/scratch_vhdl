@@ -53,23 +53,30 @@ if %ERRORLEVEL% NEQ 0 (goto error)
 if %ERRORLEVEL% NEQ 0 (goto error)
 
 setlocal enabledelayedexpansion
+
 set includeFiles=
+set argCount=0
 for %%x in (%*) do (
+   set /A argCount+=1
    set includeFiles=!includeFiles! %DIR%\%%~x
 )
-if [%1] NEQ [] (type !includeFiles! > %SRC%\scratch.vhdl)
+if %argCount%==0 (
+  set includeFiles=%SRC%\scratch_empty.vhdl
+  echo Warning - Compiling empty 'scratch' architecture.
+) else (
+  type !includeFiles! > %SRC%\scratch.vhdl
+)
 
 %MODELSIMBIN%\vcom -quiet -2008 ^
   %SRC%\demos\src\risc_pkg.vhdl ^
   %SRC%\demos\src\led4_button4.vhdl ^
-  %SRC%\scratch.vhdl ^
+  !includeFiles! ^
   %SRC%\demos\src\retime.vhdl ^
   %SRC%\Zybo_Z7_10\ip\pll\pll_sim_netlist.vhdl ^
   %SRC%\Zybo_Z7_10\src\zybo_z7_10.vhdl ^
   %SRC%\demos\sim\test_led4_button4.vhdl ^
   %SRC%\demos\sim\stimulus_led4_button4.vhdl ^
-  %SRC%\Zybo_Z7_10\sim\test_zybo_z7_10.vhdl ^
-  !includeFiles!
+  %SRC%\Zybo_Z7_10\sim\test_zybo_z7_10.vhdl
 set ec=%ERRORLEVEL%
 if %ec% NEQ 0 (goto error)
 

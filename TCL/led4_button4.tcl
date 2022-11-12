@@ -33,7 +33,7 @@ set fontsize   16
 # Don't amend these
 set thisscript [file normalize [info script]]
 set thisdir    [file dirname $thisscript]
-set winwidth    530; # [expr 60 + 36*$fontsize]
+set winwidth    594; # [expr 60 + 40*$fontsize]
 set winheight   280; # [expr 180 +  2*$fontsize]
 set btnfontsize [expr $fontsize/2]
 set pushbtntime  "300 ns"
@@ -235,6 +235,17 @@ proc step_cmd {} {
   .controls.body.sim.step configure -state normal
 }
 
+proc change_asm {{f} {conf 0}} {
+  global thisscript
+  quit -sim
+  if {$conf == 0} {
+    vsim -Grom_file_g=$f work.test_interactive
+  } else {
+    vsim -Grom_file_g=$f work.test_risc_cpu
+  }
+  transcribe source "$thisscript"
+}
+
 set autostep 0
 proc autostep_check {} {
   global autostep now
@@ -300,6 +311,12 @@ button .controls.body.sim.reload \
   -font "Helvetica $btnfontsize bold" \
   -command {source $thisscript}
 pack .controls.body.sim.reload -side left -pady $butgap -padx $butgap
+
+button .controls.body.sim.asm \
+  -text "Change ASM" \
+  -font "Helvetica $btnfontsize bold" \
+  -command {change_asm [tk_getOpenFile -initialdir {D:\Users\Philip\ModelSim\projects\button_leds\instr_files} -filetypes {{bin {.o}}}]}
+pack .controls.body.sim.asm -side left -pady $butgap -padx $butgap
 
 button .controls.body.sim.step \
   -text "Step" \
