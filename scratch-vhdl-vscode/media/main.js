@@ -1711,11 +1711,13 @@ document.addEventListener('DOMContentLoaded', function () {
     window.addEventListener('message',
         async (message) => {
             if (message.data.type == "entity") {
+                const oldLibs = JSON.stringify(entity?.libraries || {});
                 entity = JSON.parse(message.data.body);
                 name = entity.name || message.data.file_name;
                 entity.signals = entity.signals || {};
                 entity.constants = entity.constants || {};
                 entity.aliases = entity.aliases || {};
+                entity.libraries = entity.libraries || {};
                 entityCode = "";
                 librariesCode = "";
                 constantsCode = "";
@@ -1724,96 +1726,92 @@ document.addEventListener('DOMContentLoaded', function () {
                 // reset toolbox
                 const tb = structuredClone(toolbox);
 
-                if (entity.constants) {
-                    Blockly.defineBlocksWithJsonArray([{
-                        type: "constant",
-                        message0: "%1",
-                        args0: [
-                            {
-                                "type": "field_dropdown",
-                                "name": "NAME",
-                                "options": Object.keys(entity.constants).map((a) => [a, a])
-                            },
-                        ],
-                        colour: 250,
-                        "inputsInline": true,
-                        "output": null
-                    }]);
-                    tb.contents = [
-                        ...tb.contents,
+                Blockly.defineBlocksWithJsonArray([{
+                    type: "constant",
+                    message0: "%1",
+                    args0: [
                         {
-                            kind: "category",
-                            colour: 250,
-                            contents: Object.keys(entity.constants).map((a) => ({
-                                kind: "block",
-                                type: "constant",
-                                fields: {
-                                    "NAME": a
-                                }
-                            })),
-                            name: "Constants"
-                        }
-                    ];
-                    constantsCode = Object.keys(entity.constants).map((n) =>
-                        "\n  constant " + n + " : " + entity.constants[n][0] + " := " + entity.constants[n][1] + ";"
-                    ).join("");
-                }
-
-                if (entity.libraries) {
-                    function libraryDef(def) {
-                        Blockly.defineBlocksWithJsonArray(def.map((a) => a.block));
-                        def.forEach((a) => VHDLGenerator[a.block.type] = a.generator);
-                        return def.map((a) => ({
-                            kind: "block",
-                            type: a.block.type
-                        }));
-                    }
-
-                    const libraries = mergeDeep({
-                        "ieee": {
-                            "std_logic_1164": null
-                        }
-                    }, entity.libraries);
-                    categories = [];
-
-                    for (const a in libraries) {
-                        let c = [];
-                        let colour = Array.from(a).slice(0, 10).map((x) => parseInt(x, 36) - 10).reduce((x, y) => x + y, 0) * Math.min(a.length, 10) / 10;
-                        for (const lib in libraries[a]) {
-                            if (libraries[a][lib] === null)
-                                continue;
-                            else if (libraries[a][lib] === "builtin")
-                                def = builtinLibs[a][lib];
-                            else
-                                def = eval("((colour, generator)=>" + await getFile(libraries[a][lib]) + ")")(colour, VHDLGenerator).blocks;
-                            c.push({
-                                kind: "category",
-                                colour,
-                                contents: libraryDef(def),
-                                name: lib
-                            });
-                        }
-                        if (c.length > 0)
-                            categories.push({
-                                kind: "category",
-                                colour,
-                                contents: c,
-                                name: a
-                            });
-                    }
-
-                    tb.contents = [
-                        ...tb.contents,
-                        {
-                            'kind': 'sep',
+                            "type": "field_dropdown",
+                            "name": "NAME",
+                            "options": Object.keys(entity.constants).map((a) => [a, a])
                         },
-                        ...categories
-                    ];
+                    ],
+                    colour: 250,
+                    "inputsInline": true,
+                    "output": null
+                }]);
+                tb.contents = [
+                    ...tb.contents,
+                    {
+                        kind: "category",
+                        colour: 250,
+                        contents: Object.keys(entity.constants).map((a) => ({
+                            kind: "block",
+                            type: "constant",
+                            fields: {
+                                "NAME": a
+                            }
+                        })),
+                        name: "Constants"
+                    }
+                ];
+                constantsCode = Object.keys(entity.constants).map((n) =>
+                    "\n  constant " + n + " : " + entity.constants[n][0] + " := " + entity.constants[n][1] + ";"
+                ).join("");
 
-                    librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
+                function libraryDef(def) {
+                    Blockly.defineBlocksWithJsonArray(def.map((a) => a.block));
+                    def.forEach((a) => VHDLGenerator[a.block.type] = a.generator);
+                    return def.map((a) => ({
+                        kind: "block",
+                        type: a.block.type
+                    }));
                 }
+
+                const libraries = mergeDeep({
+                    "ieee": {
+                        "std_logic_1164": null
+                    }
+                }, entity.libraries);
+                const categories = [];
+
+                for (const a in libraries) {
+                    let c = [];
+                    let colour = Array.from(a).slice(0, 10).map((x) => parseInt(x, 36) - 10).reduce((x, y) => x + y, 0) * Math.min(a.length, 10) / 10;
+                    for (const lib in libraries[a]) {
+                        if (libraries[a][lib] === null)
+                            continue;
+                        else if (libraries[a][lib] === "builtin")
+                            def = builtinLibs[a][lib];
+                        else
+                            def = eval("((colour, generator)=>" + await getFile(libraries[a][lib]) + ")")(colour, VHDLGenerator).blocks;
+                        c.push({
+                            kind: "category",
+                            colour,
+                            contents: libraryDef(def),
+                            name: lib
+                        });
+                    }
+                    if (c.length > 0)
+                        categories.push({
+                            kind: "category",
+                            colour,
+                            contents: c,
+                            name: a
+                        });
+                }
+
+                tb.contents = [
+                    ...tb.contents,
+                    {
+                        'kind': 'sep',
+                    },
+                    ...categories
+                ];
 
                 ws.updateToolbox(tb);
+
+                librariesCode = Object.keys(libraries).map((l) => "library " + l + ";" + Object.keys(libraries[l]).map((p) => "\n  use " + l + "." + p + ".all;").join("")).join("\n");
 
                 vscode.postMessage({ type: 'requestUpdate' });
             }
