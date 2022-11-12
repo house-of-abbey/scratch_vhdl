@@ -1,1 +1,52 @@
-{"entity":{"clk":["in","std_logic"],"reset":["in","std_logic"],"incr":["in","std_logic"],"buttons":["in","std_logic_vector(3 downto 0)"],"leds":["out","std_logic_vector(3 downto 0)"]},"name":"led4_button4","constants":{"button_tab_c":["natural","2"],"code":["work.risc_cpu_pkg.t_code","(x\"1030\",x\"3100\",x\"7201\",x\"4200\",x\"e001\")"]},"libraries":{"ieee":{"numeric_std":"ieee.numeric_std.sbi"}},"signals":{"cnt":"signed(11 downto 0)","mem":"work.risc_cpu_pkg.t_mem"},"aliases":{}}
+{
+    "entity": {
+        "clk": [
+            "in",
+            "std_logic"
+        ],
+        "reset": [
+            "in",
+            "std_logic"
+        ],
+        "incr": [
+            "in",
+            "std_logic"
+        ],
+        "buttons": [
+            "in",
+            "std_logic_vector(3 downto 0)"
+        ],
+        "leds": [
+            "out",
+            "std_logic_vector(3 downto 0)"
+        ]
+    },
+    "name": "led4_button4",
+    "constants": {
+        "button_tab_c": [
+            "natural",
+            "2"
+        ],
+        "code": [
+            "work.risc_cpu_pkg.t_code",
+            "(x\"1030\",x\"3100\",x\"7201\",x\"4200\",x\"e001\")"
+        ]
+    },
+    "libraries": {
+        "ieee": {
+            "numeric_std": "ieee.numeric_std.sbi"
+        }
+    },
+    "signals": {
+        "pc": "std_logic_vector(8 downto 0)",
+        "pc_value": "work.risc_cpu_pkg.code_t'element",
+        "pc_op": "work.risc_cpu_pkg.op_t",
+        "pc_dest": "natural range 0 to 7",
+        "pc_src1": "natural range 0 to 7",
+        "pc_src2": "natural range 0 to 7",
+        "wi": "unsigned(8 downto 0)",
+        "eif": "std_logic",
+        "reg": "work.risc_cpu_pkg.reg_arr_t"
+    },
+    "aliases": {}
+}
