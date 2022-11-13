@@ -216,7 +216,7 @@ proc add_my_buttons {} {
     create_gui_custom_command_arg \
       -command_name asm_file \
       -arg_name f \
-      -comment ".o File"
+      -comment "The base name of the .o file to be used with neither path nor extension."
   }
 }
 

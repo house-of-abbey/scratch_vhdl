@@ -115,29 +115,31 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
 
-## Fuller Details
+## Getting Started
 
 These are split into separate pages as follows:
 
-* Installation
-  * Scratch VHDL
+* **Installation**
   * [ModelSim](modelsim_installation.md)
   * [Vivado](vivado_installation.md)
-  * Visual Studio Code, including:
-    * Scratch VHDL plugin
-    * VHDL editor plugin
+  * Microsoft [Visual Studio Code](https://code.visualstudio.com/)
+    * Also execute the [`install_extension.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/install_extension.cmd) to install Plugins for Scratch VHDL, Customasm and the VHDL editor.
+  * Download the required project binaries.
+    * Execute the [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) script to install Customasm.
+* **Setup**
+  * [Project creation](project_creation.md) covers how the Vivado project is generated.
+  * Compile the existing codebase for ModelSim by executing [`modelsim_compile.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/modelsim_compile.cmd).
+  * Execute the [`asm_compile.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/asm_compile.cmd) script to compile the initial assembly files for the RISC CPU.
+* **Design**
+  * Editing with Scratch VHDL in VS Code.
+  * [Simulation of VHDL](simulation.md)
+    * Verification using the simulator to emulate the design interactively.
+  * [Synthesis of VHDL](synthesis.md)
+    * Elaboration to see the recognisable (generic) gates inferred by the VHDL.
+    * Synthesis to map the generic gates to the required FPGA device.
+    * "Place & Route" the design across the FPGA fabric.
+    * `BIT` file generation and programming of the FPGA on the development board over USB.
+    * Execution on the target [development board](development_board.md).
+
+## References
   * [Script Reference](scripts.md)
-* [Project creation](project_creation.md)
-  * Vivado project generation
-  * ModelSim compilation
-* Editing with Scratch VHDL
-  * Drag and drop of block to create VHDL code
-  * Compilation of VHDL code
-* [Simulation of VHDL](simulation.md)
-  * Verification using the simulator to emulate the design interactively
-* [Synthesis of VHDL](synthesis.md)
-  * Elaboration to see the recognisable (generic) gates inferred by the VHDL
-  * Synthesis to map the generic gates to the required FPGA device
-  * "Place & Route" the design across the FPGA fabric
-  * Bit file generation and programming of the FPGA on the development board over USB
-  * Execution on the target [development board](development_board.md)

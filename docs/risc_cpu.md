@@ -1,8 +1,8 @@
 # RISC CPU
 
-Reduced Instruction Set Computer Central Processing Unit
+_Reduced Instruction Set Computer_ (RISC) _Central Processing Unit_ (CPU)
 
-How about a 4-bit CPU? That gives the opportunity to define 16 instructions, and we can simplify the architecture so the code is stored in a ROM at compile time. You can choose how many registers you code and how the buttons and LEDs are read or driven respectively.
+How about a 4-bit CPU? That gives the opportunity to define 16 instructions, and we can simplify the architecture so the code is stored in a ROM at compile time. You can choose how many registers you code and how the buttons and LEDs are read or driven respectively. All of this functionality neatly fits within the same `led4_button4` definition.
 
 ![CPU Architecture](images/circuit_diagrams/cpu_architecture.png)
 
@@ -10,7 +10,7 @@ For the sake of simplicity, we're proposing the use of a Read Only memory (ROM) 
 
 ## Candidate Instructions
 
-* NOOP - No operation, does nothing and is more useful than you might think.
+* `NOOP` - No operation, does nothing and is more useful than you might think.
 * `LOAD` a register with a literal (actual value)
 * `ADD` two registers and place the answer in a register
 * `SUB`tract
@@ -61,26 +61,110 @@ For this part of the project we suggest you use [customasm](https://github.com/J
 
 All of this can be made available either through
 
-* A web-based editor, or
-* A command line tool to compile a file of assembly code to instructions in a text file that can be read by a ROM initialisation routine in VHDL. Very useful for build scripts.
+* A web-based editor as customised for this project in `bin/customasm.html`. This is setup when [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) is executed so can not be linked here. Or,
+* A command line tool to [compile a file of assembly](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/asm_compile.cmd) code to instructions in a text file that can be read by a ROM initialisation routine in VHDL. Very useful for build scripts.
 
-## Example CPU
+The demonstration RISC CPU comes with an [example instruction set definition](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/demos/asm/ruledef.asm) to give you some ideas and an example to follow. Use the link to see the most up to date version. The `#ruledef` section covers the list of instructions and the `#subruledef reg` section constrains the register selections for use in the instructions. An additional `#subruledef sreg` prevents `r6` being used for an assignment as its the 'read-only' `btns` (VHDL `buttons`) input in the demonstration implementation.
 
-This project comes with an example RISC processor if you would prefer to jump ahead to the programming in assembly step. Both the VHDL for the RISC CPU and the assembly of instructions is ready and available for experiments. Perhaps work your way through the existing examples for state machines but this time in assembly code. Again this can be simulated and then downloaded to the development board and executed to prove it works. Take a look in the [ASM examples](../design/demos.asm/) to get started.
+<pre>
+#once
+#bits 13
+
+; Define a register
+#subruledef reg
+{
+  r{r:u3} => r`3
+  btns    => 6`3 ; equivalent to r6
+  leds    => 7`3 ; equivalent to r7
+}
+
+; Safely assign the output register, make sure it is not r6, which is
+; read-only for the buttons inputs.
+#subruledef sreg
+{
+  {o:reg} => {
+    assert(o != 6)
+    o`3
+  }
+}
+
+; In general: o = fn(a, b)
+;
+#ruledef                           ;       VHDL references
+{                                  ;   op @ dest @ src1 @ src2
+  noop                            => 0x0 @         0`9              ; noop
+  {o:sreg} <- {v:u4}              => 0x1 @  o`3 @  0`2 @  v`4       ; op_set
+  {o:sreg} <- {a:reg}             => 0x2 @  o`3 @  a`3 @  0`3       ; op_copy
+  {o:sreg} <- {a:reg} and {b:reg} => 0x3 @  o`3 @  a`3 @  b`3       ; op_and
+  {o:sreg} <- {a:reg} or  {b:reg} => 0x4 @  o`3 @  a`3 @  b`3       ; op_or
+  {o:sreg} <- not {a:reg}         => 0x5 @  o`3 @  a`3 @  0`3       ; op_not
+  {o:sreg} <- {a:reg}  +  {b:reg} => 0x6 @  o`3 @  a`3 @  b`3       ; op_add
+  {o:sreg} <- {a:reg}  -  {b:reg} => 0x7 @  o`3 @  a`3 @  b`3       ; op_sub
+  {o:sreg} <- {b:u1} > {a:reg}    => 0x8 @  o`3 @  a`3 @  0`2 @ b`1 ; op_shft
+  {o:sreg} <- {a:reg} < {b:u1}    => 0x8 @  o`3 @  a`3 @  1`2 @ b`1 ; op_shft
+
+  if {a:reg} eq {b:reg}           => 0xb @  0`3 @  a`3 @  b`3       ; op_ifeq
+  if {a:reg} gt {b:reg}           => 0xc @  0`3 @  a`3 @  b`3       ; op_ifgt
+  if {a:reg} ge {b:reg}           => 0xd @  0`3 @  a`3 @  b`3       ; op_ifge
+  wincr {l:u9}                    => 0xe @         l`9              ; op_wi
+  wincr                           => 0xe @         1`9              ; op_wi
+  goto  {l:u9}                    => 0xf @         l`9              ; op_goto
+}
+</pre>
+
+Typically the unassembled instructions would be written into a `file.asm` text file and then assembled into a `file.o` text file. The VHDL test bench will then be passed the path to the text file and initialise the ROM with the contents during synthesis. If the unassembled files are written to `design/demos/asm/`, the the [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) script can be re-used for compilation. It calls `customasm` on each file matching `*.asm` in that directory and places each product file in the simulation area under the `instr_files` directory. Both Modelsim and Vivado can pick up the files from that directory.
+
+<div style="column-count:2">
+
+Unassembled code (`add.asm`), more readable:
+
+<pre>
+#include "./ruledef.asm"
+
+r0 <- 3
+r1 <- 0b0000
+
+loop:
+  leds <- r0 + btns
+  wincr 3
+  leds <- btns and r1
+  wincr 1
+  goto loop
+</pre>
+
+Assembled code (`add.o`), for the ROM:
+
+<pre>
+0001000000011
+0001001000000
+0110111000110
+1110000000011
+0011111110001
+1110000000001
+1111000000010
+</pre>
+
+</div>
+
+![Completing the design entry](./images/circuit_diagrams/cpu_architecture_detail.png)
+
+## Demonstration CPU
+
+This project comes with an example RISC processor if you would prefer to jump ahead to the programming in assembly step. Both the Scratch VHDL for the RISC CPU and the assembly of instructions is ready and available for experiments. Perhaps work your way through the existing examples for state machines but this time in assembly code. Again this can be simulated and then downloaded to the development board and executed to prove it works. Take a look in the [ASM examples](../design/demos.asm/) to get started.
 
 In order to execute these files you will need to:
 
-1. Compile the simulation to include the `risc_cpu` architecture of the `led4button4` component.
-2. Supply the simulation with the path to the _compiled_ instructions, i.e. the contents to initialise the ROM with.
-3. Amend the generic used by the top level of the design in Vivado. Then the synthesis will be able to include the instructions in the ROM when generating the BIT file.
-4. Send the BIT file to the development board for execution.
+1. Compile the simulation to include the `risc_cpu` architecture of the `led4_button4` component.
+2. Supply the simulation tool, ModelSim, with the path to the _compiled_ instructions, i.e. the contents to initialise the ROM with. The TCL function `change_asm {/path/file.o}` restarts the simulation with an amended value for the generic used by the top level of the design.
+3. Supply the synthesis tool, Vivado, with the path to the _compiled_ instructions. The TCL function `set_asm_file file` amends the generic used by the top level of the design in Vivado. Then the synthesis will be able to include the instructions in the ROM when generating the `BIT` file.
+4. Send the `BIT` file to the development board for execution. This contains both the RISC CPU and the ROM initialised with the assembled code.
 
-These are the scripts that you need to use to manage this process:
+These are the actions that you need to use to manage this process:
 
-| Action    | Script | Description |
-|:----------|:-------|:------------|
-| Simulation|        |             |
-| Synthesis |        |             |
+| Action    | Button | Script      |
+|:----------|:------:|:------------|
+| Simulation| ![Simulation Control Button](./images/sim_controls/change_asm.png) | `change_asm {/path/file.o}` |
+| Synthesis | ![Vivado Toolbar Button](./images/vivado/a.png) | `set_asm_file file` |
 
 ## And Finally
 

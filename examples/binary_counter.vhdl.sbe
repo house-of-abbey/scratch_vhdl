@@ -1,1 +1,45 @@
-{"entity":{"clk":["in","std_logic"],"reset":["in","std_logic"],"incr":["in","std_logic"],"buttons":["in","std_logic_vector(3 downto 0)"],"leds":["out","std_logic_vector(3 downto 0)"]},"name":"led4_button4","aliases":{"start":"buttons(0)","stop":"buttons(1)"},"constants":{"button_tab_c":["natural","1"]},"libraries":{"ieee":{"numeric_std_unsigned":"./ieee.numeric_std_unsigned.sbi"}},"signals":{"cnt":"integer range 0 to 15","run":"std_logic"}}
+{
+  "entity": {
+    "clk": [
+      "in",
+      "std_logic"
+    ],
+    "reset": [
+      "in",
+      "std_logic"
+    ],
+    "incr": [
+      "in",
+      "std_logic"
+    ],
+    "buttons": [
+      "in",
+      "std_logic_vector(3 downto 0)"
+    ],
+    "leds": [
+      "out",
+      "std_logic_vector(3 downto 0)"
+    ]
+  },
+  "name": "led4_button4",
+  "aliases": {
+    "start": "buttons(0)",
+    "stop": "buttons(1)"
+  },
+  "constants": {
+    "button_tab_c": [
+      "natural",
+      "1"
+    ]
+  },
+  "libraries": {
+    "ieee": {
+      "numeric_std_unsigned": "./ieee.numeric_std_unsigned.sbi"
+    }
+  },
+  "signals": {
+    "cnt": "integer range 0 to 15",
+    "run": "std_logic"
+  },
+  "command": "../design/modelsim_compile.cmd binary_counter.vhdl"
+}

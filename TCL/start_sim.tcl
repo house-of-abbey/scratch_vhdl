@@ -130,5 +130,5 @@ set PrefSource(OpenOnFinish) 0
 
 cd $env(USERPROFILE)/ModelSim/projects/button_leds
 # 'sim_start_hook' gets run twice when this is called here. Otherwise once. Don't know why.
-vsim work.test_interactive
+vsim -t ns work.test_interactive
 source "$scratch_vhdl_src/TCL/led4_button4.tcl"
