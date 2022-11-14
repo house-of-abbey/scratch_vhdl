@@ -160,9 +160,11 @@ set_msg_config -suppress -id {Netlist 29-345}
 set_msg_config -suppress -id {Common 17-576}
 set_msg_config -suppress -id {Synth 8-3301} 
 set_msg_config -suppress -id {Constraints 18-5210}
-# Not using thr PS7
+# Not using the PS7
 set_msg_config -suppress -id {DRC ZPS7-1}
 set_msg_config -suppress -id {Synth 8-565}
+# Some devices are not supported for the installed boards as we're using the free version.
+set_msg_config -suppress -id {Board 49-26}
 
 create_ip_run $ip_xci
 launch_runs -jobs 6 ${ip_inst}_synth_1

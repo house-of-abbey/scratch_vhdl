@@ -122,6 +122,7 @@ These are split into separate pages as follows:
 * **Installation**
   * [ModelSim](modelsim_installation.md)
   * [Vivado](vivado_installation.md)
+  * [Development Board](board_installation.md)
   * Microsoft [Visual Studio Code](https://code.visualstudio.com/)
     * Also execute the [`install_extension.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/install_extension.cmd) to install Plugins for Scratch VHDL, Customasm and the VHDL editor.
   * Download the required project binaries.
