@@ -8,6 +8,11 @@ architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 1;
 
+  signal dir_lr_d : std_logic;
+  signal dir_rl_d : std_logic;
+  signal dir_lr_p : std_logic;
+  signal dir_rl_p : std_logic;
+  signal rl : std_logic;
 
   alias dir_rl is buttons(0);
   alias dir_lr is buttons(3);
@@ -28,8 +33,8 @@ begin
         leds <= "0000";
       else
         if incr = '1' then
-          dir_rl_d <= buttons();
-          dir_lr_d <= buttons();
+          dir_rl_d <= buttons(0);
+          dir_lr_d <= buttons(3);
           if dir_rl = '1' and dir_rl_d = '0' then
             rl <= '1';
           elsif dir_lr = '1' and dir_lr_d = '0' then

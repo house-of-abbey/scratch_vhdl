@@ -8,6 +8,7 @@ architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 1;
 
+  signal buttons_d : std_logic_vector(3 downto 0);
 
 
 begin

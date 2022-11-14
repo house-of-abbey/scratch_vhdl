@@ -64,7 +64,7 @@ begin
         end if;
         if run = '1' and incr = '1' then
           -- External Feedback
-          leds <= leds(2 downto 0) & (leds() xor leds());
+          leds <= leds(2 downto 0) & (leds(3) xor leds(2));
         end if;
       end if;
     end if;

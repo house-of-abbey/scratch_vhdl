@@ -5,19 +5,24 @@
             "block": {
                 "kind": "block",
                 "type": "ieee.numeric_std_unsigned.to_stdulogicvector",
-                "message0": "to_stdulogicvector %1",
+                "message0": "to_stdulogicvector %1, %2",
                 colour,
                 "args0": [
                     {
                         "type": "input_value",
                         "name": "NUM"
+                    },
+                    {
+                        "type": "input_value",
+                        "name": "width"
                     }
                 ],
                 "output": null,
+                "inputsInline": true,
                 "tooltip": "Converts unsigned to std_ulogic_vector"
             },
             "generator": function (block) {
-                return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
+                return ["to_stdulogicvector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ", " + generator.valueToCode(block, "width", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
             }
         }
     ]
