@@ -165,6 +165,15 @@ set_msg_config -suppress -id {DRC ZPS7-1}
 set_msg_config -suppress -id {Synth 8-565}
 # Some devices are not supported for the installed boards as we're using the free version.
 set_msg_config -suppress -id {Board 49-26}
+# Incremental synthesis
+set_msg_config -suppress -id {Vivado 12-7122}
+# Parallel synthesis
+set_msg_config -suppress -id {Synth 8-7080}
+# Unused inputs, e.g. buttons
+# [Synth 8-7129] Port buttons[3] in module led4_button4_scratch is either unconnected or has no load
+set_msg_config  -id {Synth 8-7129}  -string {{WARNING: \[Synth 8-7129\] Port buttons\[[0-3]\].*}}  -suppress  -regexp
+# Check the rules with: get_msg_config -rules
+# Delete a rule with (undocumented): reset_msg_config -ruleid {<n>}
 
 create_ip_run $ip_xci
 launch_runs -jobs 6 ${ip_inst}_synth_1
