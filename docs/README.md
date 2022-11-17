@@ -4,7 +4,7 @@
 [![Open VSX version](https://img.shields.io/open-vsx/v/JosephAbbey/scratch-vhdl-vscode)](https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode)
 [![Open VSX release](https://img.shields.io/open-vsx/release-date/JosephAbbey/scratch-vhdl-vscode)](https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode)
 
-The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious. We'll do this by providing an introductory package of measures to simplify all aspects of design entry from coding through to deployment on a *"Field Programmable Gate Array"* (reprogrammable silicon chip). We'll simplify the process into the following step:
+The purpose of "Scratch VHDL" is to make reprogrammable logic design into child's play. Sounds ambitious. We'll do this by providing an introductory package of measures to simplify all aspects of design entry from coding through to deployment on a *"Field Programmable Gate Array"* (FPGA) which is a reprogrammable silicon chip. To learn more about what an FPGA is, you might like to read the blog "[All About FPGAs](https://www.eetimes.com/all-about-fpgas/)" by Bob Zeidman, or "[Basics of FPGA Architecture and Applications](https://www.elprocus.com/fpga-architecture-and-applications/)". We'll simplify the FPGA design process into the following step:
 
 1. Using a *Scratch* interface to enable drag and drop coding of VHDL.
 2. Providing simple examples to code on a basic theme of 4 button and 4 LEDs, thereby...
