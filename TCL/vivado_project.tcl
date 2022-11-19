@@ -77,9 +77,9 @@ set_property target_language VHDL [current_project]
 set_property default_lib work [current_project]
 
 # Add project files
-add_files -fileset [current_fileset] $scratch_vhdl_src/design/demos/src
-add_files -fileset [current_fileset] $scratch_vhdl_src/design/scratch.vhdl
-add_files -fileset [current_fileset] $scratch_vhdl_src/design/Zybo_Z7_10/src
+add_files -fileset [current_fileset]            $scratch_vhdl_src/design/demos/src
+add_files -fileset [current_fileset]            $scratch_vhdl_src/design/scratch.vhdl
+add_files -fileset [current_fileset]            $scratch_vhdl_src/design/Zybo_Z7_10/src
 add_files -fileset [current_fileset -constrset] $scratch_vhdl_src/design/Zybo_Z7_10/constraints
 set_property file_type {VHDL 2008} [get_files {*.vhdl}]
 # Turn on manual file ordering before reordering
@@ -92,6 +92,9 @@ set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -con
 #set_property top zybo_z7_10 [current_fileset]
 #set_property top zybo_risc_cpu [current_fileset]
 set_property top zybo_scratch [current_fileset]
+# LED registers can get replicated not that the design also drives the 7 segment display. This does improve timing, but is not
+# necessary to meet timing, and it could cause questions on inspection by the novice users we are aiming thi at.
+set_property -name {STEPS.OPT_DESIGN.ARGS.MORE OPTIONS} -value -merge_equivalent_drivers -objects [get_runs impl_1]
 
 set user_profile [file normalize $env(USERPROFILE)]
 
@@ -171,7 +174,8 @@ set_msg_config -suppress -id {Vivado 12-7122}
 set_msg_config -suppress -id {Synth 8-7080}
 # Unused inputs, e.g. buttons
 # [Synth 8-7129] Port buttons[3] in module led4_button4_scratch is either unconnected or has no load
-set_msg_config  -id {Synth 8-7129}  -string {{WARNING: \[Synth 8-7129\] Port buttons\[[0-3]\].*}}  -suppress  -regexp
+set_msg_config -new_severity {WARNING} -id {Synth 8-7129} -string {{WARNING: \[Synth 8-7129\] Port buttons\[[0-3]\].*}} -regexp
+set_msg_config -new_severity {WARNING} -id {Synth 8-7129} -string {{WARNING: [Synth 8-7129] Port incr in module led4_button4_scratch is either unconnected or has no load}}
 # Check the rules with: get_msg_config -rules
 # Delete a rule with (undocumented): reset_msg_config -ruleid {<n>}
 

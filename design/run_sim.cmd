@@ -9,7 +9,14 @@ rem
 rem ---------------------------------------------------------------------------------
 
 title Running Modelsim
-call config.cmd
+if exist config.cmd (
+  call config.cmd
+) else (
+  echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
+  pause
+  exit /b 1
+)
+
 if not defined MODELSIMDIR (goto error)
 set MODELSIMBIN=%MODELSIMDIR%\modelsim_ase\win32aloem
 

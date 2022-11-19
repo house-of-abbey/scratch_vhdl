@@ -51,10 +51,18 @@ rem
 
 title Running Vivado Project Creation
 rem Setup paths to local installations
-call config.cmd
-if not defined VIVADO_INSTALL (goto error)
+if exist config.cmd (
+  call config.cmd
+) else (
+  echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
+  goto error
+)
+if not defined VIVADO_INSTALL (
+  echo Variable 'VIVADO_INSTALL' not set.
+  goto error
+)
 
-%VIVADO_INSTALL%\vivado.bat ^
+call %VIVADO_INSTALL%\vivado.bat ^
   -mode gui ^
   -tempDir %TEMP% ^
   -nojournal ^
@@ -64,8 +72,8 @@ if not defined VIVADO_INSTALL (goto error)
 
 rem Clean up junk
 del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log
+exit /b 0
 
 :error
   echo.
-  echo Variable 'VIVADO_INSTALL' not set
   exit /b 1
