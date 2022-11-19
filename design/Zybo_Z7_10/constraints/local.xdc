@@ -27,6 +27,8 @@ set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime
 # These off chip sources and destinations are not synchronous, but we want a clean timing report.
 # Time in ns
 set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
-set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {led[*]}]
+set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {led[*] disp_sel sevseg[*]}]
 
 set_property direct_reset true [get_nets {led4_button4_i/reset}]
+# Pack the final register into the IOB? Keep this auto to avoid hold time violations
+set_property IOB auto [get_ports {led[*] disp_sel sevseg[*]}]

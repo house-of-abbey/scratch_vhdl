@@ -9,14 +9,14 @@
 -- for the buttons. The four switches and buttons are OR'ed together respectively,
 -- so ensure the switches are off when using the buttons.
 --
--- J D Abbey & P A Abbey, 18 October 2022
---
--------------------------------------------------------------------------------------
-
 -- References:
 --  * https://digilent.com/reference/programmable-logic/zybo-z7/reference-manual
 --  * https://digilent.com/reference/programmable-logic/zybo-z7/start
 --  * https://digilent.com/reference/programmable-logic/guides/installing-vivado-and-vitis
+--
+-- J D Abbey & P A Abbey, 18 October 2022
+--
+-------------------------------------------------------------------------------------
 
 library ieee;
   use ieee.std_logic_1164.all;
@@ -30,7 +30,9 @@ entity zybo_z7_10 is
     clk_port : in  std_logic; -- 125 MHz External Clock
     sw       : in  std_logic_vector(3 downto 0);
     btn      : in  std_logic_vector(3 downto 0);
-    led      : out std_logic_vector(3 downto 0) := "0000"
+    led      : out std_logic_vector(3 downto 0) := "0000";
+    disp_sel : out std_logic                    := '0';
+    sevseg   : out std_logic_vector(6 downto 0) := "0000000"
   );
 end entity;
 
@@ -77,15 +79,17 @@ architecture rtl of zybo_z7_10 is
 
   constant divide_c : positive := divide(sim_g);
 
-  signal clk     : std_logic                    := '0';
-  signal reset   : std_logic                    := '0';
+  signal clk     : std_logic                     := '0';
+  signal reset   : std_logic                     := '0';
   signal locked  : std_logic;
-  signal rst_reg : std_logic_vector(3 downto 0) := (others => '1');
-  signal sw_r    : std_logic_vector(sw'range)   := (others => '0');
-  signal btn_r   : std_logic_vector(btn'range)  := (others => '0');
-  signal buttons : std_logic_vector(btn'range)  := (others => '0');
-  signal incr    : std_logic                    := '0';
-  signal count   : natural range 0 to divide_c  := 0;
+  signal rst_reg : std_logic_vector(3 downto 0)  := (others => '1');
+  signal sw_r    : std_logic_vector(sw'range)    := (others => '0');
+  signal btn_r   : std_logic_vector(btn'range)   := (others => '0');
+  signal buttons : std_logic_vector(btn'range)   := (others => '0');
+  signal incr    : std_logic                     := '0';
+  signal count   : natural range 0 to divide_c-1 := 0;
+  signal sevseg0 : std_logic_vector(6 downto 0)  := (others => '0');
+  signal sevseg1 : std_logic_vector(6 downto 0)  := (others => '0');
 
 begin
 
@@ -167,6 +171,61 @@ begin
       incr    => incr,
       buttons => buttons,
       leds    => led
+    );
+
+  --       a
+  --     #####
+  --    #     #
+  --  f #     # b
+  --    #  g  #
+  --     #####
+  --    #     #
+  --  e #     # c
+  --    #  d  #
+  --     #####
+  --
+  -- https://digilent.com/reference/_media/reference/pmod/pmodssd/pmodssd_rm.pdf
+  --
+  -- This does not need to be registered as the 'dual_seven_seg_display' component
+  -- will register it before the IO.
+  process(led)
+  begin
+    case led is --              "gfedcba"
+      when x"0"   => sevseg1 <= "0111111";
+      when x"1"   => sevseg1 <= "0000110";
+      when x"2"   => sevseg1 <= "1011011";
+      when x"3"   => sevseg1 <= "1001111";
+      when x"4"   => sevseg1 <= "1100110";
+      when x"5"   => sevseg1 <= "1101101";
+      when x"6"   => sevseg1 <= "1111101";
+      when x"7"   => sevseg1 <= "0000111";
+      when x"8"   => sevseg1 <= "1111111";
+      when x"9"   => sevseg1 <= "1101111";
+      when x"a"   => sevseg1 <= "1110111"; -- A
+      when x"b"   => sevseg1 <= "1111100"; -- b
+      when x"c"   => sevseg1 <= "0111001"; -- C
+      when x"d"   => sevseg1 <= "1011110"; -- d
+      when x"e"   => sevseg1 <= "1111001"; -- E
+      when x"f"   => sevseg1 <= "1110001"; -- F
+      when others => sevseg1 <= "0000000";
+    end case;
+  end process;
+
+  -- We only need one.
+  sevseg0 <= "0000000";
+
+  dual_seven_seg_display_i : entity work.dual_seven_seg_display
+    generic map (
+      sim_g         => sim_g,
+      switch_rate_g => 2.0e-3 -- 2 ms
+    )
+    port map (
+      clk      => clk,
+      reset    => reset,
+      sevseg0  => sevseg0, -- left
+      sevseg1  => sevseg1, -- right
+      disp_sel => disp_sel,
+      sevseg   => sevseg
     );
 
 end architecture;
