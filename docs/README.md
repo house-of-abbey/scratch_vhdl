@@ -109,7 +109,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
 8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
   ![Traffic Lights](./images/sim_controls/traffic_lights_demo.gif)
-9. **[Dimmer Controller](dimmer_controller.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
+9. **[Dimmer Controller](dimmer_control.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
 10. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
 11. **[RISC CPU](risc_cpu.md)** - A simple "Reduce Instruction Set Computer" "Central Processing Unit" to read the buttons and drive the LEDs. Now you can re-write all the examples in assembly code!
 
@@ -143,4 +143,5 @@ These are split into separate pages as follows:
     * Execution on the target [development board](development_board.md).
 
 ## References
-  * [Script Reference](scripts.md)
+
+* [Script Reference](scripts.md)
