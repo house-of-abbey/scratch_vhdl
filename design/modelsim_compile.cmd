@@ -73,6 +73,7 @@ if %argCount%==0 (
   !includeFiles! ^
   %SRC%\demos\src\retime.vhdl ^
   %SRC%\Zybo_Z7_10\ip\pll\pll_sim_netlist.vhdl ^
+  %SRC%\Zybo_Z7_10\src\dual_seven_seg_display.vhdl ^
   %SRC%\Zybo_Z7_10\src\zybo_z7_10.vhdl ^
   %SRC%\demos\sim\test_led4_button4.vhdl ^
   %SRC%\demos\sim\stimulus_led4_button4.vhdl ^
@@ -85,7 +86,7 @@ echo Compilation SUCCEEDED
 echo.
 echo To run the top level simulation use:
 echo.
-echo cd %DEST%
+echo cd /d %DEST%
 echo %MODELSIMDIR%\modelsim_ase\win32aloem\vsim -gsim_g=true work.test_zybo_z7_10
 echo.
 
