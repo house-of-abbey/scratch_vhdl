@@ -6,6 +6,20 @@ The process of generating a design from VHDL has been simplified and automated i
 
 The letters 'E', 'S', 'i', 'P' and 'A' on each button refer to the steps detailed below.
 
+## Full Design
+
+Beyond the sub-components we have been simulating there is additional logic used for "house keeping" tasks.
+
+* As the buttons and switches are in effect "asynchronous" to the internal clock they must be "synchronised" to it to avoid meta-stability. This will not be explained further as its a big topic.
+* Each button is `OR`'ed with is corresponding switch (toggle button) as a simple way to amalgamate the two stimuli. This means that the toggle buttons need to be returned to their off position when using the push buttons.
+* A Phase Locked Loop (PLL) is used for clock management (and avoid hold time violations on `reset`.)
+* A "Power on Reset" component is used to generate a short reset after each re-programming of the device. It uses an FPGA's ability to initialise registers to a known value in the `BIT` file and holds the reset high (`1`) until `GSR` (_Global Set/Reset_) goes low after programming and then shifts a `0` through a short shift register soon after lowering `reset`.
+* A seven segment display driver was in the box, and it just had to be used. The additional PCB plugs into the development board and provide a pair of displays. It only makes sense for 4-bit to drive a single display. The decoder implements the driving of both displays, and has to switch between them rapidly (faster then 20 ms) to give the illusion that both are continuously driven as there are only 8 connections (7 segments and one display select). The display will decode to hexadecimal for the values in the range 10-15. (See the [binary counter](binary_counter.md) demo for an explanation.)
+
+![Full Design](./images/circuit_diagrams/top_level_architecture.png)
+
+The Scratch VHDL design simply replaces the contents of the `led4_button4` component each time it is compiled. The rest of the design is trusted and hence not re-simulated each time.
+
 ## Elaboration Step
 
 This is managed by the TCL function `elab_my_design`. It elaborates the design to generic gates and opens up the schematic of the sub-section of the design authored through Scratch VHDL.
