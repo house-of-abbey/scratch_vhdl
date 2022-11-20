@@ -20,7 +20,7 @@
 create_clock -add -name clk_port -period 8.000 -waveform {0 4} [get_ports {clk_port}]
 
 # Keep the mapping from hierarchy to code clear.
-set_property keep_hierarchy true [get_cells {retime_btn retime_sw led4_button4_i}]
+set_property keep_hierarchy true [get_cells {retime_btn retime_sw dual_seven_seg_display_i led4_button4_i}]
 
 # Not getting clever with max_delay constraints here, keep it simple for this tiny design
 set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime_reg[*]}]
@@ -29,6 +29,6 @@ set_false_path -to [get_cells {retime_btn/reg_retime_reg[*] retime_sw/reg_retime
 set_input_delay  -clock [get_clocks clk_port] 0.100 [get_ports {btn[*] sw[*]}]
 set_output_delay -clock [get_clocks clk_port] 0.100 [get_ports {led[*] disp_sel sevseg[*]}]
 
-set_property direct_reset true [get_nets {led4_button4_i/reset}]
+set_property direct_reset true [get_nets {reset}]
 # Pack the final register into the IOB? Keep this auto to avoid hold time violations
 set_property IOB auto [get_ports {led[*] disp_sel sevseg[*]}]
