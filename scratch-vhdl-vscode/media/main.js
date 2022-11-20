@@ -929,28 +929,196 @@ document.addEventListener('DOMContentLoaded', function () {
     Blockly.dialog.setPrompt((m, a, cb) => prompt(m).then((d) => cb(d ?? a)));
     Blockly.dialog.setConfirm((m, cb) => confirm(m).then((d) => cb(d ?? false)));
 
-    const entityVars = {};
-    const aliasVars = {};
+    const field_variables = [];
 
     (() => {
         Blockly.fieldRegistry.unregister("field_variable");
-        Blockly.fieldRegistry.register("field_variable", Blockly.FieldVariable = class extends Blockly.FieldVariable {
-            renderSelectedText_() {
-                super.renderSelectedText_();
-                if (["variables_get", "variables_set", "variables_set_index", "math_change", "process_direct_set"].indexOf(this.sourceBlock_.type) !== -1) {
-                    if (Object.keys(entityVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(20);
-                    else if (Object.keys(aliasVars).indexOf(this.value_) !== -1) this.sourceBlock_.setColour(120);
-                    else this.sourceBlock_.setColour('%{BKY_VARIABLES_HUE}');
+        Blockly.fieldRegistry.register("field_variable", Blockly.FieldVariable = class extends Blockly.FieldDropdown {
+            constructor(
+                varName,
+                opt_config) {
+                super(Blockly.Field.SKIP_SETUP);
+
+                this.defaultType_ = '';
+                this.SERIALIZABLE = true;
+                this.var = varName;
+
+                this.menuGenerator_ = Blockly.FieldVariable.dropdownCreate;
+
+                this.defaultVariableName = typeof varName === 'string' ? varName : '';
+
+                this.size_ = new Blockly.utils.Size(0, 0);
+
+                if (varName === Blockly.Field.SKIP_SETUP) {
+                    return;
                 }
+
+                if (opt_config) {
+                    this.configure_(opt_config);
+                }
+
+                field_variables.push(this);
+            }
+
+            configure_(config) {
+                super.configure_(config);
             }
 
             initModel() {
-                if (!this.variable_) {
+                const block = this.getSourceBlock();
+                if (!block) {
+                    throw new UnattachedFieldError();
+                }
+                if (!this.var)
                     if (this.defaultVariableName === "") {
-                        this.doValueUpdate_(this.getSourceBlock().workspace.getAllVariables()[0].getId());
+                        this.doValueUpdate_(Object.keys(entity.entity)[0]);
                     } else {
-                        super.initModel();
+                        // Don't call setValue because we don't want to cause a rerender.
+                        this.doValueUpdate_(this.defaultVariableName);
                     }
+            }
+
+            shouldAddBorderRect_() {
+                const block = this.getSourceBlock();
+                if (!block) {
+                    throw new UnattachedFieldError();
+                }
+                return super.shouldAddBorderRect_() &&
+                    (!this.getConstants().FIELD_DROPDOWN_NO_BORDER_RECT_SHADOW ||
+                        block.type !== 'variables_get');
+            }
+
+            saveState(doFullSerialization) {
+                // Make sure the variable is initialized.
+                this.initModel();
+                const state = { name: this.var };
+                return state;
+            }
+
+            loadState(state) {
+                const block = this.getSourceBlock();
+                if (!block) {
+                    throw new UnattachedFieldError();
+                }
+                // This is necessary so that blocks in the flyout can have custom var names.
+                this.setValue(state.name || Blockly.getMainWorkspace().getVariableById(state.id).name);
+            }
+
+            setSourceBlock(block) {
+                if (block.isShadow()) {
+                    throw Error('Variable fields are not allowed to exist on shadow blocks.');
+                }
+                super.setSourceBlock(block);
+            }
+
+            setValue(a) {
+                this.var = a;
+                super.setValue(a);
+            }
+
+            getValue() {
+                return this.var;
+            }
+
+            getText() {
+                return this.var;
+            }
+
+            doValueUpdate_(newId) {
+                const block = this.getSourceBlock();
+                if (!block) {
+                    throw new UnattachedFieldError();
+                }
+                this.var = newId;
+                super.doValueUpdate_(newId);
+                this.refreshVariableName();
+            }
+
+            refreshVariableName() {
+                this.forceRerender();
+            }
+
+            onItemSelected_(menu, menuItem) {
+                const id = menuItem.getValue();
+                // Handle special cases.
+                if (this.sourceBlock_ && !this.sourceBlock_.isDeadOrDying()) {
+                    if (id === "DELETE_VARIABLE_ID") {
+                        if (entity.signals[this.var])
+                            delete entity.signals[this.var];
+                        else if (entity.aliases[this.var]) {
+                            delete entity.aliases[this.var];
+                        } else if (entity.entity[this.var]) {
+                            delete entity.entity[this.var];
+                        }
+                        vscode.postMessage({
+                            type: "updateEntity",
+                            body: JSON.stringify(entity)
+                        });
+                    } else if (id === "RENAME_VARIABLE_ID") {
+                        if (entity.signals[this.var]) {
+                            entity.signals[prompt("New name:", this.var)] = entity.signals[this.var];
+                            delete entity.signals[this.var];
+                        } else if (entity.aliases[this.var]) {
+                            entity.aliases[prompt("New name:", this.var)] = entity.aliases[this.var];
+                            delete entity.aliases[this.var];
+                        } else if (entity.entity[this.var]) {
+                            entity.entity[prompt("New name:", this.var)] = entity.entity[this.var];
+                            delete entity.entity[this.var];
+                        }
+                        vscode.postMessage({
+                            type: "updateEntity",
+                            body: JSON.stringify(entity)
+                        });
+                    }
+                }
+                // Handle unspecial case.
+                this.setValue(id);
+            }
+
+            referencesVariables() {
+                return true;
+            }
+
+            static fromJson(options) {
+                return new this(null, options);
+            }
+
+            static dropdownCreate() {
+                if (!this.var) {
+                    throw Error(
+                        'Tried to call dropdownCreate on a variable field with no' +
+                        ' variable selected.');
+                }
+                const name = this.getText();
+                let variableModelList = [];
+                if (this.sourceBlock_ && !this.sourceBlock_.isDeadOrDying()) {
+                    variableModelList = variableModelList.concat(Object.keys(entity.entity), Object.keys(entity.aliases), Object.keys(entity.signals));
+                }
+                variableModelList.sort();
+
+                const options = [];
+                for (let i = 0; i < variableModelList.length; i++) {
+                    // Set the UUID as the internal representation of the variable.
+                    options[i] = [variableModelList[i], variableModelList[i]];
+                }
+                options.push(
+                    [Blockly.Msg['RENAME_VARIABLE'], "RENAME_VARIABLE_ID"]);
+                if (Blockly.Msg['DELETE_VARIABLE']) {
+                    options.push([
+                        Blockly.Msg['DELETE_VARIABLE'].replace('%1', name),
+                        "DELETE_VARIABLE_ID",
+                    ]);
+                }
+
+                return options;
+            }
+
+            renderSelectedText_() {
+                super.renderSelectedText_();
+                if (["variables_get", "variables_set", "variables_set_index", "math_change", "process_direct_set"].indexOf(this.sourceBlock_.type) !== -1) {
+                    if (Object.keys(entity.entity).indexOf(this.getValue()) !== -1) this.sourceBlock_.setColour(20);
+                    else if (Object.keys(entity.aliases).indexOf(this.getValue()) !== -1) this.sourceBlock_.setColour(120);
+                    else this.sourceBlock_.setColour('%{BKY_VARIABLES_HUE}');
                 }
             }
         });
@@ -994,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', function () {
     Generator.finish = function (generator, code) {
         function gen_signals(signals) {
             return Object.keys(signals).map((n) =>
-                "\n  signal " + n + " : " + signals[n] + ";"
+                "\n  signal " + n + " : " + signals[n][0] + (signals[n][1] ? (" := " + signals[n][1]) : "") + ";"
             ).join("");
         }
         return librariesCode + "\n\n" + entityCode + "\n\n\narchitecture scratch of " + name + " is\n" + constantsCode + "\n" + gen_signals(entity.signals) + "\n" + aliasesCode + "\n\nbegin\n" + Object.getPrototypeOf(generator).finish.call(generator, code) + "\n\nend architecture;\n";
@@ -1035,7 +1203,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 .fieldRow.filter(
                     (a) => a instanceof Blockly.FieldVariable
                 ).map(
-                    (a) => a.getVariable().name
+                    (a) => a.getText()
                 ).join(", ")) + "\n  begin\n  " +
             generator.statementToCode(block, 'body').replaceAll("\n", "\n  ") +
             "end process;";
@@ -1046,7 +1214,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     Generator.process_direct_set = function (generator, block) {
-        return "\n  " + block.getField("VAR").getVariable().name + ' <= ' +
+        return "\n  " + block.getField("VAR").getText() + ' <= ' +
             generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';';
     }
 
@@ -1090,7 +1258,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     Generator.logic_rising_edge = function (generator, block) {
-        return ["rising_edge(" + block.getField("dep").getVariable().name + ")", generator.ORDER_FUNCTION_CALL]
+        return ["rising_edge(" + block.getField("dep").getText() + ")", generator.ORDER_FUNCTION_CALL]
     }
 
     Generator.logic_not = function (generator, block) {
@@ -1115,7 +1283,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     Generator.variables_get = function (generator, block) {
-        return [block.getField("VAR").getVariable().name, generator.ORDER_ATOMIC];
+        return [block.getField("VAR").getText(), generator.ORDER_ATOMIC];
     }
 
     Generator.constant = function (generator, block) {
@@ -1123,18 +1291,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     Generator.variables_set = function (generator, block) {
-        return block.getField("VAR").getVariable().name + ' <= ' +
+        return block.getField("VAR").getText() + ' <= ' +
             generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';\n';
     }
 
     Generator.variables_set_index = function (generator, block) {
-        return block.getField("VAR").getVariable().name + "(" + generator.valueToCode(block, 'INDEX', generator.ORDER_NONE) + ') <= ' +
+        return block.getField("VAR").getText() + "(" + generator.valueToCode(block, 'INDEX', generator.ORDER_NONE) + ') <= ' +
             generator.valueToCode(block, 'VALUE', generator.ORDER_NONE) + ';\n';
     }
 
     Generator.math_change = function (generator, block) {
-        return block.getField("VAR").getVariable().name + ' <= ' +
-            block.getField("VAR").getVariable().name + " + " + generator.valueToCode(block, 'DELTA', generator.ORDER_ADD) + ';\n';
+        return block.getField("VAR").getText() + ' <= ' +
+            block.getField("VAR").getText() + " + " + generator.valueToCode(block, 'DELTA', generator.ORDER_ADD) + ';\n';
     }
 
     Generator.value_std_logic = function (generator, block) {
@@ -1433,7 +1601,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function table_modal(columns, data) {
         return new Promise((resolve) => {
-            const isArray = Object.values(data)[0] instanceof Array;
+            const isArray = columns.length > 2;
 
             const modal = document.createElement("dialog");
             const table = document.createElement("table");
@@ -1447,16 +1615,21 @@ document.addEventListener('DOMContentLoaded', function () {
             });
             table.appendChild(cs);
 
+            const s = {};
+
             const rows = [];
             Object.keys(data).forEach((r, i) => {
                 const a = document.createElement("tr");
+
+                a.setAttribute("data-id", i);
+                s[i] = r;
 
                 const rem = document.createElement("td");
                 const remb = document.createElement("button");
                 remb.innerText = "-";
                 remb.addEventListener("click", () => {
                     table.deleteRow(1 + i);
-                    rows.splice(i, 1);
+                    delete rows[i];
                 });
                 rem.appendChild(remb);
                 a.appendChild(rem);
@@ -1503,12 +1676,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 const i = rows.length;
                 const a = document.createElement("tr");
 
+                a.setAttribute("data-id", i);
+
                 const rem = document.createElement("td");
                 const remb = document.createElement("button");
                 remb.innerText = "-";
                 remb.addEventListener("click", () => {
                     table.deleteRow(1 + i);
-                    rows.splice(i, 1);
+                    delete rows[i];
                 });
                 rem.appendChild(remb);
                 a.appendChild(rem);
@@ -1517,6 +1692,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const n = document.createElement("td");
                 const ni = document.createElement("input");
+                ni.setAttribute("data-name", "true");
                 ni.type = "text";
                 cols.push(ni);
                 n.appendChild(ni);
@@ -1551,11 +1727,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 modal.removeEventListener("close", () => (modal.remove(), resolve(data)));
                 modal.close();
                 modal.remove();
+                const changed = (a, b) => ({
+                    created: Object.keys(b).filter((k) => !a.hasOwnProperty(k)).map((k) => b[k]),
+                    renamed: Object.keys(a).filter((k) => b.hasOwnProperty(k) && a[k] !== b[k]).map((k) => [a[k], b[k]]),
+                    deleted: Object.keys(a).filter((k) => !b.hasOwnProperty(k)).map((k) => a[k]),
+                });
+                const changes = changed(s, [...table.getElementsByTagName("tr")].map(tag => [tag.getAttribute("data-id"), tag.querySelector("tr td input[data-name~=true]").value]));
                 if (isArray) {
                     const arraySplit = (array) => [array[0], array.slice(1)];
-                    resolve(Object.fromEntries(rows.map((cols) => arraySplit(cols.map(c => c.value)))));
+                    resolve({ data: Object.fromEntries(rows.filter(v => v != null).map((cols) => arraySplit(cols.map(c => c.value)))), changes });
                 } else {
-                    resolve(Object.fromEntries(rows.map((cols) => cols.map(c => c.value))));
+                    resolve({ data: Object.fromEntries(rows.filter(v => v != null).map((cols) => cols.map(c => c.value))), changes });
                 }
             });
             modal.appendChild(submit);
@@ -1563,9 +1745,33 @@ document.addEventListener('DOMContentLoaded', function () {
             document.body.appendChild(modal);
             modal.setAttribute("hidden", "true");
             modal.showModal();
-            modal.addEventListener("close", () => (modal.remove(), resolve(data)));
+            modal.addEventListener("close", () => (modal.remove(), resolve({
+                data, change: {
+                    created: [],
+                    renamed: [],
+                    deleted: []
+                }
+            })));
         })
     }
+
+    const makeChanges = (changes, c = false) => {
+        const renamed = Object.fromEntries(changes.renamed);
+        if (c) Blockly.getMainWorkspace().getBlocksByType("constant").forEach(block => {
+            if (renamed.hasOwnProperty(block.getField("NAME").getValue())) {
+                block.getField("NAME").setValue(renamed[block.getField("NAME").getValue()]);
+            } else if (changes.deleted.includes(block.getField("NAME").getValue())) {
+                block.checkAndDelete();
+            }
+        });
+        else field_variables.forEach(field_variable => {
+            if (renamed.hasOwnProperty(field_variable.getValue())) {
+                field_variable.setValue(renamed[field_variable.getValue()]);
+            } else if (changes.deleted.includes(field_variable.getValue())) {
+                field_variable.sourceBlock_.checkAndDelete();
+            }
+        });
+    };
 
     Blockly.ContextMenuRegistry.registry.register({
         displayText: "Edit ports",
@@ -1573,8 +1779,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return "enabled";
         },
         callback() {
-            table_modal(["name", "direction", "type"], entity.entity).then((data) => {
+            table_modal(["name", "direction", "type"], entity.entity).then(({ data, changes }) => {
                 entity.entity = data;
+                makeChanges(changes);
                 vscode.postMessage({
                     type: "updateEntity",
                     body: JSON.stringify(entity)
@@ -1583,7 +1790,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
         id: 'editPorts',
-        weight: 9,
+        weight: 9.0,
     });
 
     Blockly.ContextMenuRegistry.registry.register({
@@ -1592,8 +1799,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return "enabled";
         },
         callback() {
-            table_modal(["name", "type"], entity.signals).then((data) => {
+            table_modal(["name", "type", "value"], entity.signals).then(({ data, changes }) => {
                 entity.signals = data;
+                makeChanges(changes);
                 vscode.postMessage({
                     type: "updateEntity",
                     body: JSON.stringify(entity)
@@ -1602,7 +1810,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
         id: 'editSignals',
-        weight: 9.0,
+        weight: 9.1,
     });
 
     Blockly.ContextMenuRegistry.registry.register({
@@ -1611,8 +1819,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return "enabled";
         },
         callback() {
-            table_modal(["name", "type", "value"], entity.constants).then((data) => {
+            table_modal(["name", "type", "value"], entity.constants).then(({ data, changes }) => {
                 entity.constants = data;
+                makeChanges(changes, true);
                 vscode.postMessage({
                     type: "updateEntity",
                     body: JSON.stringify(entity)
@@ -1621,7 +1830,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
         id: 'editConstants',
-        weight: 9.0,
+        weight: 9.2,
     });
 
     Blockly.ContextMenuRegistry.registry.register({
@@ -1630,8 +1839,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return "enabled";
         },
         callback() {
-            table_modal(["name", "value"], entity.aliases).then((data) => {
+            table_modal(["name", "value"], entity.aliases).then(({ data, changes }) => {
                 entity.aliases = data;
+                makeChanges(changes);
                 vscode.postMessage({
                     type: "updateEntity",
                     body: JSON.stringify(entity)
@@ -1640,7 +1850,7 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
         id: 'editAliases',
-        weight: 9.0,
+        weight: 9.3,
     });
 
     let name = "hi";
@@ -1668,9 +1878,6 @@ document.addEventListener('DOMContentLoaded', function () {
     //         }));
     function generateEntity() {
         Blockly.Events.disable();
-        for (const n in entity.entity) {
-            entityVars[ws.createVariable(n).id_] = n;
-        }
         // rerender all variable fields
         ws.getAllBlocks().forEach((b) => b.inputList.forEach((c) => c.fieldRow.forEach((d) => d instanceof Blockly.FieldVariable && d.renderSelectedText_())));
         Blockly.Events.enable();
@@ -1684,9 +1891,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function generateAliases() {
         Blockly.Events.disable();
-        for (const n in entity.aliases) {
-            aliasVars[ws.createVariable(n).id_] = n;
-        }
         // rerender all variable fields
         ws.getAllBlocks().forEach((b) => b.inputList.forEach((c) => c.fieldRow.forEach((d) => d instanceof Blockly.FieldVariable && d.renderSelectedText_())));
         Blockly.Events.enable();
@@ -1696,25 +1900,23 @@ document.addEventListener('DOMContentLoaded', function () {
                 "\n  alias " + n + " is " + entity.aliases[n] + ";"
             ).join("");
     }
-    function generateSignals() {
-        Blockly.Events.disable();
-        Object.keys(entity.signals).forEach(signal => ws.createVariable(signal));
-        Blockly.Events.enable();
-    }
     window.addEventListener('message',
         (message) => message.data.type == "contentUpdate" && (
             Blockly.Events.disable(),
             Blockly.serialization.workspaces.load(JSON.parse(message.data.body), ws, { registerUndo: false }),
             Blockly.Events.enable(),
-            generateEntity(), generateAliases(), generateSignals()
+            generateEntity(), generateAliases()
         ));
     window.addEventListener('message',
         async (message) => {
             if (message.data.type == "entity") {
-                const oldLibs = JSON.stringify(entity?.libraries || {});
                 entity = JSON.parse(message.data.body);
                 name = entity.name || message.data.file_name;
                 entity.signals = entity.signals || {};
+                Object.keys(entity.signals)
+                    .forEach(s =>
+                        entity.signals[s] = entity.signals[s] instanceof Array ?
+                            entity.signals[s] : [entity.signals[s], ""]);
                 entity.constants = entity.constants || {};
                 entity.aliases = entity.aliases || {};
                 entity.libraries = entity.libraries || {};
@@ -1822,35 +2024,6 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.isUiEvent) return;
         if (e.oldInputName && !e.newInputName) return;
         if (e.type == Blockly.Events.BLOCK_CREATE) return;
-
-        if (e.type == Blockly.Events.VAR_DELETE) {
-            if (entity.signals[e.varName])
-                delete entity.signals[e.varName];
-            else if (entity.aliases[e.varName]) {
-                delete entity.aliases[e.varName];
-            } else if (entity.entity[e.varName]) {
-                delete entity.entity[e.varName];
-            }
-            vscode.postMessage({
-                type: "updateEntity",
-                body: JSON.stringify(entity)
-            });
-        } else if (e.type == Blockly.Events.VAR_RENAME) {
-            if (entity.signals[e.oldName]) {
-                entity.signals[e.newName] = entity.signals[e.oldName];
-                delete entity.signals[e.oldName];
-            } else if (entity.aliases[e.varName]) {
-                entity.aliases[e.newName] = entity.aliases[e.oldName];
-                delete entity.aliases[e.oldName];
-            } else if (entity.entity[e.varName]) {
-                entity.entity[e.newName] = entity.entity[e.oldName];
-                delete entity.entity[e.oldName];
-            }
-            vscode.postMessage({
-                type: "updateEntity",
-                body: JSON.stringify(entity)
-            });
-        }
 
         vscode.postMessage({
             type: "update",
