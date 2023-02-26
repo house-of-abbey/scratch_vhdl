@@ -73,7 +73,7 @@ proc synth_my_design {{synth synth_1} {jobs 6}} {
   }
   set d [current_design -quiet]
   if {[llength $d] == 0} {
-      open_run $synth -name $synth
+    open_run $synth -name $synth
   }
   # Open a schematic of the basic design
   show_schematic [get_cells {led4_button4_i/*}] -name "'Led4 Button4' Synthesis"
@@ -109,7 +109,7 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
   }
   set d [current_design -quiet]
   if {[llength $d] == 0} {
-      open_run $impl -name $impl
+    open_run $impl -name $impl
   }
   # Open a schematic of the basic design
   show_schematic [get_cells {led4_button4_i/*}] -name "'Led4 Button4' Implementation"
