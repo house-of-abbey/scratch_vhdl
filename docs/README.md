@@ -107,7 +107,7 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 5. **4-bit [binary counter](binary_counter.md)** with start and stop buttons.
 6. **[Sum of buttons pressed](adders.md)**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
 7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
-8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelicon crossing. The latter (of course) includes a flashing yellow stage.
+8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelican crossing. The latter (of course) includes a flashing yellow stage.
   ![Traffic Lights](./images/sim_controls/traffic_lights_demo.gif)
 9. **[Dimmer Controller](dimmer_control.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
 10. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
