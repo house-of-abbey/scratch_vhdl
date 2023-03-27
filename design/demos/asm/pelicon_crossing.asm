@@ -16,7 +16,7 @@ pelicon_crossing:
     leds <- 0b0001
     wincr
     .s0_loop:
-      r0 <- 0b0001      ; st+art
+      r0 <- 0b0001      ; start
       r1 <- btns and r0
       if r1 eq r0
         goto .s1

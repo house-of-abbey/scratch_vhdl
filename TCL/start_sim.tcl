@@ -112,6 +112,12 @@ proc sim_start_hook {} {
   mybuttons
 }
 
+# Open up the control widget GUI
+proc controls {} {
+  global scratch_vhdl_src
+  source "$scratch_vhdl_src/TCL/led4_button4.tcl"
+}
+
 if {![llength [namespace which orignal_vsim]]} {
   rename vsim orignal_vsim
 
@@ -131,4 +137,4 @@ set PrefSource(OpenOnFinish) 0
 cd $env(USERPROFILE)/ModelSim/projects/button_leds
 # 'sim_start_hook' gets run twice when this is called here. Otherwise once. Don't know why.
 vsim -t ns work.test_interactive
-source "$scratch_vhdl_src/TCL/led4_button4.tcl"
+controls
