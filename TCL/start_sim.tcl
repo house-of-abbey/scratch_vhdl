@@ -88,10 +88,11 @@ set mybuttonsadded 0
 proc mybuttons {} {
   global mybuttonsadded
   if {!$mybuttonsadded} {
-    add button "Resim"          {transcribe resim}
-    add button "Goto Cursor"    {transcribe scroll_cursor}
-    add button "Start Monitor"  {transcribe setup_monitor}
-    add button "Stop Monitor"   {transcribe stop_monitor}
+    add button "Controls"      {transcribe controls}
+    add button "Resim"         {transcribe resim}
+    add button "Goto Cursor"   {transcribe scroll_cursor}
+    add button "Start Monitor" {transcribe setup_monitor}
+    add button "Stop Monitor"  {transcribe stop_monitor}
     set mybuttonsadded 1
   }
 }
@@ -115,7 +116,7 @@ proc sim_start_hook {} {
 # Open up the control widget GUI
 proc controls {} {
   global scratch_vhdl_src
-  source "$scratch_vhdl_src/TCL/led4_button4.tcl"
+  uplevel "source $scratch_vhdl_src/TCL/led4_button4.tcl"
 }
 
 if {![llength [namespace which orignal_vsim]]} {

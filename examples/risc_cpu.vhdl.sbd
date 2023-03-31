@@ -198,7 +198,7 @@
                                                     "id": "oT,?w({bL2NxhM#;?[!V",
                                                     "icons": {
                                                         "comment": {
-                                                            "text": "The assembler will prevent assignments to reg(6). If the assembled\ninstruction code does manage to assign reg(6), it will be overwritten\non the next clock cycle.",
+                                                            "text": "The assembler will prevent assignments to reg(6). If the assembled\ninstruction code does manage to assign reg(6), it will be overwritten\non the next clock cycle.\nThis assignment is inside the clock process for convenience only.\nThe reset clause also resets reg(6) due to limits with Scratch VHDL\nentry, hence this assignment cannot presently be a concurrent one.",
                                                             "pinned": false,
                                                             "height": 80,
                                                             "width": 160

@@ -31,13 +31,12 @@ set butgap      4
 set fontsize   16
 
 # Don't amend these
-set thisscript [file normalize [info script]]
-set thisdir    [file dirname $thisscript]
+set thisscript  [file normalize [info script]]
+set thisdir     [file dirname $thisscript]
 set winwidth    594; # [expr 60 + 40*$fontsize]
 set winheight   280; # [expr 180 +  2*$fontsize]
 set btnfontsize [expr $fontsize/2]
-set pushbtntime  "300 ns"
-# set toggletime [examine /test_time_display/ClkPeriod]
+set pushbtntime "300 ns"
 # Signals
 set clock   {/test_led4_button4/clk}
 set incr    {/test_led4_button4/incr}
@@ -142,6 +141,7 @@ proc display {can {conf plain} {l0 0} {l1 0} {l2 0} {l3 0}} {
   }
 }
 
+# Setup the triggers to update the displayed controls
 proc setup_monitor {} {
   global incr leds default toggle traffic togglebutton
   catch {nowhen updateDisplay}
@@ -188,6 +188,7 @@ proc setup_monitor {} {
   }
 }
 
+# Disconnect the triggers from the displayed controls.
 proc stop_monitor {} {
   global default toggle traffic
   catch {nowhen updateDisplay}
@@ -235,6 +236,13 @@ proc step_cmd {} {
   .controls.body.sim.step configure -state normal
 }
 
+# Reopen the simulation with the newly selected assembled instructions file
+#  Parameters:
+#   1. The file name
+#   2. A switch as follows:
+#      0 to load the 'test_interactive' configuration which uses the 'scratch' architecture for a user generated CPU.
+#      1 to load the 'test_risc_cpu' configuration which uses the 'risc_cpu' architecture for a the completed example CPU.
+#
 proc change_asm {{f} {conf 0}} {
   global thisscript
   quit -sim
@@ -244,6 +252,14 @@ proc change_asm {{f} {conf 0}} {
     vsim -Grom_file_g=$f work.test_risc_cpu
   }
   transcribe source "$thisscript"
+}
+
+# Select the assembled instructions file to execute in simulation.
+proc change_asm_file_select {} {
+  set file [tk_getOpenFile -initialdir {./instr_files} -filetypes {{bin {.o}}}]
+  if {$file != ""} {
+    change_asm $file
+  }
 }
 
 set autostep 0
@@ -315,7 +331,7 @@ pack .controls.body.sim.reload -side left -pady $butgap -padx $butgap
 button .controls.body.sim.asm \
   -text "Change ASM" \
   -font "Helvetica $btnfontsize bold" \
-  -command {change_asm [tk_getOpenFile -initialdir {./instr_files} -filetypes {{bin {.o}}}]}
+  -command {change_asm_file_select}
 pack .controls.body.sim.asm -side left -pady $butgap -padx $butgap
 
 button .controls.body.sim.step \
@@ -492,7 +508,7 @@ if {$now > 0} {
   restart -f
 }
 if {[runStatus] == "ready" || [runStatus] == "break"} {
-  # Setup the trigger to update the display
+  # Setup the triggers to update the displayed controls
   setup_monitor
   puts "NOTE - Trigger setup."
 } {

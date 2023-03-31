@@ -49,6 +49,9 @@ begin
         -- The assembler will prevent assignments to reg(6). If the assembled
         -- instruction code does manage to assign reg(6), it will be overwritten
         -- on the next clock cycle.
+        -- This assignment is inside the clock process for convenience only.
+        -- The reset clause also resets reg(6) due to limits with Scratch VHDL
+        -- entry, hence this assignment cannot presently be a concurrent one.
         reg(6) <= buttons;
         if incr = '1' then
           if wi > 0 then

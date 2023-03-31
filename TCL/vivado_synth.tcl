@@ -202,7 +202,7 @@ proc set_asm_file {f} {
 
   set_property generic [list \
     sim_g=false \
-    rom_file_g=[file normalize $ff] \
+    rom_file_g=$ff \
   ] [current_fileset]
 }
 

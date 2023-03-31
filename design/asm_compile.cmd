@@ -24,11 +24,23 @@ if not exist %DEST%\instr_files (
   if %ERRORLEVEL% NEQ 0 (goto error)
 )
 
+setlocal enabledelayedexpansion
+rem Compile the user's own instruction file.
+
+echo Assembling instructions.asm:
+%SRC%\..\bin\customasm ^
+ --format=binline ^
+ --output=%DEST%\instr_files\instructions.o ^
+ %SRC%\instructions.asm
+set ec=%ERRORLEVEL%
+echo.
+if !ec! NEQ 0 (goto error)
+
 rem Assemble each file in %SRC%\demos\asm\*.asm
 
-setlocal enabledelayedexpansion
 for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm ^| findstr /v ruledef.asm') do (
-   echo Assembling %%G:
+  echo Assembling %%G:
+
    %SRC%\..\bin\customasm ^
      --format=binline ^
      --output=%DEST%\instr_files\%%~nG.o ^

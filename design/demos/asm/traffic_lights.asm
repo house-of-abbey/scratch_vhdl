@@ -61,4 +61,3 @@ traffic_lights:
     leds <- 0b0010
     wincr
   goto traffic_lights
-  
