@@ -29,15 +29,17 @@ proc get_my_impl_run {} {
   get_runs -filter {NAME !~ "pll*" && IS_IMPLEMENTATION}
 }
 
-# Track if either runs have been marked as out of date.
+# Print the various run statuses to see if they have been marked as out of date.
 #
 proc check_state {{synth synth_1} {impl impl_1}} {
   set synth_run [get_runs $synth]
   set impl_run [get_runs $impl]
-  puts "synth_1 CURRENT_STEP  : [get_property CURRENT_STEP  $synth_run]"
-  puts "synth_1 NEEDS_REFRESH : [get_property NEEDS_REFRESH $synth_run]"
-  puts "impl_1  CURRENT_STEP  : [get_property CURRENT_STEP  $impl_run]"
-  puts "impl_1  NEEDS_REFRESH : [get_property NEEDS_REFRESH $impl_run]"
+  puts "$synth CURRENT_STEP  : [get_property CURRENT_STEP  $synth_run]"
+  puts "$synth NEEDS_REFRESH : [get_property NEEDS_REFRESH $synth_run]"
+  puts "$synth PROGRESS      : [get_property PROGRESS      $synth_run]"
+  puts "$impl  CURRENT_STEP  : [get_property CURRENT_STEP  $impl_run]"
+  puts "$impl  NEEDS_REFRESH : [get_property NEEDS_REFRESH $impl_run]"
+  puts "$impl  PROGRESS      : [get_property PROGRESS      $impl_run]"
 }
 
 # Elaborate the design and '-rtl' will open the full design.
@@ -66,7 +68,7 @@ proc synth_my_design {{synth synth_1} {jobs 6}} {
       close_design
     }
   }
-  if {$must_refesh || [string equal [get_property PROGRESS $synth_run] "0%"]} {
+  if {$must_refesh || ! [string equal [get_property PROGRESS $synth_run] "100%"]} {
     reset_run $synth
     launch_runs $synth -jobs $jobs
     wait_on_run $synth
@@ -98,9 +100,9 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
       close_design
     }
   }
-  if {[get_property NEEDS_REFRESH $synth_run] || [string equal [get_property PROGRESS $synth_run] "0%"]} {
+  if {[get_property NEEDS_REFRESH $synth_run] || ! [string equal [get_property PROGRESS $synth_run] "100%"]} {
     reset_run $synth
-  } elseif {$must_refesh || [string equal [get_property PROGRESS $impl_run] "0%"]} {
+  } elseif {$must_refesh || ! [string equal [get_property PROGRESS $impl_run] "100%"]} {
     reset_run $impl
   }
   if {![string equal [get_property PROGRESS $impl_run] "100%"]} {
@@ -138,14 +140,10 @@ proc impl_my_design {{synth synth_1} {impl impl_1} {jobs 6}} {
 proc prog_my_board {{impl impl_1} {jobs 6}} {
   set bit_files [glob -nocomplain "[get_property DIRECTORY [get_my_impl_run]]/*.bit"]
   set impl_run [get_runs $impl]
-  if {
-    [llength $bit_files] == 0 ||
-    ! [string equal [get_property PROGRESS $impl_run] "100%"]
-  } {
+  if {[get_property NEEDS_REFRESH $impl_run] || ! [string equal [get_property PROGRESS $impl_run] "100%"]} {
     impl_my_design
   }
-  # if [string equal [get_property CURRENT_STEP $impl_run] "write_bitstream"] then don't repeat the work
-  if {[string equal [get_property CURRENT_STEP $impl_run] "route_design"]} {
+  if {[llength $bit_files] == 0 || [string equal [get_property CURRENT_STEP $impl_run] "route_design"]} {
     puts "Creating the BIT file."
     launch_runs $impl -to_step write_bitstream -jobs $jobs
     wait_on_run $impl
