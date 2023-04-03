@@ -3,421 +3,418 @@ import { TextDecoder, TextEncoder } from 'util';
 import * as vscode from 'vscode';
 
 export class ScratchVHDLEditorProvider
-    implements vscode.CustomTextEditorProvider
+  implements vscode.CustomTextEditorProvider
 {
-    private static newScratchVHDLFileId = 1;
+  private static newScratchVHDLFileId = 1;
 
-    public static register(
-        context: vscode.ExtensionContext
-    ): vscode.Disposable {
-        vscode.commands.registerCommand(
-            'scratch-vhdl-vscode.scratchVHDL.new',
-            () => {
-                const workspaceFolders = vscode.workspace.workspaceFolders;
-                if (!workspaceFolders) {
-                    vscode.window.showErrorMessage(
-                        'Creating new Scratch VHDL files currently requires opening a workspace'
-                    );
-                    return;
-                }
+  public static register(context: vscode.ExtensionContext): vscode.Disposable {
+    vscode.commands.registerCommand(
+      'scratch-vhdl-vscode.scratchVHDL.new',
+      () => {
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders) {
+          vscode.window.showErrorMessage(
+            'Creating new Scratch VHDL files currently requires opening a workspace'
+          );
+          return;
+        }
 
-                const uri = vscode.Uri.joinPath(
-                    workspaceFolders[0].uri,
-                    `new-${ScratchVHDLEditorProvider.newScratchVHDLFileId++}.vhdl`
-                ).with({ scheme: 'untitled' });
+        const uri = vscode.Uri.joinPath(
+          workspaceFolders[0].uri,
+          `new-${ScratchVHDLEditorProvider.newScratchVHDLFileId++}.vhdl`
+        ).with({ scheme: 'untitled' });
 
-                vscode.commands.executeCommand(
-                    'vscode.openWith',
-                    uri,
-                    ScratchVHDLEditorProvider.viewType
-                );
-            }
+        vscode.commands.executeCommand(
+          'vscode.openWith',
+          uri,
+          ScratchVHDLEditorProvider.viewType
         );
+      }
+    );
 
-        vscode.commands.registerCommand(
-            'scratch-vhdl-vscode.scratchVHDL.newFrom',
-            () => {
-                const config = vscode.workspace.getConfiguration();
-                const templates =
-                    config.get<{ [key: string]: object }>(
-                        'scratch-vhdl-vscode.templates'
-                    ) || {};
+    vscode.commands.registerCommand(
+      'scratch-vhdl-vscode.scratchVHDL.newFrom',
+      () => {
+        const config = vscode.workspace.getConfiguration();
+        const templates =
+          config.get<{ [key: string]: object }>(
+            'scratch-vhdl-vscode.templates'
+          ) || {};
 
-                vscode.window
-                    .showQuickPick(Object.keys(templates), {
-                        canPickMany: false,
-                    })
-                    .then(async (value) => {
-                        if (!value) return;
-                        const workspaceFolders =
-                            vscode.workspace.workspaceFolders;
-                        if (!workspaceFolders) {
-                            vscode.window.showErrorMessage(
-                                'Creating new Scratch VHDL files currently requires opening a workspace'
-                            );
-                            return;
-                        }
-
-                        const uri = await vscode.window.showSaveDialog({
-                            filters: { VHDL: ['vhdl'] },
-                            saveLabel: 'Create',
-                            title: 'Where',
-                        });
-
-                        if (!uri) return;
-
-                        await vscode.workspace.fs.writeFile(
-                            uri,
-                            new TextEncoder().encode('')
-                        );
-                        await vscode.workspace.fs.writeFile(
-                            vscode.Uri.parse(uri.toString() + '.sbd'),
-                            new TextEncoder().encode('{}')
-                        );
-                        await vscode.workspace.fs.writeFile(
-                            vscode.Uri.parse(uri.toString() + '.sbe'),
-                            new TextEncoder().encode(
-                                JSON.stringify(templates[value])
-                            )
-                        );
-
-                        vscode.commands.executeCommand(
-                            'vscode.openWith',
-                            uri,
-                            ScratchVHDLEditorProvider.viewType
-                        );
-                    });
+        vscode.window
+          .showQuickPick(Object.keys(templates), {
+            canPickMany: false,
+          })
+          .then(async (value) => {
+            if (!value) return;
+            const workspaceFolders = vscode.workspace.workspaceFolders;
+            if (!workspaceFolders) {
+              vscode.window.showErrorMessage(
+                'Creating new Scratch VHDL files currently requires opening a workspace'
+              );
+              return;
             }
-        );
 
-        return vscode.window.registerCustomEditorProvider(
-            ScratchVHDLEditorProvider.viewType,
-            new ScratchVHDLEditorProvider(context),
-            {
-                // For this demo extension, we enable `retainContextWhenHidden` which keeps the
-                // webview alive even when it is not visible. You should avoid using this setting
-                // unless is absolutely required as it does have memory overhead.
-                webviewOptions: {
-                    retainContextWhenHidden: true,
-                },
-                supportsMultipleEditorsPerDocument: false,
-            }
-        );
+            const uri = await vscode.window.showSaveDialog({
+              filters: { VHDL: ['vhdl'] },
+              saveLabel: 'Create',
+              title: 'Where',
+            });
+
+            if (!uri) return;
+
+            await vscode.workspace.fs.writeFile(
+              uri,
+              new TextEncoder().encode('')
+            );
+            await vscode.workspace.fs.writeFile(
+              vscode.Uri.parse(uri.toString() + '.sbd'),
+              new TextEncoder().encode('{}')
+            );
+            await vscode.workspace.fs.writeFile(
+              vscode.Uri.parse(uri.toString() + '.sbe'),
+              new TextEncoder().encode(JSON.stringify(templates[value]))
+            );
+
+            vscode.commands.executeCommand(
+              'vscode.openWith',
+              uri,
+              ScratchVHDLEditorProvider.viewType
+            );
+          });
+      }
+    );
+
+    return vscode.window.registerCustomEditorProvider(
+      ScratchVHDLEditorProvider.viewType,
+      new ScratchVHDLEditorProvider(context),
+      {
+        // For this demo extension, we enable `retainContextWhenHidden` which keeps the
+        // webview alive even when it is not visible. You should avoid using this setting
+        // unless is absolutely required as it does have memory overhead.
+        webviewOptions: {
+          retainContextWhenHidden: true,
+        },
+        supportsMultipleEditorsPerDocument: false,
+      }
+    );
+  }
+
+  private static readonly viewType = 'scratch-vhdl-vscode.scratchVHDL';
+
+  constructor(private readonly context: vscode.ExtensionContext) {}
+
+  /**
+   * Called when our custom editor is opened.
+   *
+   *
+   */
+  public async resolveCustomTextEditor(
+    document: vscode.TextDocument,
+    webviewPanel: vscode.WebviewPanel,
+    _token: vscode.CancellationToken
+  ): Promise<void> {
+    // Setup initial content for the webview
+    webviewPanel.webview.options = {
+      enableScripts: true,
+    };
+    webviewPanel.webview.html = this.getHtmlForWebview(webviewPanel.webview);
+
+    async function readFile(uri: vscode.Uri): Promise<string> {
+      if (uri.scheme === 'untitled') {
+        return '';
+      }
+      return new TextDecoder().decode(await vscode.workspace.fs.readFile(uri));
     }
 
-    private static readonly viewType = 'scratch-vhdl-vscode.scratchVHDL';
+    function readLocalFile(p: string) {
+      return readFile(
+        vscode.Uri.parse(
+          'file:///' + path.resolve(path.dirname(document.uri.fsPath), p),
+          true
+        )
+      );
+    }
 
-    constructor(private readonly context: vscode.ExtensionContext) {}
+    try {
+      await vscode.workspace.fs.stat(
+        vscode.Uri.parse(document.uri.toString() + '.sbd', true)
+      );
+      await vscode.workspace.fs.stat(
+        vscode.Uri.parse(document.uri.toString() + '.sbe', true)
+      );
+    } catch {
+      vscode.commands.executeCommand('workbench.action.closeActiveEditor');
+      vscode.commands.executeCommand(
+        'vscode.openWith',
+        document.uri,
+        'default'
+      );
+      return;
+    }
 
-    /**
-     * Called when our custom editor is opened.
-     *
-     *
-     */
-    public async resolveCustomTextEditor(
-        document: vscode.TextDocument,
-        webviewPanel: vscode.WebviewPanel,
-        _token: vscode.CancellationToken
-    ): Promise<void> {
-        // Setup initial content for the webview
-        webviewPanel.webview.options = {
-            enableScripts: true,
-        };
-        webviewPanel.webview.html = this.getHtmlForWebview(
-            webviewPanel.webview
-        );
+    const scratchDocument = await vscode.workspace.openTextDocument(
+      vscode.Uri.parse(document.uri.toString() + '.sbd', true)
+    );
+    const entityDocument = await vscode.workspace.openTextDocument(
+      vscode.Uri.parse(document.uri.toString() + '.sbe', true)
+    );
 
-        async function readFile(uri: vscode.Uri): Promise<string> {
-            if (uri.scheme === 'untitled') {
-                return '';
-            }
-            return new TextDecoder().decode(
-                await vscode.workspace.fs.readFile(uri)
-            );
+    const updateWebview = () => {
+      webviewPanel.webview.postMessage({
+        type: 'entity',
+        body: entityDocument.getText(),
+        file_name: path.basename(document.uri.fsPath).split('.')[0],
+      });
+    };
+
+    // Hook up event handlers so that we can synchronize the webview with the text document.
+    //
+    // The text document acts as our model, so we have to sync change in the document to our
+    // editor and sync changes in the editor back to the document.
+    //
+    // Remember that a single text document can also be shared between multiple custom
+    // editors (this happens for example when you split a custom editor)
+
+    let acceptChanges = true;
+    const changeDocumentSubscription = vscode.workspace.onDidChangeTextDocument(
+      (e) => {
+        if (
+          acceptChanges &&
+          [
+            document.uri.toString(),
+            scratchDocument.uri.toString(),
+            entityDocument.uri.toString(),
+          ].includes(e.document.uri.toString())
+        ) {
+          updateWebview();
         }
+      }
+    );
 
-        function readLocalFile(p: string) {
-            return readFile(
-                vscode.Uri.parse(
-                    'file:///' +
-                        path.resolve(path.dirname(document.uri.fsPath), p),
-                    true
-                )
-            );
+    const saveDocumentSubscription = vscode.workspace.onDidSaveTextDocument(
+      (e) => {
+        if (document.uri.toString() === e.uri.toString()) {
+          scratchDocument.save();
+          entityDocument.save();
         }
+      }
+    );
 
-        const scratchDocument = await vscode.workspace.openTextDocument(
-            vscode.Uri.parse(document.uri.toString() + '.sbd', true)
-        );
-        const entityDocument = await vscode.workspace.openTextDocument(
-            vscode.Uri.parse(document.uri.toString() + '.sbe', true)
-        );
+    // Make sure we get rid of the listener when our editor is closed.
+    webviewPanel.onDidDispose(() => {
+      changeDocumentSubscription.dispose();
+      saveDocumentSubscription.dispose();
+    });
 
-        function updateWebview() {
-            webviewPanel.webview.postMessage({
-                type: 'entity',
-                body: entityDocument.getText(),
-                file_name: path.basename(document.uri.fsPath).split('.')[0],
-            });
-        }
+    // let _requestId = 1;
+    // const callbacks = new Map<number, (response: any) => void>();
+    // function postMessageWithResponse<R = unknown>(
+    //     panel: vscode.WebviewPanel,
+    //     type: string,
+    //     body: any
+    // ): Promise<R> {
+    //     const requestId = _requestId++;
+    //     const p = new Promise<R>((resolve) =>
+    //         callbacks.set(requestId, resolve)
+    //     );
+    //     panel.webview.postMessage({ type, requestId, body });
+    //     return p;
+    // }
 
-        // Hook up event handlers so that we can synchronize the webview with the text document.
-        //
-        // The text document acts as our model, so we have to sync change in the document to our
-        // editor and sync changes in the editor back to the document.
-        //
-        // Remember that a single text document can also be shared between multiple custom
-        // editors (this happens for example when you split a custom editor)
-
-        let acceptChanges = true;
-        const changeDocumentSubscription =
-            vscode.workspace.onDidChangeTextDocument((e) => {
-                if (
-                    acceptChanges &&
-                    [
-                        document.uri.toString(),
-                        scratchDocument.uri.toString(),
-                        entityDocument.uri.toString(),
-                    ].includes(e.document.uri.toString())
-                ) {
-                    updateWebview();
-                }
-            });
-
-        const saveDocumentSubscription = vscode.workspace.onDidSaveTextDocument(
-            (e) => {
-                if (document.uri.toString() === e.uri.toString()) {
-                    scratchDocument.save();
-                    entityDocument.save();
-                }
-            }
-        );
-
-        // Make sure we get rid of the listener when our editor is closed.
-        webviewPanel.onDidDispose(() => {
-            changeDocumentSubscription.dispose();
-            saveDocumentSubscription.dispose();
-        });
-
-        // let _requestId = 1;
-        // const callbacks = new Map<number, (response: any) => void>();
-        // function postMessageWithResponse<R = unknown>(
-        //     panel: vscode.WebviewPanel,
-        //     type: string,
-        //     body: any
-        // ): Promise<R> {
-        //     const requestId = _requestId++;
-        //     const p = new Promise<R>((resolve) =>
-        //         callbacks.set(requestId, resolve)
-        //     );
-        //     panel.webview.postMessage({ type, requestId, body });
-        //     return p;
+    // Receive message from the webview.
+    webviewPanel.webview.onDidReceiveMessage((message) => {
+      switch (message.type) {
+        // case 'response': {
+        //     const callback = callbacks.get(message.requestId);
+        //     callback?.(message.body);
+        //     return;
         // }
 
-        // Receive message from the webview.
-        webviewPanel.webview.onDidReceiveMessage((message) => {
-            switch (message.type) {
-                // case 'response': {
-                //     const callback = callbacks.get(message.requestId);
-                //     callback?.(message.body);
-                //     return;
-                // }
+        case 'update':
+          acceptChanges = false;
+          Promise.all([
+            this.updateTextDocument(scratchDocument, message.body[0]),
+            this.updateTextDocument(document, message.body[1]),
+          ]).then(() => (acceptChanges = true));
+          return;
 
-                case 'update':
-                    acceptChanges = false;
-                    Promise.all([
-                        this.updateTextDocument(
-                            scratchDocument,
-                            message.body[0]
-                        ),
-                        this.updateTextDocument(document, message.body[1]),
-                    ]).then(() => (acceptChanges = true));
-                    return;
+        case 'requestEntity':
+          webviewPanel.webview.postMessage({
+            type: 'entity',
+            body: entityDocument.getText(),
+            file_name: path.basename(document.uri.fsPath).split('.')[0],
+          });
+          return;
 
-                case 'requestEntity':
-                    webviewPanel.webview.postMessage({
-                        type: 'entity',
-                        body: entityDocument.getText(),
-                        file_name: path
-                            .basename(document.uri.fsPath)
-                            .split('.')[0],
-                    });
-                    return;
+        case 'updateEntity':
+          this.updateTextDocument(entityDocument, message.body);
+          webviewPanel.webview.postMessage({
+            type: 'entity',
+            body: message.body,
+            file_name: path.basename(document.uri.fsPath).split('.')[0],
+          });
+          return;
 
-                case 'updateEntity':
-                    this.updateTextDocument(entityDocument, message.body);
-                    webviewPanel.webview.postMessage({
-                        type: 'entity',
-                        body: message.body,
-                        file_name: path
-                            .basename(document.uri.fsPath)
-                            .split('.')[0],
-                    });
-                    return;
+        case 'requestUpdate':
+          webviewPanel.webview.postMessage({
+            type: 'contentUpdate',
+            body: scratchDocument.getText(),
+          });
+          return;
 
-                case 'requestUpdate':
-                    webviewPanel.webview.postMessage({
-                        type: 'contentUpdate',
-                        body: scratchDocument.getText(),
-                    });
-                    return;
+        case 'code':
+          vscode.commands.executeCommand(
+            'vscode.openWith',
+            document.uri,
+            'default'
+          );
+          return;
 
-                case 'code':
-                    vscode.commands.executeCommand(
-                        'vscode.openWith',
-                        document.uri,
-                        'default'
-                    );
-                    return;
+        case 'cmd': {
+          const terminal = vscode.window.createTerminal('Build');
+          terminal.show();
+          terminal.sendText('cd ' + path.dirname(entityDocument.uri.fsPath));
+          terminal.sendText(message.cmd);
+          return;
+        }
 
-                case 'cmd': {
-                    const terminal = vscode.window.createTerminal('Run');
-                    terminal.show();
-                    terminal.sendText(message.cmd);
-                    return;
-                }
+        case 'getFile':
+          readLocalFile(message.path).then((value) =>
+            webviewPanel.webview.postMessage({
+              type: 'getFile',
+              id: message.id,
+              body: value,
+            })
+          );
+          return;
 
-                case 'getFile':
-                    readLocalFile(message.path).then((value) =>
-                        webviewPanel.webview.postMessage({
-                            type: 'getFile',
-                            id: message.id,
-                            body: value,
-                        })
-                    );
-                    return;
+        case 'alert':
+          vscode.window.showInformationMessage(message.body);
+          return;
 
-                case 'alert':
-                    vscode.window.showInformationMessage(message.body);
-                    return;
+        case 'prompt':
+          vscode.window
+            .showInputBox({
+              prompt: message.body,
+              value: message.default,
+            })
+            .then((value) =>
+              webviewPanel.webview.postMessage({
+                type: 'prompt',
+                id: message.id,
+                body: value,
+              })
+            );
+          return;
 
-                case 'prompt':
-                    vscode.window
-                        .showInputBox({
-                            prompt: message.body,
-                            value: message.default,
-                        })
-                        .then((value) =>
-                            webviewPanel.webview.postMessage({
-                                type: 'prompt',
-                                id: message.id,
-                                body: value,
-                            })
-                        );
-                    return;
+        case 'confirm':
+          vscode.window
+            .showInformationMessage(message.body, 'Ok', 'Cancel')
+            .then((value) =>
+              webviewPanel.webview.postMessage({
+                type: 'confirm',
+                id: message.id,
+                body: value == 'Ok',
+              })
+            );
+          return;
 
-                case 'confirm':
-                    vscode.window
-                        .showInformationMessage(message.body, 'Ok', 'Cancel')
-                        .then((value) =>
-                            webviewPanel.webview.postMessage({
-                                type: 'confirm',
-                                id: message.id,
-                                body: value == 'Ok',
-                            })
-                        );
-                    return;
+        case 'select':
+          vscode.window
+            .showQuickPick(message.body, {
+              canPickMany: false,
+            })
+            .then((value) =>
+              webviewPanel.webview.postMessage({
+                type: 'select',
+                id: message.id,
+                body: value,
+              })
+            );
+          return;
 
-                case 'select':
-                    vscode.window
-                        .showQuickPick(message.body, {
-                            canPickMany: false,
-                        })
-                        .then((value) =>
-                            webviewPanel.webview.postMessage({
-                                type: 'select',
-                                id: message.id,
-                                body: value,
-                            })
-                        );
-                    return;
+        case 'selectFile': {
+          vscode.window
+            .showOpenDialog({
+              canSelectMany: false,
+              openLabel: 'Select',
+              canSelectFiles: true,
+              canSelectFolders: false,
+            })
+            .then((fileUri) => {
+              if (fileUri)
+                webviewPanel.webview.postMessage({
+                  type: 'selectFile',
+                  id: message.id,
+                  body: path.relative(
+                    path.dirname(document.uri.fsPath),
+                    fileUri[0].fsPath
+                  ),
+                });
+              else
+                webviewPanel.webview.postMessage({
+                  type: 'selectFile',
+                  id: message.id,
+                  body: undefined,
+                });
+            });
+          return;
+        }
 
-                case 'selectFile': {
-                    vscode.window
-                        .showOpenDialog({
-                            canSelectMany: false,
-                            openLabel: 'Select',
-                            canSelectFiles: true,
-                            canSelectFolders: false,
-                        })
-                        .then((fileUri) => {
-                            if (fileUri)
-                                webviewPanel.webview.postMessage({
-                                    type: 'selectFile',
-                                    id: message.id,
-                                    body: path.relative(
-                                        path.dirname(document.uri.fsPath),
-                                        fileUri[0].fsPath
-                                    ),
-                                });
-                            else
-                                webviewPanel.webview.postMessage({
-                                    type: 'selectFile',
-                                    id: message.id,
-                                    body: undefined,
-                                });
-                        });
-                    return;
-                }
+        case 'setState':
+          this.context.globalState.setKeysForSync([message.key]);
+          this.context.globalState.update(message.key, message.value).then(() =>
+            webviewPanel.webview.postMessage({
+              type: 'setState',
+              id: message.id,
+            })
+          );
+          return;
 
-                case 'setState':
-                    this.context.globalState.setKeysForSync([message.key]);
-                    this.context.globalState
-                        .update(message.key, message.value)
-                        .then(() =>
-                            webviewPanel.webview.postMessage({
-                                type: 'setState',
-                                id: message.id,
-                            })
-                        );
-                    return;
+        case 'getState':
+          webviewPanel.webview.postMessage({
+            type: 'getState',
+            id: message.id,
+            value: this.context.globalState.get<any>(message.key, message.a),
+          });
+          return;
+      }
+    });
 
-                case 'getState':
-                    webviewPanel.webview.postMessage({
-                        type: 'getState',
-                        id: message.id,
-                        value: this.context.globalState.get<any>(
-                            message.key,
-                            message.a
-                        ),
-                    });
-                    return;
-            }
-        });
+    updateWebview();
+  }
 
-        updateWebview();
-    }
+  /**
+   * Get the static html used for the editor webviews.
+   */
+  private getHtmlForWebview(webview: vscode.Webview): string {
+    // Local path to script for the webview
+    const scriptUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.js')
+    );
 
-    /**
-     * Get the static html used for the editor webviews.
-     */
-    private getHtmlForWebview(webview: vscode.Webview): string {
-        // Local path to script for the webview
-        const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'main.js')
-        );
+    const scriptBlocklyBackpackUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this.context.extensionUri,
+        'node_modules',
+        '@blockly',
+        'workspace-backpack',
+        'dist',
+        'index.js'
+      )
+    );
 
-        const scriptBlocklyBackpackUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(
-                this.context.extensionUri,
-                'node_modules',
-                '@blockly',
-                'workspace-backpack',
-                'dist',
-                'index.js'
-            )
-        );
+    const scriptBlocklyUri = webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this.context.extensionUri,
+        'node_modules',
+        'blockly',
+        'blockly.min.js'
+      )
+    );
 
-        const scriptBlocklyUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(
-                this.context.extensionUri,
-                'node_modules',
-                'blockly',
-                'blockly.min.js'
-            )
-        );
-
-        return /* html */ `
+    return /* html */ `
 			<!DOCTYPE html>
 			<html lang="en">
                 <head>
@@ -562,22 +559,22 @@ export class ScratchVHDLEditorProvider
                     <script src="${scriptUri}"></script>
                 </body>
 			</html>`;
-    }
+  }
 
-    /**
-     * Write out the text to a given document.
-     */
-    private updateTextDocument(document: vscode.TextDocument, text: any) {
-        const edit = new vscode.WorkspaceEdit();
+  /**
+   * Write out the text to a given document.
+   */
+  private updateTextDocument(document: vscode.TextDocument, text: any) {
+    const edit = new vscode.WorkspaceEdit();
 
-        // Just replace the entire document every time for this example extension.
-        // A more complete extension should compute minimal edits instead.
-        edit.replace(
-            document.uri,
-            new vscode.Range(0, 0, document.lineCount, 0),
-            text
-        );
+    // Just replace the entire document every time for this example extension.
+    // A more complete extension should compute minimal edits instead.
+    edit.replace(
+      document.uri,
+      new vscode.Range(0, 0, document.lineCount, 0),
+      text
+    );
 
-        return vscode.workspace.applyEdit(edit);
-    }
+    return vscode.workspace.applyEdit(edit);
+  }
 }

@@ -1,98 +1,98 @@
 {
-    "name": "scratch-vhdl-vscode",
-    "author": {
-        "name": "JosephAbbey",
-        "email": "joseph@abbey1.org.uk",
-        "url": "https://joseph.abbey1.org.uk"
-    },
-    "publisher": "JosephAbbey",
-    "displayName": "Scratch VHDL",
-    "description": "",
-    "version": "0.2.1",
-    "license": "MIT",
-    "engines": {
-        "vscode": "^1.65.0"
-    },
-    "categories": [
-        "Other"
+  "name": "scratch-vhdl-vscode",
+  "author": {
+    "name": "JosephAbbey",
+    "email": "joseph@abbey1.org.uk",
+    "url": "https://joseph.abbey1.org.uk"
+  },
+  "publisher": "JosephAbbey",
+  "displayName": "Scratch VHDL",
+  "description": "",
+  "version": "0.2.2",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.65.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCustomEditor:scratch-vhdl-vscode.scratchVHDL",
+    "onCommand:scratch-vhdl-vscode.scratchVHDL.new",
+    "onCommand:scratch-vhdl-vscode.scratchVHDL.newFrom"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/house-of-abbey/scratch_vhdl"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "customEditors": [
+      {
+        "viewType": "scratch-vhdl-vscode.scratchVHDL",
+        "displayName": "Scratch VHDL",
+        "selector": [
+          {
+            "filenamePattern": "*.vhdl"
+          }
+        ]
+      }
     ],
-    "activationEvents": [
-        "onCustomEditor:scratch-vhdl-vscode.scratchVHDL",
-        "onCommand:scratch-vhdl-vscode.scratchVHDL.new",
-        "onCommand:scratch-vhdl-vscode.scratchVHDL.newFrom"
+    "commands": [
+      {
+        "command": "scratch-vhdl-vscode.scratchVHDL.new",
+        "title": "Create new Scratch VHDL Document",
+        "category": "Scratch VHDL"
+      },
+      {
+        "command": "scratch-vhdl-vscode.scratchVHDL.newFrom",
+        "title": "Create new Scratch VHDL Document From",
+        "category": "Scratch VHDL"
+      }
     ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/house-of-abbey/scratch_vhdl"
-    },
-    "main": "./out/extension.js",
-    "contributes": {
-        "customEditors": [
-            {
-                "viewType": "scratch-vhdl-vscode.scratchVHDL",
-                "displayName": "Scratch VHDL",
-                "selector": [
-                    {
-                        "filenamePattern": "*.vhdl"
-                    }
-                ]
-            }
-        ],
-        "commands": [
-            {
-                "command": "scratch-vhdl-vscode.scratchVHDL.new",
-                "title": "Create new Scratch VHDL Document",
-                "category": "Scratch VHDL"
-            },
-            {
-                "command": "scratch-vhdl-vscode.scratchVHDL.newFrom",
-                "title": "Create new Scratch VHDL Document From",
-                "category": "Scratch VHDL"
-            }
-        ],
-        "languages": [
-            {
-                "id": "javascript",
-                "extensions": [
-                    ".sbi"
-                ]
-            },
-            {
-                "id": "json",
-                "extensions": [
-                    ".sbd",
-                    ".sbe"
-                ]
-            }
-        ],
-        "configuration": {
-            "title": "ScratchVHDL",
-            "properties": {
-                "scratch-vhdl-vscode.templates": {
-                    "type": "object",
-                    "default": {},
-                    "additionalProperties": true,
-                    "description": "The templates available from 'scratch-vhdl-vscode.ScratchVHDL.newFrom'."
-                }
-            }
+    "languages": [
+      {
+        "id": "javascript",
+        "extensions": [
+          ".sbi"
+        ]
+      },
+      {
+        "id": "json",
+        "extensions": [
+          ".sbd",
+          ".sbe"
+        ]
+      }
+    ],
+    "configuration": {
+      "title": "ScratchVHDL",
+      "properties": {
+        "scratch-vhdl-vscode.templates": {
+          "type": "object",
+          "default": {},
+          "additionalProperties": true,
+          "description": "The templates available from 'scratch-vhdl-vscode.ScratchVHDL.newFrom'."
         }
-    },
-    "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
-        "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -w -p ./"
-    },
-    "devDependencies": {
-        "@types/node": "^16.11.7",
-        "@types/vscode": "^1.65.0",
-        "@typescript-eslint/eslint-plugin": "^5.30.0",
-        "@typescript-eslint/parser": "^5.30.0",
-        "eslint": "^8.13.0",
-        "typescript": "^4.8.4"
-    },
-    "dependencies": {
-        "@blockly/workspace-backpack": "^3.0.2",
-        "blockly": "^9.0.0"
+      }
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "lint": "eslint . --ext .ts,.tsx",
+    "watch": "tsc -w -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.7",
+    "@types/vscode": "^1.65.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
+    "eslint": "^8.13.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@blockly/workspace-backpack": "^3.0.2",
+    "blockly": "^9.0.0"
+  }
 }
