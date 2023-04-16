@@ -15,9 +15,9 @@
 ; Define a register
 #subruledef reg
 {
-  r{r:u3} => r`3
   btns    => 6`3 ; equivalent to r6
   leds    => 7`3 ; equivalent to r7
+  r{r:u3} => r`3
 }
 
 ; Safely assign the output register, make sure it is not r6, which is
@@ -48,8 +48,8 @@
   if {a:reg} eq {b:reg}           => 0xb @  0`3 @  a`3 @  b`3       ; op_ifeq
   if {a:reg} gt {b:reg}           => 0xc @  0`3 @  a`3 @  b`3       ; op_ifgt
   if {a:reg} ge {b:reg}           => 0xd @  0`3 @  a`3 @  b`3       ; op_ifge
-  wincr {l:u9}                    => 0xe @         l`9              ; op_wi
   wincr                           => 0xe @         1`9              ; op_wi
+  wincr {l:u9}                    => 0xe @         l`9              ; op_wi
   goto  {l:u9}                    => 0xf @         l`9              ; op_goto
 }
 
