@@ -153,10 +153,10 @@ export class ScratchVHDLEditorProvider
       return;
     }
 
-    const scratchDocument = await vscode.workspace.openTextDocument(
+    let scratchDocument = await vscode.workspace.openTextDocument(
       vscode.Uri.parse(document.uri.toString() + '.sbd', true)
     );
-    const entityDocument = await vscode.workspace.openTextDocument(
+    let entityDocument = await vscode.workspace.openTextDocument(
       vscode.Uri.parse(document.uri.toString() + '.sbe', true)
     );
 
@@ -193,9 +193,19 @@ export class ScratchVHDLEditorProvider
     );
 
     const saveDocumentSubscription = vscode.workspace.onDidSaveTextDocument(
-      (e) => {
+      async (e) => {
         if (document.uri.toString() === e.uri.toString()) {
+          if (scratchDocument.isClosed) {
+            scratchDocument = await vscode.workspace.openTextDocument(
+              vscode.Uri.parse(document.uri.toString() + '.sbd', true)
+            );
+          }
           scratchDocument.save();
+          if (entityDocument.isClosed) {
+            entityDocument = await vscode.workspace.openTextDocument(
+              vscode.Uri.parse(document.uri.toString() + '.sbe', true)
+            );
+          }
           entityDocument.save();
         }
       }

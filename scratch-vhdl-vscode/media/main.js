@@ -2340,7 +2340,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
 
   ws.addChangeListener((e) => {
-    if (e.isUiEvent) return;
+    if (e.isUiEvent && e.type != 'selected') return;
     if (e.oldInputName && !e.newInputName) return;
     if (e.type == Blockly.Events.BLOCK_CREATE) return;
 
