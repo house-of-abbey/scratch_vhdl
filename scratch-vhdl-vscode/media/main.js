@@ -89,13 +89,13 @@ document.addEventListener('DOMContentLoaded', function () {
       message.data.type == 'selectFile' &&
       requests[message.data.id](message.data.body)
   );
-  const selectFile = () => {
-    vscode.postMessage({
-      type: 'selectFile',
-      id: rid,
-    });
-    return new Promise((resolve) => (requests[rid++] = resolve));
-  };
+  // const selectFile = () => {
+  //   vscode.postMessage({
+  //     type: 'selectFile',
+  //     id: rid,
+  //   });
+  //   return new Promise((resolve) => (requests[rid++] = resolve));
+  // };
   window.addEventListener(
     'message',
     (message) =>
