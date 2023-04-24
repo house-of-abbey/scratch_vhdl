@@ -63,6 +63,9 @@ All of this can be made available either through
 
 * A web-based editor as customised for this project in `bin/customasm.html`. This is setup when [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) is executed so can not be linked here. Or,
 * A command line tool to [compile a file of assembly](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/asm_compile.cmd) code to instructions in a text file that can be read by a ROM initialisation routine in VHDL. Very useful for build scripts.
+## Demonstration RISC CPU
+
+![ALU Architecture](images/4-bit_cpu.png)
 
 The demonstration RISC CPU comes with an [example instruction set definition](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/demos/asm/ruledef.asm) to give you some ideas and an example to follow. This CPU has 8 internal registers (in lieu of zero RAM!), of which register 6 is bound to the buttons (and hence is read only) and register 7 is bound to the LEDs. Use the link to see the most up to date version. The `#ruledef` section covers the list of instructions and the `#subruledef reg` section constrains the register selections for use in the instructions. An additional `#subruledef sreg` prevents `r6` being used for an assignment as its the 'read-only' `btns` (VHDL `buttons`) input in the demonstration implementation.
 
@@ -73,9 +76,9 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
 ; Define a register
 #subruledef reg
 {
-  r{r:u3} => r`3
   btns    => 6`3 ; equivalent to r6
   leds    => 7`3 ; equivalent to r7
+  r{r:u3} => r`3
 }
 
 ; Safely assign the output register, make sure it is not r6, which is
@@ -90,8 +93,8 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
 
 ; In general: o = fn(a, b)
 ;
-#ruledef                           ;       VHDL references
-{                                  ;   op @ dest @ src1 @ src2
+#ruledef                           ;      VHDL references
+{                                  ;  op @ dest @ src1 @ src2
   noop                            => 0x0 @         0`9              ; noop
   {o:sreg} <- {v:u4}              => 0x1 @  o`3 @  0`2 @  v`4       ; op_set
   {o:sreg} <- {a:reg}             => 0x2 @  o`3 @  a`3 @  0`3       ; op_copy
@@ -106,8 +109,8 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
   if {a:reg} eq {b:reg}           => 0xb @  0`3 @  a`3 @  b`3       ; op_ifeq
   if {a:reg} gt {b:reg}           => 0xc @  0`3 @  a`3 @  b`3       ; op_ifgt
   if {a:reg} ge {b:reg}           => 0xd @  0`3 @  a`3 @  b`3       ; op_ifge
-  wincr {l:u9}                    => 0xe @         l`9              ; op_wi
   wincr                           => 0xe @         1`9              ; op_wi
+  wincr {l:u9}                    => 0xe @         l`9              ; op_wi
   goto  {l:u9}                    => 0xf @         l`9              ; op_goto
 }
 </pre>
