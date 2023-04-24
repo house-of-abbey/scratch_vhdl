@@ -11,26 +11,29 @@
 
 #include "./ruledef.asm"
 
+; Dimmer setting
 r0 <- 0b0000
+; Increment button
 r4 <- 0b0001
+; Decrement button
 r5 <- 0b0010
 
 loop:
   r1 <- btns and r4
-  if r1 eq r4
+  if r1 eq r4       ; Increment
     r0 <- r0 + r4
     noop
   r1 <- 5
   if r0 eq r1
-    r0 <- 4
+    r0 <- 4         ; Maximum value
     noop
   r1 <- btns and r5
-  if r1 eq r5
+  if r1 eq r5       ; Decrement
     r0 <- r0 - r4
     noop
-  r1 <- 15
+  r1 <- 15          ; (0 - 1) mod 16 = 15
   if r0 eq r1
-    r0 <- 0
+    r0 <- 0         ; Minimum value
     noop
   wincr
   r1 <- 0
