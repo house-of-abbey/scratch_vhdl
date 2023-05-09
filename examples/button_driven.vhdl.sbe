@@ -30,5 +30,6 @@
   },
   "signals": {},
   "aliases": {},
-  "command": "../design/modelsim_compile.cmd button_driven.vhdl"
+  "command": "../design/modelsim_compile.cmd button_driven.vhdl",
+  "libraries": {}
 }

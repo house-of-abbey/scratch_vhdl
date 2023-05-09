@@ -1807,106 +1807,117 @@ document.addEventListener('DOMContentLoaded', function () {
   // const notExists = (n) => !(entity.entity.hasOwnProperty(n) || signals.hasOwnProperty(n) || constants.hasOwnProperty(n) || aliases.hasOwnProperty(n));
 
   function table_modal(columns, data) {
-    return new Promise((resolve) => {
-      const isArray = columns.length > 2;
+    return new Promise(
+      /** @param {(value: { data: any, changed: any }) => void} resolve */ (
+        resolve
+      ) => {
+        const isArray = columns.length > 2;
 
-      const modal = document.createElement('dialog');
-      const table = document.createElement('table');
+        const modal = document.createElement('dialog');
+        const table = document.createElement('table');
 
-      const cs = document.createElement('tr');
-      cs.appendChild(document.createElement('th'));
-      columns.forEach((c) => {
-        const a = document.createElement('th');
-        a.innerText = c;
-        cs.appendChild(a);
-      });
-      table.appendChild(cs);
-
-      const s = {};
-
-      const rows = [];
-      Object.keys(data).forEach((r, i) => {
-        const a = document.createElement('tr');
-
-        a.setAttribute('data-id', i);
-        s[i] = r;
-
-        const rem = document.createElement('td');
-        const remb = document.createElement('button');
-        remb.innerText = '-';
-        remb.addEventListener('click', () => {
-          table.deleteRow(1 + i);
-          delete rows[i];
+        const cs = document.createElement('tr');
+        cs.appendChild(document.createElement('th'));
+        columns.forEach((c) => {
+          const a = document.createElement('th');
+          a.innerText = c;
+          cs.appendChild(a);
         });
-        rem.appendChild(remb);
-        a.appendChild(rem);
+        table.appendChild(cs);
 
-        const cols = [];
+        const s = {};
 
-        const n = document.createElement('td');
-        const ni = document.createElement('input');
-        ni.type = 'text';
-        ni.value = r;
-        cols.push(ni);
-        n.appendChild(ni);
-        a.appendChild(n);
+        const rows = [];
+        Object.keys(data).forEach((r, i) => {
+          const a = document.createElement('tr');
 
-        if (isArray) {
-          data[r].forEach((x) => {
+          a.setAttribute('data-id', i);
+          s[i] = r;
+
+          const rem = document.createElement('td');
+          const remb = document.createElement('button');
+          remb.innerText = '-';
+          remb.addEventListener('click', () => {
+            table.deleteRow(1 + i);
+            delete rows[i];
+          });
+          rem.appendChild(remb);
+          a.appendChild(rem);
+
+          const cols = [];
+
+          const n = document.createElement('td');
+          const ni = document.createElement('input');
+          ni.type = 'text';
+          ni.value = r;
+          cols.push(ni);
+          n.appendChild(ni);
+          a.appendChild(n);
+
+          if (isArray) {
+            data[r].forEach((x) => {
+              const b = document.createElement('td');
+              const ib = document.createElement('input');
+              ib.type = 'text';
+              ib.value = x;
+              cols.push(ib);
+              b.appendChild(ib);
+              a.appendChild(b);
+            });
+          } else {
             const b = document.createElement('td');
             const ib = document.createElement('input');
             ib.type = 'text';
-            ib.value = x;
+            ib.value = data[r];
             cols.push(ib);
             b.appendChild(ib);
             a.appendChild(b);
-          });
-        } else {
-          const b = document.createElement('td');
-          const ib = document.createElement('input');
-          ib.type = 'text';
-          ib.value = data[r];
-          cols.push(ib);
-          b.appendChild(ib);
-          a.appendChild(b);
-        }
+          }
 
-        rows.push(cols);
-        table.appendChild(a);
-      });
-
-      modal.appendChild(table);
-
-      const addb = document.createElement('button');
-      addb.innerText = '+';
-      addb.addEventListener('click', () => {
-        const i = rows.length;
-        const a = document.createElement('tr');
-
-        a.setAttribute('data-id', i);
-
-        const rem = document.createElement('td');
-        const remb = document.createElement('button');
-        remb.innerText = '-';
-        remb.addEventListener('click', () => {
-          table.deleteRow(1 + i);
-          delete rows[i];
+          rows.push(cols);
+          table.appendChild(a);
         });
-        rem.appendChild(remb);
-        a.appendChild(rem);
 
-        const cols = [];
+        modal.appendChild(table);
 
-        const n = document.createElement('td');
-        const ni = document.createElement('input');
-        ni.setAttribute('data-name', 'true');
-        ni.type = 'text';
-        cols.push(ni);
-        n.appendChild(ni);
-        a.appendChild(n);
+        const addb = document.createElement('button');
+        addb.innerText = '+';
+        addb.addEventListener('click', () => {
+          const i = rows.length;
+          const a = document.createElement('tr');
 
-        if (isArray) {
-          for (var j = 0; j < Object.values(data)[0].length; j++) {
+          a.setAttribute('data-id', i);
+
+          const rem = document.createElement('td');
+          const remb = document.createElement('button');
+          remb.innerText = '-';
+          remb.addEventListener('click', () => {
+            table.deleteRow(1 + i);
+            delete rows[i];
+          });
+          rem.appendChild(remb);
+          a.appendChild(rem);
+
+          const cols = [];
+
+          const n = document.createElement('td');
+          const ni = document.createElement('input');
+          ni.setAttribute('data-name', 'true');
+          ni.type = 'text';
+          cols.push(ni);
+          n.appendChild(ni);
+          a.appendChild(n);
+
+          if (isArray) {
+            for (var j = 0; j < Object.values(data)[0].length; j++) {
+              const b = document.createElement('td');
+              const ib = document.createElement('input');
+              ib.type = 'text';
+              cols.push(ib);
+              b.appendChild(ib);
+              a.appendChild(b);
+            }
+          } else {
             const b = document.createElement('td');
             const ib = document.createElement('input');
             ib.type = 'text';
@@ -1914,88 +1925,79 @@ document.addEventListener('DOMContentLoaded', function () {
             b.appendChild(ib);
             a.appendChild(b);
           }
-        } else {
-          const b = document.createElement('td');
-          const ib = document.createElement('input');
-          ib.type = 'text';
-          cols.push(ib);
-          b.appendChild(ib);
-          a.appendChild(b);
-        }
 
-        rows.push(cols);
-        table.appendChild(a);
-      });
-      modal.appendChild(addb);
-
-      const submit = document.createElement('button');
-      submit.innerText = 'Submit';
-      submit.addEventListener('click', () => {
-        modal.removeEventListener(
-          'close',
-          () => (modal.remove(), resolve(data))
-        );
-        modal.close();
-        modal.remove();
-        const changed = (a, b) => ({
-          created: Object.keys(b)
-            .filter((k) => !a.hasOwnProperty(k))
-            .map((k) => b[k]),
-          renamed: Object.keys(a)
-            .filter((k) => b.hasOwnProperty(k) && a[k] !== b[k])
-            .map((k) => [a[k], b[k]]),
-          deleted: Object.keys(a)
-            .filter((k) => !b.hasOwnProperty(k))
-            .map((k) => a[k]),
+          rows.push(cols);
+          table.appendChild(a);
         });
-        const changes = changed(
-          s,
-          [...table.getElementsByTagName('tr')].map((tag) => [
-            tag.getAttribute('data-id'),
-            tag.querySelector('tr td input[data-name~=true]').value,
-          ])
-        );
-        if (isArray) {
-          const arraySplit = (array) => [array[0], array.slice(1)];
-          resolve({
-            data: Object.fromEntries(
-              rows
-                .filter((v) => v != null)
-                .map((cols) => arraySplit(cols.map((c) => c.value)))
-            ),
-            changes,
-          });
-        } else {
-          resolve({
-            data: Object.fromEntries(
-              rows
-                .filter((v) => v != null)
-                .map((cols) => cols.map((c) => c.value))
-            ),
-            changes,
-          });
-        }
-      });
-      modal.appendChild(submit);
+        modal.appendChild(addb);
 
-      document.body.appendChild(modal);
-      modal.setAttribute('hidden', 'true');
-      modal.showModal();
-      modal.addEventListener(
-        'close',
-        () => (
-          modal.remove(),
-          resolve({
-            data,
-            change: {
-              created: [],
-              renamed: [],
-              deleted: [],
-            },
-          })
-        )
-      );
-    });
+        const submit = document.createElement('button');
+        submit.innerText = 'Submit';
+        submit.addEventListener('click', () => {
+          modal.remove();
+          const changed = (a, b) => ({
+            created: Object.keys(b)
+              .filter((k) => !a.hasOwnProperty(k))
+              .map((k) => b[k]),
+            renamed: Object.keys(a)
+              .filter((k) => b.hasOwnProperty(k) && a[k] !== b[k])
+              .map((k) => [a[k], b[k]]),
+            deleted: Object.keys(a)
+              .filter((k) => !b.hasOwnProperty(k))
+              .map((k) => a[k]),
+          });
+          if (isArray) {
+            const arraySplit = (array) => [array[0], array.slice(1)];
+            resolve({
+              data: Object.fromEntries(
+                rows
+                  .filter((v) => v != null)
+                  .map((cols) => arraySplit(cols.map((c) => c.value)))
+              ),
+              changes: {
+                created: [],
+                renamed: [],
+                deleted: [],
+              },
+            });
+          } else {
+            resolve({
+              data: Object.fromEntries(
+                rows
+                  .filter((v) => v != null)
+                  .map((cols) => cols.map((c) => c.value))
+              ),
+              changes: changed(
+                s,
+                [...table.getElementsByTagName('tr')].map((tag) => [
+                  tag.getAttribute('data-id'),
+                  tag.querySelector('tr td input[data-name~=true]').value,
+                ])
+              ),
+            });
+          }
+        });
+        modal.appendChild(submit);
+
+        document.body.appendChild(modal);
+        modal.setAttribute('hidden', 'true');
+        modal.showModal();
+        modal.addEventListener(
+          'close',
+          () => (
+            modal.remove(),
+            resolve({
+              data,
+              changes: {
+                created: [],
+                renamed: [],
+                deleted: [],
+              },
+            })
+          )
+        );
+      }
+    );
   }
 
   const makeChanges = (changes, c = false) => {
@@ -2032,6 +2034,7 @@ document.addEventListener('DOMContentLoaded', function () {
     callback() {
       table_modal(['name', 'direction', 'type'], entity.entity).then(
         ({ data, changes }) => {
+          console.log(entity.entity, data, changes);
           entity.entity = data;
           makeChanges(changes);
           vscode.postMessage({
