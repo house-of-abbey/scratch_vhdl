@@ -1,5 +1,5 @@
-TCL/config.tcl
-design/config.cmd
+/TCL/config.tcl
+/design/config.cmd
 transcript
 Thumbs.db
 .Xil
@@ -7,5 +7,6 @@ vivado.*
 vivado_*.jou
 vivado_*.log
 vivado_pid*.str
-bin/*
-**/*.vsix
+/bin/*
+/**/*.vsix
+

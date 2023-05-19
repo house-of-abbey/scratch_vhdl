@@ -20,3 +20,5 @@ code --install-extension josephabbey.customasm
 code --install-extension puorc.awesome-vhdl
 
 del /f %TEMP%/scratch-vhdl-vscode.vsix
+
+pause

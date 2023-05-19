@@ -51,6 +51,7 @@ if {![file isdirectory $modelsim_install]} {
 set proj_src     [file normalize $env(USERPROFILE)/Xilinx/Workspace/scratch_vhdl]
 set modelsim_lib [file normalize $env(USERPROFILE)/ModelSim/libraries]
 
+cd $modelsim_lib
 # Create 'unisim' library for ModelSim only if required
 if {![file isdirectory "$modelsim_lib/unisim"]} {
   compile_simlib \
@@ -59,7 +60,8 @@ if {![file isdirectory "$modelsim_lib/unisim"]} {
     -family all \
     -language vhdl \
     -library unisim \
-    -dir $modelsim_lib
+    -dir $modelsim_lib \
+	-quiet
 
   report_simlib_info $modelsim_lib
 }
@@ -96,11 +98,9 @@ set_property top zybo_scratch [current_fileset]
 # necessary to meet timing, and it could cause questions on inspection by the novice users we are aiming thi at.
 set_property -name {STEPS.OPT_DESIGN.ARGS.MORE OPTIONS} -value -merge_equivalent_drivers -objects [get_runs impl_1]
 
-set user_profile [file normalize $env(USERPROFILE)]
-
 set_property generic [list \
   sim_g=false \
-  rom_file_g="${user_profile}/ModelSim/projects/button_leds/instr_files/tests.o" \
+  rom_file_g="[file normalize $env(USERPROFILE)]/ModelSim/projects/button_leds/instr_files/tests.o" \
 ] [current_fileset]
 
 set ip_inst pll
@@ -188,7 +188,7 @@ export_simulation \
   -ip_user_files_dir   $ip_dest_file/$ip_inst/ip_user_files \
   -ipstatic_source_dir $ip_dest_file/$ip_inst/ipstatic \
   -lib_map_path [list \
-    "modelsim=$user_profile/ModelSim/libraries" \
+    "modelsim=$modelsim_lib" \
     "questa=$ip_dest_file/$ip_inst/compile_simlib/questa" \
     "riviera=$ip_dest_file/$ip_inst/compile_simlib/riviera" \
     "activehdl=$ip_dest_file/$ip_inst/compile_simlib/activehdl" \
