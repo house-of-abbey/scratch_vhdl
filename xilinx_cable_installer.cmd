@@ -1,8 +1,17 @@
 @echo off
-rem Install The Canble Driver for Xilinx
+rem ---------------------------------------------------------------------------------
+rem 
+rem  Distributed under MIT Licence
+rem    See https://github.com/house-of-abbey/scratch_vhdl/blob/main/LICENCE.
+rem 
+rem  J D Abbey & P A Abbey, 23 October 2022
+rem 
+rem Install The Cable Driver for Xilinx
 rem NB. Run as  Administrator
 rem
 rem https://docs.xilinx.com/r/en-US/ug973-vivado-release-notes-install-license/Install-Cable-Drivers
+rem
+rem ---------------------------------------------------------------------------------
 
 title Installing Cable Drivers
 

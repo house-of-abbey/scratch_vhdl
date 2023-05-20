@@ -128,11 +128,12 @@ These are split into separate pages as follows:
   * Download the required project binaries.
     * Execute the [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) script to install Customasm.
 * **Setup**
+  * Compile pre-requisite libraries for ModelSim by executing [`compile_libs.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/compile_libs.cmd).
   * [Project creation](project_creation.md) covers how the Vivado project is generated.
   * Compile the existing codebase for ModelSim by executing [`modelsim_compile.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/modelsim_compile.cmd).
   * Execute the [`asm_compile.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/asm_compile.cmd) script to compile the initial assembly files for the RISC CPU.
 * **Design**
-  * Editing with Scratch VHDL in VS Code.
+  * Editing with Scratch VHDL in VSCode, best achieved viewing the given example demonstrations above.
   * [Simulation of VHDL](simulation.md)
     * Verification using the simulator to emulate the design interactively.
   * [Synthesis of VHDL](synthesis.md)

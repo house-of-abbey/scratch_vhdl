@@ -6,6 +6,8 @@ rem    See https://github.com/house-of-abbey/scratch_vhdl/blob/main/LICENCE.
 rem 
 rem  J D Abbey & P A Abbey, 23 October 2022
 rem 
+rem Install required extensions for Microsoft's VSCode
+rem
 rem ---------------------------------------------------------------------------------
 
 title Installing Extensions
