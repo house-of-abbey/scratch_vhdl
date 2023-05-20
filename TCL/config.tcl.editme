@@ -13,6 +13,20 @@
 #
 #####################################################################################
 
-# Set this to your local Git clone
-set scratch_vhdl_src [file normalize {path\to\scratch_vhdl}]
+# Do not use '[info script]' here as it will get the wrong filename. This file is sourced
+# within other TCL scripts, '[info script]' returns the name of the file that was sourced.
+set thisFile [file normalize [dict get [info frame 0] file]]
+# External drives might reconnect with a differnt drive letter
+set drive [lindex [split $thisFile ':'] 0]
+
+# Set this to your local Git clone, hopefully this will not need to be amended
+# Go up two parents for the Scratch VHDL installation directory
+set scratch_vhdl_src [file normalize [file dirname [file dirname $thisFile]]]
+
+# Set this to your local ModelSim installation
 set modelsim_install [file normalize {C:\intelFPGA_lite\<ver>\modelsim_ase\win32aloem}]
+#set modelsim_install [file normalize "${drive}:/intelFPGA/20.1/modelsim_ase/win32aloem"]
+
+# Set this to where you want the Vivado project to be created.
+# This might normally be $env(USERPROFILE), but can be moved, e.g. to an external drive.
+set compile_dir $env(USERPROFILE)

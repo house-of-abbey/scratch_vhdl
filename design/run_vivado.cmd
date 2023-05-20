@@ -75,5 +75,6 @@ exit /b 0
 
 :error
   echo.
+  echo Execution FAILED
   pause
   exit /b 1

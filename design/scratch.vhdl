@@ -1,9 +1,14 @@
 library ieee;
   use ieee.std_logic_1164.all;
 
+
+
+
 architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 2;
+
+
 
 begin
 
@@ -13,7 +18,27 @@ begin
       if reset = '1' then
         leds <= "0000";
       else
-        leds <= buttons;
+        case buttons is
+          when "0000" =>
+            leds <= "0000";
+
+          when "0001" | "0010" | "0100" | "1000" =>
+            leds <= "0001";
+
+          when "0011" | "0101" | "0110" | "1010" | "1100" | "1001" =>
+            leds <= "0010";
+
+          when "0111" | "1011" | "1101" | "1110" =>
+            leds <= "0100";
+
+          when "1111" =>
+            leds <= "1000";
+
+          -- Cover the other bit values: 'U', 'X', 'Z', 'W', 'L' & 'H'
+          when others =>
+            leds <= "1111";
+
+        end case;
       end if;
     end if;
   end process;

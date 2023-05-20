@@ -18,8 +18,29 @@
 #
 #####################################################################################
 
-set thisscript [file normalize [info script]]
+# Do not use '[info script]' here as it will get the wrong filename. This file is sourced
+# within other TCL scripts, '[info script]' returns the name of the file that was sourced.
+set thisscript [file normalize [dict get [info frame 0] file]]
 set thisdir    [file dirname $thisscript]
+# The aim of this file is to provide a reliable way of knowing where the source code
+# is, without setting up variables in a special start up batch file which are relied
+# upon but absent when Modelsim is started from Windows start menu.
+set configfile "${thisdir}/config.tcl"
+
+if {[file exists $configfile]} {
+  # This file sets up the path to source
+  source $configfile
+} else {
+  error "Set up 'config.tcl' file before proceeding." 1
+}
+# Verify the config has been read
+if {![info exists compile_dir]} {
+  error "Set 'compile_dir' before proceeding." 1
+}
+# Check the directory exists - belt & braces
+if {![file isdirectory $compile_dir]} {
+  error "'compile_dir' does not point to an existing directory." 1
+}
 
 proc get_my_synth_run {} {
   get_runs -filter {NAME !~ "pll*" && IS_SYNTHESIS}
@@ -173,14 +194,14 @@ proc prog_my_board {} {
 #
 # Parameter:
 #  1. A file name 'f'. Must contain neither path nor extension as these get added, as
-#     in "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.o".
+#     in "$compile_dir/ModelSim/projects/button_leds/instr_files/${f}.o".
 #
 # Usage: set_asm_file traffic_lights
 #
 proc set_asm_file {f} {
   global env
 
-  set ff [file normalize "$env(USERPROFILE)/ModelSim/projects/button_leds/instr_files/${f}.o"]
+  set ff [file normalize "$compile_dir/ModelSim/projects/button_leds/instr_files/${f}.o"]
   if {![file exists $ff]} {
     error "File '$ff' does not exist." 1
   }
@@ -260,7 +281,7 @@ remove_my_buttons
 add_my_buttons
 
 if {[llength [get_projects -quiet]] == 0} {
-  set proj_src [file normalize $env(USERPROFILE)/Xilinx/Workspace/scratch_vhdl]
+  set proj_src [file normalize $compile_dir/Xilinx/Workspace/scratch_vhdl]
   open_project $proj_src/scratch_vhdl.xpr
   unset proj_src
 }

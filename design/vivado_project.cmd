@@ -50,9 +50,15 @@ rem Categories:
 rem
 
 title Running Vivado Project Creation
+
 rem Setup paths to local installations
-if exist config.cmd (
-  call config.cmd
+rem Batch file's directory where the source code is
+set SRC=%~dp0
+rem drop last character '\'
+set SRC=%SRC:~0,-1%
+
+if exist %SRC%\config.cmd (
+  call %SRC%\config.cmd
 ) else (
   echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
   goto error
@@ -76,4 +82,5 @@ exit /b 0
 
 :error
   echo.
+  echo Compilation FAILED
   exit /b 1

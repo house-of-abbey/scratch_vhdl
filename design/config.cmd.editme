@@ -12,6 +12,15 @@ rem  J D Abbey & P A Abbey, 11 November 2022
 rem 
 rem ---------------------------------------------------------------------------------
 
+rem Be explicit, useful for external drives.
+set DRIVE=%~d0
+set SCRATCH_SRC=%~dp0
+rem drop last character '\'
+set SCRATCH_SRC=%SCRATCH_SRC:~0,-1%
+
 set VIVADO_INSTALL=C:\Xilinx\Vivado\<ver>\bin
 rem Do not call this variable MODELSIM
 set MODELSIMDIR=C:\intelFPGA_lite\<ver>
+rem This might normally be %USERPROFILE%, but can be moved, e.g. to an external drive.
+rem If using an external drive which might be assign a different drive letter on connection, use '%~d0'
+set COMPILEDIR=%USERPROFILE%

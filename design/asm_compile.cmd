@@ -10,14 +10,27 @@ rem ----------------------------------------------------------------------------
 
 title Compiling Assembly Files
 
-rem Set the path to the compilation products
-set SIM=%USERPROFILE%\ModelSim
-set DEST=%SIM%\projects\button_leds
-
 rem Batch file's directory where the source code is
 set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
+
+if exist %SRC%\config.cmd (
+  call %SRC%\config.cmd
+) else (
+  echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
+  pause
+  exit /b 1
+)
+
+if not defined COMPILEDIR (
+  echo Variable 'COMPILEDIR' not set.
+  goto error
+)
+
+rem Set the path to the compilation products
+set SIM=%COMPILEDIR%\ModelSim
+set DEST=%SIM%\projects\button_leds
 
 if not exist %DEST%\instr_files (
   md %DEST%\instr_files

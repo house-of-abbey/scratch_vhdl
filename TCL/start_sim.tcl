@@ -25,16 +25,23 @@ set configfile "${thisdir}/config.tcl"
 if {[file exists $configfile]} {
   # This file sets up the path to source
   source $configfile
-} {
+} else {
   error "Set up 'config.tcl' file before proceeding." 1
 }
 # Verify the config has been read
 if {![info exists scratch_vhdl_src]} {
   error "Set 'scratch_vhdl_src' before proceeding." 1
 }
+if {![info exists compile_dir]} {
+  error "Set 'compile_dir' before proceeding." 1
+}
 # Check the directory exists - belt & braces
 if {![file isdirectory $scratch_vhdl_src]} {
   error "'scratch_vhdl_src' does not point to the source code." 1
+}
+# Check the directory exists - belt & braces
+if {![file isdirectory $compile_dir]} {
+  error "'compile_dir' does not point to the compiled code." 1
 }
 
 # Turn warnings off: "set_warnings 0"
@@ -135,7 +142,7 @@ set PrefMain(AutoReloadModifiedFiles) 1
 set PrefSource(OpenOnBreak) 0
 set PrefSource(OpenOnFinish) 0
 
-cd $env(USERPROFILE)/ModelSim/projects/button_leds
+cd $compile_dir/ModelSim/projects/button_leds
 # 'sim_start_hook' gets run twice when this is called here. Otherwise once. Don't know why.
 vsim -t ns work.test_interactive
 controls

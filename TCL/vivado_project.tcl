@@ -18,7 +18,9 @@
 #
 #####################################################################################
 
-set thisscript [file normalize [info script]]
+# Do not use '[info script]' here as it will get the wrong filename. This file is sourced
+# within other TCL scripts, '[info script]' returns the name of the file that was sourced.
+set thisscript [file normalize [dict get [info frame 0] file]]
 set thisdir    [file dirname $thisscript]
 # The aim of this file is to provide a reliable way of knowing where the source code
 # is, without setting up variables in a special start up batch file which are relied
@@ -28,7 +30,7 @@ set configfile "${thisdir}/config.tcl"
 if {[file exists $configfile]} {
   # This file sets up the path to source
   source $configfile
-} {
+} else {
   error "Set up 'config.tcl' file before proceeding." 1
 }
 # Verify the config has been read
@@ -38,18 +40,23 @@ if {![info exists scratch_vhdl_src]} {
 if {![info exists modelsim_install]} {
   error "Set 'modelsim_install' before proceeding." 1
 }
-# Check the directory exists - belt & braces
+if {![info exists compile_dir]} {
+  error "Set 'compile_dir' before proceeding." 1
+}
+# Check the directories exists - belt & braces
 if {![file isdirectory $scratch_vhdl_src]} {
   error "'scratch_vhdl_src' does not point to the source code." 1
 }
-# Check the directory exists - belt & braces
 if {![file isdirectory $modelsim_install]} {
   error "'modelsim_install' does not point to the ModelSim installation." 1
 }
+if {![file isdirectory $compile_dir]} {
+  error "'compile_dir' does not point to an existing directory." 1
+}
 
 # Create a Vivado project
-set proj_src     [file normalize $env(USERPROFILE)/Xilinx/Workspace/scratch_vhdl]
-set modelsim_lib [file normalize $env(USERPROFILE)/ModelSim/libraries]
+set proj_src     [file normalize $compile_dir/Xilinx/Workspace/scratch_vhdl]
+set modelsim_lib [file normalize $compile_dir/ModelSim/libraries]
 
 cd $modelsim_lib
 # Create 'unisim' library for ModelSim only if required
@@ -100,7 +107,7 @@ set_property -name {STEPS.OPT_DESIGN.ARGS.MORE OPTIONS} -value -merge_equivalent
 
 set_property generic [list \
   sim_g=false \
-  rom_file_g="[file normalize $env(USERPROFILE)]/ModelSim/projects/button_leds/instr_files/tests.o" \
+  rom_file_g="[file normalize $compile_dir/ModelSim/projects/button_leds/instr_files/tests.o]" \
 ] [current_fileset]
 
 set ip_inst pll
