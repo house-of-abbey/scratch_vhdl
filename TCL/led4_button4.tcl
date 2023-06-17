@@ -36,7 +36,8 @@ set thisdir     [file dirname $thisscript]
 set winwidth    594; # [expr 60 + 40*$fontsize]
 set winheight   280; # [expr 180 +  2*$fontsize]
 set btnfontsize [expr $fontsize/2]
-set pushbtntime "300 ns"
+# Needs to be less than an "increment" ('incr' pulses 1 in 10 clock cycles in simulation, i.e. here, but 0.5s on the real FPGA)
+set pushbtntime "50 ns"
 # Signals
 set clock   {/test_led4_button4/clk}
 set incr    {/test_led4_button4/incr}
@@ -473,25 +474,25 @@ pack  ${traffic}.buttons.label -side top
 button ${traffic}.buttons.button_0 \
   -text "0 (start)" \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 0}
+  -command {button_cmd 0 $pushbtntime}
 pack ${traffic}.buttons.button_0 -side top -padx $butgap -pady $butgap
 
 button ${traffic}.buttons.button_1 \
   -text "1 (stop)" \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 1}
+  -command {button_cmd 1 $pushbtntime}
 pack ${traffic}.buttons.button_1 -side top -padx $butgap -pady $butgap
 
 button ${traffic}.buttons.button_2 \
   -text " 2 " \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 2}
+  -command {button_cmd 2 $pushbtntime}
 pack ${traffic}.buttons.button_2 -side top -padx $butgap -pady $butgap
 
 button ${traffic}.buttons.button_3 \
   -text " 3 " \
   -font "Helvetica $btnfontsize bold" \
-  -command {button_cmd 3}
+  -command {button_cmd 3 $pushbtntime}
 pack ${traffic}.buttons.button_3 -side top -padx $butgap -pady $butgap
 
 display ${traffic}.ledframe.leds traffic

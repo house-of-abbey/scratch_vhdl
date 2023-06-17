@@ -12,15 +12,15 @@ architecture scratch of led4_button4 is
   constant button_tab_c : natural := 2;
   constant code : code_t := read_code_from_file(filename => rom_file_g, arr_size => 512);
 
-  signal pc : std_logic_vector(8 downto 0);
-  signal pc_value : work.risc_cpu_pkg.code_t'element;
-  signal pc_op : std_logic_vector(3 downto 0);
+  signal pc : std_logic_vector(8 downto 0) := (others => '0');
+  signal pc_value : work.risc_cpu_pkg.code_t'element := (others => '0');
+  signal pc_op : std_logic_vector(3 downto 0) := (others => '0');
   signal pc_dest : natural range 0 to 7;
   signal pc_src1 : natural range 0 to 7;
   signal pc_src2 : natural range 0 to 7;
-  signal wi : unsigned(8 downto 0);
+  signal wi : unsigned(8 downto 0) := (others => '0');
   signal eif : std_logic;
-  signal reg : work.risc_cpu_pkg.reg_arr_t;
+  signal reg : work.risc_cpu_pkg.reg_arr_t := (others => (others => '0'));
 
 
 begin
@@ -93,6 +93,13 @@ begin
                 reg(pc_dest) <= pc_value(0) & reg(pc_src1)(3 downto 1);
               else
                 reg(pc_dest) <= reg(pc_src1)(2 downto 0) & pc_value(0);
+              end if;
+
+            when "1010" =>
+              if reg(pc_src1)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
+                eif <= '1';
+              else
+                pc <= pc + 2;
               end if;
 
             when "1011" =>

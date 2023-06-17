@@ -839,6 +839,13 @@ begin
                 reg(pc_dest) <= reg(pc_src1)(2 downto 0) & pc_value(0);
               end if;
 
+            when op_ifbit =>
+              if reg(pc_src1)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
+                eif <= '1';
+              else
+                pc <= pc + 2;
+              end if;
+
             when op_ifeq =>
               if reg(pc_src1) = reg(pc_src2) then
                 eif <= '1';

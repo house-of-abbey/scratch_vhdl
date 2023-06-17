@@ -48,9 +48,9 @@ architecture test of test_led4_button4 is
     );
   end component;
 
-  signal clk     : std_logic := '0';
-  signal reset   : std_logic := '0';
-  signal incr    : std_logic := '0';
+  signal clk     : std_logic                    := '0';
+  signal reset   : std_logic                    := '0';
+  signal incr    : std_logic                    := '0';
   signal buttons : std_logic_vector(3 downto 0) := "0000";
   signal leds    : std_logic_vector(3 downto 0);
 

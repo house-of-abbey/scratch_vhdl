@@ -188,7 +188,6 @@ op_shft:
     goto fail      ; fail
 
   wincr
-;
 
 end:
   leds <- 0b1110

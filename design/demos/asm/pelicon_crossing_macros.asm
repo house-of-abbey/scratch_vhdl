@@ -3,7 +3,7 @@
 ; Distributed under MIT Licence
 ;   See https://github.com/house-of-abbey/scratch_vhdl/blob/main/LICENCE.
 ;
-; J D Abbey & P A Abbey, 6 November 2022
+; J D Abbey & P A Abbey, 17 June 2022
 ;
 ; https://github.com/hlorenzi/customasm/wiki/Getting-started
 ;
@@ -14,15 +14,9 @@
 pelicon_crossing:
   .s0:
     leds <- 0b0001
-    wincr
-    r0 <- 0b0001      ; start
-    .s0_loop:
-      r1 <- btns and r0
-      if r1 eq r0
-        goto .s1
-        goto .s0_loop
+    wait until btns[0]
   .s1:
-    leds <- 0b0011
+    leds <- 0b0010
     wincr
   .s2:
     leds <- 0b0000
@@ -31,21 +25,15 @@ pelicon_crossing:
     leds <- 0b0010
     wincr
   .s4:
-    leds <- 0b0000    ; Left filter this time
+    leds <- 0b0000 ; Left filter this time
     wincr
   .s5:
     leds <- 0b0010
     wincr
   .s6:
     leds <- 0b0100
-    wincr
-    r0 <- 0b0010      ; stop
-    .s6_loop:
-      r1 <- btns and r0
-      if r1 eq r0
-        goto .s7
-        goto .s6_loop
+    wait until btns[1]
   .s7:
     leds <- 0b0010
     wincr
-  goto pelicon_crossing
+    goto pelicon_crossing

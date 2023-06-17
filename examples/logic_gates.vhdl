@@ -6,7 +6,7 @@ library ieee;
 
 architecture scratch of led4_button4 is
 
-  constant button_tab_c : natural := 1;
+  constant button_tab_c : natural := 2;
 
 
 
