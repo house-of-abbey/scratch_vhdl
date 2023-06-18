@@ -239,10 +239,14 @@ proc step_cmd {} {
 
 # Reopen the simulation with the newly selected assembled instructions file
 #  Parameters:
-#   1. The file name
+#   1. The file name (/path/file.o)
 #   2. A switch as follows:
-#      0 to load the 'test_interactive' configuration which uses the 'scratch' architecture for a user generated CPU.
-#      1 to load the 'test_risc_cpu' configuration which uses the 'risc_cpu' architecture for a the completed example CPU.
+#      0 to load the 'test_interactive' configuration which uses the 'scratch' architecture for a user
+#        generated CPU.
+#      1 to load the 'test_cpu_interactive' configuration which uses the 'risc_cpu' architecture for
+#        the non-Scratch example CPU for ease of debugging.
+#
+# Usage: change_asm {F:\Compile\ModelSim\projects\button_leds\instr_files\knight_rider_start_stop.o} 1
 #
 proc change_asm {{f} {conf 0}} {
   global thisscript
@@ -250,7 +254,7 @@ proc change_asm {{f} {conf 0}} {
   if {$conf == 0} {
     vsim -Grom_file_g=$f work.test_interactive
   } else {
-    vsim -Grom_file_g=$f work.test_risc_cpu
+    vsim -Grom_file_g=$f work.test_cpu_interactive
   }
   transcribe source "$thisscript"
 }

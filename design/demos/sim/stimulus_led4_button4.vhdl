@@ -145,20 +145,6 @@ configuration test_logic_gates of test_led4_button4 is
   end for;
 end configuration;
 
-configuration test_risc_cpu of test_led4_button4 is
-  for test
-
-    for led4_button4_i : led4_button4
-      use entity work.led4_button4(risc_cpu);
-    end for;
-
-    for stimulus_led4_button4_i : stimulus_led4_button4
-      use entity work.stimulus_led4_button4(logic_gates);
-    end for;
-
-  end for;
-end configuration;
-
 
 library local;
   use local.testbench_pkg.all;
@@ -696,7 +682,7 @@ begin
     if pass = '1' then
       report "Test PASS" severity note;
     else
-      report "Tes FAIL" severity error;
+      report "Test FAIL" severity error;
     end if;
 
     stop_clocks;
@@ -749,6 +735,23 @@ configuration test_interactive of test_led4_button4 is
       use entity work.led4_button4(scratch)
         generic map(
           rom_file_g => "./instr_files/tests.o"
+        );
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(interactive);
+    end for;
+
+  end for;
+end configuration;
+
+configuration test_cpu_interactive of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(risc_cpu)
+        generic map(
+          rom_file_g => "./instr_files/interactive.o"
         );
     end for;
 
