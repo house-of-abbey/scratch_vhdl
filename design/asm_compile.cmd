@@ -37,42 +37,60 @@ if not exist %DEST%\instr_files (
   if %ERRORLEVEL% NEQ 0 (goto error)
 )
 
+rem required for 'set ec' assignment to work
 setlocal enabledelayedexpansion
-rem Compile the user's own instruction file.
+rem Test we have specified a file to compile
+if "%1" == "" (
+  echo.
+  echo No file specified, compiling all files.
+  echo.
 
-echo Assembling instructions.asm:
-%SRC%\..\bin\customasm ^
- --format=binline ^
- --output=%DEST%\instr_files\instructions.o ^
- %SRC%\instructions.asm
-set ec=%ERRORLEVEL%
-echo.
-if !ec! NEQ 0 (goto error)
+  rem Compile the user's own instruction file. Must be compiled from the current directory as
+  rem a relative include path is used.
+  echo Assembling instructions.asm:
+  %SRC%\..\bin\customasm ^
+    --format=binline ^
+    --output=%DEST%\instr_files\instructions.o ^
+    %SRC%\instructions.asm
+  set ec=%ERRORLEVEL%
+  if !ec! NEQ 0 (goto error)
+  echo.
 
-rem Assemble each file in %SRC%\demos\asm\*.asm
+  rem Assemble each file in %SRC%\demos\asm\*.asm
+  for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm ^| findstr /v ruledef.asm') do (
+    echo Assembling %%G:
 
-for /f "tokens=*" %%G in ('dir /b %SRC%\demos\asm\*.asm ^| findstr /v ruledef.asm') do (
-  echo Assembling %%G:
+    %SRC%\..\bin\customasm ^
+      --format=binline ^
+      --output=%DEST%\instr_files\%%~nG.o ^
+      %SRC%\demos\asm\%%G
+    set ec=%ERRORLEVEL%
+    if !ec! NEQ 0 (goto error)
+    echo.
+  )
+) else (
+  echo.
+  echo Assembling %1:
 
-   %SRC%\..\bin\customasm ^
-     --format=binline ^
-     --output=%DEST%\instr_files\%%~nG.o ^
-     %SRC%\demos\asm\%%G
-   set ec=%ERRORLEVEL%
-   echo.
-   if !ec! NEQ 0 (goto error)
+  set fn=%~n1
+  %SRC%\..\bin\customasm ^
+    --format=binline ^
+    --output=%DEST%\instr_files\%fn%.o ^
+    %1
+  set ec=%ERRORLEVEL%
+  if !ec! NEQ 0 (goto error)
 )
 
 echo.
 echo Compilation SUCCEEDED
 echo.
-
 rem Do not pause inside MS Visual Studio Code, it has its own prompt on completion.
 if not "%TERM_PROGRAM%"=="vscode" pause
-exit /b %ec%
+exit /b !ec!
 
 :error
   echo.
   echo Compilation FAILED
+  echo.
   if not "%TERM_PROGRAM%"=="vscode" pause
-  exit /b %ERRORLEVEL%
+  exit /b !ec!
