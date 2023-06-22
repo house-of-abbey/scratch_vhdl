@@ -30,42 +30,42 @@ knight_rider:
   r0 <- 0
   btnschk
   .s0:
-    leds <- 1
+    leds <- 0b0001
     wincr
     btnschk
     if r0[0]
       goto .s1
       goto .s0
   .s1:
-    leds <- 2
+    leds <- 0b0010
     wincr
     btnschk
     if r0[0]
       goto .s2
       goto .s1
   .s2:
-    leds <- 4
+    leds <- 0b0100
     wincr
     btnschk
     if r0[0]
       goto .s3
       goto .s2
   .s3:
-    leds <- 8
+    leds <- 0b1000
     wincr
     btnschk
     if r0[0]
       goto .s4
       goto .s3
   .s4:
-    leds <- 4
+    leds <- 0b0100
     wincr
     btnschk
     if r0[0]
       goto .s5
       goto .s4
   .s5:
-    leds <- 2
+    leds <- 0b0010
     wincr
     btnschk
     if r0[0]

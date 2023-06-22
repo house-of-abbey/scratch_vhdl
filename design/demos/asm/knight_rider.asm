@@ -15,21 +15,21 @@
 
 knight_rider:
   .s0:
-    leds <- 1
+    leds <- 0b0001
     wincr
   .s1:
-    leds <- 2
+    leds <- 0b0010
     wincr
   .s2:
-    leds <- 4
+    leds <- 0b0100
     wincr
   .s3:
-    leds <- 8
+    leds <- 0b1000
     wincr
   .s4:
-    leds <- 4
+    leds <- 0b0100
     wincr
   .s5:
-    leds <- 2
+    leds <- 0b0010
     wincr
   goto .s0
