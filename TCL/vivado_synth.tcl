@@ -200,6 +200,7 @@ proc prog_my_board {} {
 #
 proc set_asm_file {f} {
   global env
+  global compile_dir
 
   set ff [file normalize "$compile_dir/ModelSim/projects/button_leds/instr_files/${f}.o"]
   if {![file exists $ff]} {
