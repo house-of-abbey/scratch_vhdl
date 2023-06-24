@@ -52,7 +52,7 @@ if "%1" == "" (
     --format=binline ^
     --output=%DEST%\instr_files\instructions.o ^
     %SRC%\instructions.asm
-  set ec=%ERRORLEVEL%
+  set ec=!ERRORLEVEL!
   if !ec! NEQ 0 (goto error)
   echo.
 
@@ -64,7 +64,7 @@ if "%1" == "" (
       --format=binline ^
       --output=%DEST%\instr_files\%%~nG.o ^
       %SRC%\demos\asm\%%G
-    set ec=%ERRORLEVEL%
+    set ec=!ERRORLEVEL!
     if !ec! NEQ 0 (goto error)
     echo.
   )
@@ -78,7 +78,7 @@ if "%1" == "" (
     --format=binline ^
     --output=%DEST%\instr_files\%fn%.o ^
     %1 2>&1
-  set ec=%ERRORLEVEL%
+  set ec=!ERRORLEVEL!
   if !ec! NEQ 0 (goto error)
 )
 
@@ -86,12 +86,20 @@ echo.
 echo Compilation SUCCEEDED
 echo.
 rem Do not pause inside MS Visual Studio Code, it has its own prompt on completion.
-if not defined VSCODE_PID pause
-exit /b !ec!
+if defined VSCODE_PID (
+  exit /b 0
+) else (
+  pause
+  exit /b !ec!
+)
 
 :error
   echo.
   echo Compilation FAILED
   echo.
-  if not defined VSCODE_PID pause
-  exit /b !ec!
+  if defined VSCODE_PID (
+    exit /b 0
+  ) else (
+    pause
+    exit /b !ec!
+  )
