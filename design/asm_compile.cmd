@@ -76,7 +76,7 @@ if "%1" == "" (
   set fn=%~n1
   %SRC%\..\bin\customasm ^
     --format=binline ^
-    --output=%DEST%\instr_files\%fn%.o ^
+    --output=%DEST%\instr_files\!fn!.o ^
     %1 2>&1
   set ec=!ERRORLEVEL!
   if !ec! NEQ 0 (goto error)
