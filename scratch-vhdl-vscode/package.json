@@ -21,6 +21,7 @@
     "url": "https://github.com/house-of-abbey/scratch_vhdl"
   },
   "main": "./out/extension.js",
+  "activationEvents": [],
   "contributes": {
     "menus": {
       "editor/title": [
