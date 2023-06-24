@@ -16,7 +16,7 @@ r1 <- 0b0000
 
 loop:
   leds <- r0 + btns
-  wincr 3
+  wincri 3
   leds <- btns and r1
   wincr 1
   goto loop

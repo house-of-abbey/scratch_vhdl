@@ -35,17 +35,19 @@ export function activate(context: vscode.ExtensionContext) {
     output = output.replace(
       / --> ([a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
-        ` --> ${file}:<button class="a" onclick="window.goto("${file}",${
-          line - 1
-        },${column - 1})">${line}:${column}</button>`
+        ` --> ${file}:<button class="a" onclick="window.goto('${file.replace(
+          /\\/g,
+          '\\\\'
+        )}',${line - 1},${column - 1})">${line}:${column}</button>`
     );
 
     output = output.replace(
       / --> ([a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
-        ` --> ${file}:<button class="a" onclick="window.goto("${file}",${
-          line - 1
-        },${column - 1})">${line}:${column}</button>`
+        ` --> ${file}:<button class="a" onclick="window.goto('${file.replace(
+          /\\/g,
+          '\\\\'
+        )}',${line - 1},${column - 1})">${line}:${column}</button>`
     );
     output = output.replace(
       /\x1b\[90m/g,
@@ -95,22 +97,27 @@ export function activate(context: vscode.ExtensionContext) {
               case 'goto': {
                 const a = message.text.split(',');
                 const f = a[0];
-                const b = message.text.split(' ');
+                const b = a[1].split(' ');
                 const l = parseInt(b[0]);
                 const c = parseInt(b[1]);
 
-                const doc = await vscode.workspace.openTextDocument(
-                  vscode.Uri.parse(f)
+                const e = await vscode.window.showTextDocument(
+                  await vscode.workspace.openTextDocument(vscode.Uri.file(f)),
+                  {
+                    preview: true,
+                    viewColumn: editor.viewColumn,
+                  }
                 );
-                const e = await vscode.window.showTextDocument(doc);
-
                 e.revealRange(
                   new vscode.Range(
                     new vscode.Position(l, c),
                     new vscode.Position(l, c)
                   )
                 );
-                e.selection = new vscode.Selection(l, 0, l, 999);
+                e.selection = new vscode.Selection(
+                  new vscode.Position(l, c),
+                  new vscode.Position(l, c)
+                );
                 break;
               }
             }
