@@ -35,7 +35,7 @@ export function activate(context: vscode.ExtensionContext) {
     output = output.replace(
       / --> ([a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
-        ` --> ${file}:<button class="a" onclick="window.goto("${file}",${
+        ` --> ${file}:<button class="a" onclick="window.goto('${file}',${
           line - 1
         },${column - 1})">${line}:${column}</button>`
     );
@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
     output = output.replace(
       / --> ([a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
-        ` --> ${file}:<button class="a" onclick="window.goto("${file}",${
+        ` --> ${file}:<button class="a" onclick="window.goto('${file}',${
           line - 1
         },${column - 1})">${line}:${column}</button>`
     );
