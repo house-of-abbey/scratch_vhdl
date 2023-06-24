@@ -16,17 +16,21 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "onCustomEditor:scratch-vhdl-vscode.scratchVHDL",
-    "onCommand:scratch-vhdl-vscode.scratchVHDL.new",
-    "onCommand:scratch-vhdl-vscode.scratchVHDL.newFrom"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/house-of-abbey/scratch_vhdl"
   },
   "main": "./out/extension.js",
   "contributes": {
+    "menus": {
+      "editor/title": [
+        {
+          "command": "scratch-vhdl-vscode.asm_compile",
+          "when": "editorLangId == customasm",
+          "group": "navigation"
+        }
+      ]
+    },
     "customEditors": [
       {
         "viewType": "scratch-vhdl-vscode.scratchVHDL",
@@ -48,6 +52,11 @@
         "command": "scratch-vhdl-vscode.scratchVHDL.newFrom",
         "title": "Create new Scratch VHDL Document From",
         "category": "Scratch VHDL"
+      },
+      {
+        "command": "scratch-vhdl-vscode.asm_compile",
+        "title": "asm_compile",
+        "category": "Scratch VHDL"
       }
     ],
     "languages": [
@@ -63,6 +72,12 @@
           ".sbd",
           ".sbe"
         ]
+      },
+      {
+        "id": "customasm",
+        "extensions": [
+          ".asm"
+        ]
       }
     ],
     "configuration": {
@@ -73,6 +88,11 @@
           "default": {},
           "additionalProperties": true,
           "description": "The templates available from 'scratch-vhdl-vscode.ScratchVHDL.newFrom'."
+        },
+        "scratch-vhdl-vscode.asm_compile_path": {
+          "type": "string",
+          "default": "../asm_compile.cmd",
+          "description": "The path to the asm_compile script."
         }
       }
     }

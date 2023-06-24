@@ -1,8 +1,9 @@
 {
-	"editor.insertSpaces": false,
-	"workbench.colorCustomizations": {
-		"activityBar.background": "#36117E",
-		"titleBar.activeBackground": "#4C18B0",
-		"titleBar.activeForeground": "#FDFBFF"
-	}
+  "editor.insertSpaces": false,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#36117E",
+    "titleBar.activeBackground": "#4C18B0",
+    "titleBar.activeForeground": "#FDFBFF"
+  },
+  "cmake.configureOnOpen": false
 }
