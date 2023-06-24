@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
     );
     output = output.replace(
-      / --> (asm|[a-zA-Z]:[\\/](?:[a-zA-Z0-9]+[\\/])*([a-zA-Z0-9]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+      / --> [a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
         ` --> ${file}:<button class="a" onclick="window.goto(${file},${
           line - 1
@@ -41,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     output = output.replace(
-      / --> (asm|[a-zA-Z]:[\\/](?:[a-zA-Z0-9]+[\\/])*([a-zA-Z0-9]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+      / --> [a-zA-Z]:[\\\/](?:[^\\\/<>:"|?*\s]+[\\\/])*(?:[^\\\/<>:"|?*\s]+\.asm):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
       (_, file, line, column) =>
         ` --> ${file}:<button class="a" onclick="window.goto(${file},${
           line - 1
