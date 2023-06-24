@@ -33,9 +33,19 @@
     "stop": "buttons(1)"
   },
   "signals": {
-    "start_r": "std_logic",
-    "stop_r": "std_logic",
-    "state": "natural range 0 to 7"
+    "start_r": [
+      "std_logic",
+      "'0'"
+    ],
+    "stop_r": [
+      "std_logic",
+      "'0'"
+    ],
+    "state": [
+      "natural range 0 to 7",
+      "(others => '0')"
+    ]
   },
-  "command": "../design/modelsim_compile.cmd design_entry.vhdl"
+  "command": "../design/modelsim_compile.cmd design_entry.vhdl",
+  "libraries": {}
 }
