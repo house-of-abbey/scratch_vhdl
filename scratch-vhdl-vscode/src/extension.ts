@@ -33,19 +33,19 @@ export function activate(context: vscode.ExtensionContext) {
       }
     );
     output = output.replace(
-      / --> asm:\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
-      (_, line, column) =>
-        ` --> asm:<button class="a" onclick="window.goto(${line - 1},${
-          column - 1
-        })">${line}:${column}</button>`
+      / --> (asm|[a-zA-Z]:[\\/](?:[a-zA-Z0-9]+[\\/])*([a-zA-Z0-9]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+      (_, file, line, column) =>
+        ` --> ${file}:<button class="a" onclick="window.goto(${file},${
+          line - 1
+        },${column - 1})">${line}:${column}</button>`
     );
 
     output = output.replace(
-      / --> asm:\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
-      (_, line, column) =>
-        ` --> asm:<button class="a" onclick="window.goto(${line - 1},${
-          column - 1
-        })">${line}:${column}</button>`
+      / --> (asm|[a-zA-Z]:[\\/](?:[a-zA-Z0-9]+[\\/])*([a-zA-Z0-9]+\.asm)):\x1b\[0m\x1b\[90m(\d+):(\d+)/g,
+      (_, file, line, column) =>
+        ` --> ${file}:<button class="a" onclick="window.goto(${file},${
+          line - 1
+        },${column - 1})">${line}:${column}</button>`
     );
     output = output.replace(
       /\x1b\[90m/g,
@@ -90,19 +90,27 @@ export function activate(context: vscode.ExtensionContext) {
         );
 
         panel.webview.onDidReceiveMessage(
-          (message) => {
+          async (message) => {
             switch (message.command) {
               case 'goto': {
-                const a = message.text.split(' ');
-                const l = parseInt(a[0]);
-                const c = parseInt(a[1]);
-                editor.revealRange(
+                const a = message.text.split(',');
+                const f = a[0];
+                const b = message.text.split(' ');
+                const l = parseInt(b[0]);
+                const c = parseInt(b[1]);
+
+                const doc = await vscode.workspace.openTextDocument(
+                  vscode.Uri.parse(f)
+                );
+                const e = await vscode.window.showTextDocument(doc);
+
+                e.revealRange(
                   new vscode.Range(
                     new vscode.Position(l, c),
                     new vscode.Position(l, c)
                   )
                 );
-                editor.selection = new vscode.Selection(l, 0, l, 999);
+                e.selection = new vscode.Selection(l, 0, l, 999);
                 break;
               }
             }
@@ -141,7 +149,7 @@ export function activate(context: vscode.ExtensionContext) {
                                 <body>
                                     <script>
                                         window.vscode = acquireVsCodeApi();
-                                        window.goto = (l, c) => window.vscode.postMessage({ command: "goto", text: l+" "+c });
+                                        window.goto = (f, l, c) => window.vscode.postMessage({ command: "goto", text: f+","+l+" "+c });
                                     </script>
                                     <div id="output">${assemble(
                                       editor.document
