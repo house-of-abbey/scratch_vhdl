@@ -14,13 +14,12 @@ title Installing Extensions
 curl ^
   --silent ^
   --location ^
-  --output %TEMP%/scratch-vhdl-vscode.vsix ^
+  --output %TEMP%\scratch-vhdl-vscode.vsix ^
   https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
 
-code --install-extension %TEMP%/scratch-vhdl-vscode.vsix
-code --install-extension josephabbey.customasm
-code --install-extension puorc.awesome-vhdl
+code --install-extension %TEMP%\scratch-vhdl-vscode.vsix
 
-del /f %TEMP%/scratch-vhdl-vscode.vsix
+rem These commands never execute
+del /f %TEMP%\scratch-vhdl-vscode.vsix
 
 pause

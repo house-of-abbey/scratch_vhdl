@@ -69,6 +69,7 @@ if "%1" == "" (
     echo.
   )
 ) else (
+  rem Executing inside VS Code, need to redirect stderr to stdout for Javascript parsing.
   echo.
   echo Assembling %1:
 
@@ -76,7 +77,7 @@ if "%1" == "" (
   %SRC%\..\bin\customasm ^
     --format=binline ^
     --output=%DEST%\instr_files\%fn%.o ^
-    %1
+    %1 2>&1
   set ec=%ERRORLEVEL%
   if !ec! NEQ 0 (goto error)
 )
@@ -85,12 +86,12 @@ echo.
 echo Compilation SUCCEEDED
 echo.
 rem Do not pause inside MS Visual Studio Code, it has its own prompt on completion.
-if not "%TERM_PROGRAM%"=="vscode" pause
+if not defined VSCODE_PID pause
 exit /b !ec!
 
 :error
   echo.
   echo Compilation FAILED
   echo.
-  if not "%TERM_PROGRAM%"=="vscode" pause
+  if not defined VSCODE_PID pause
   exit /b !ec!
