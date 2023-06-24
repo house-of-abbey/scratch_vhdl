@@ -18,8 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
   // Register our custom editor providers
   context.subscriptions.push(ScratchVHDLEditorProvider.register(context));
 
-  const assemble = (document: vscode.TextDocument) => {
-    document.save();
+  const assemble = async (document: vscode.TextDocument) => {
+    await document.save();
     let output = cp.execSync(
       `${path.join(
         vscode.workspace.workspaceFile?.fsPath ?? '',
@@ -81,7 +81,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerTextEditorCommand(
       'scratch-vhdl-vscode.asm_compile',
-      (editor) => {
+      async (editor) => {
         const panel = vscode.window.createWebviewPanel(
           'customasm',
           `Customasm`,
@@ -158,7 +158,7 @@ export function activate(context: vscode.ExtensionContext) {
                                         window.vscode = acquireVsCodeApi();
                                         window.goto = (f, l, c) => window.vscode.postMessage({ command: "goto", text: f+","+l+" "+c });
                                     </script>
-                                    <div id="output">${assemble(
+                                    <div id="output">${await assemble(
                                       editor.document
                                     )}</div>
                                 </body>
