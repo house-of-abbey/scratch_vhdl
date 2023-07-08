@@ -17,10 +17,11 @@ For the sake of simplicity, we're proposing the use of a Read Only memory (ROM) 
 * `AND` - Vector based, i.e. "1001" AND "0011" = "0001"
 * `OR` - Vector based
 * `NOT` - Vector based
+* `IF_BIT` - If register bit set
 * `IF_EQ` - If equal
 * `IF_GT` - If greater than
 * `IF_GE` - If greater than or equal
-* `IF_LT` - If less than. Note you don't need this if you have `LT_GT` as you can just swap the operands over.
+* `IF_LT` - If less than. Note you don't need this if you have `LT_GE` as you can just swap the operands over.
 * `IF_LE` - If less than or equal to. Note you don't need this if you have `LT_GT` as you can just swap the operands over.
 * `GOTO` an instruction. This requires some care with program counter values that may get shifted by code changes. At this point you need to start using loop labels with an assembler.
 * `WAIT` - Wait for a specified number of pulses on the `incr` input
