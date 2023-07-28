@@ -1,51 +1,51 @@
 {
-    "folders": [
-        {
-            "path": "."
-        },
-        {
-            "path": "./scratch-vhdl-vscode",
-            "name": "vscode"
-        }
-    ],
-    "settings": {
-        "workbench.colorCustomizations": {
-            "activityBar.background": "#3E0F77",
-            "titleBar.activeBackground": "#5614A6",
-            "titleBar.activeForeground": "#FBF9FE"
-        },
-        "todo-tree.tree.showCountsInTree": true,
-        "todo-tree.tree.showBadges": true,
-        "todo-tree.tree.disableCompactFolders": true,
-        "explorer.fileNesting.enabled": true,
-        "material-icon-theme.files.associations": {
-            "*.vhdl": "Verilog"
-        },
-        "scratch-vhdl-vscode.templates": {
-          "led4_button4": {
-            "entity": {
-                "clk": ["in", "std_logic"],
-                "reset": ["in", "std_logic"],
-                "incr": ["in", "std_logic"],
-                "buttons": ["in", "std_logic_vector(3 downto 0)"],
-                "leds": ["out", "std_logic_vector(3 downto 0)"]
-            },
-            "name": "led4_button4",
-            "constants": {
-                "button_tab_c": ["natural", "1"]
-            }
-          }
-        },
-        "markdownlint.config": {
-            "MD033": false,
-            "MD024": false
-        },
-        "scratch-vhdl-vscode.asm_compile_path": "./design/asm_compile.cmd"
+  "folders": [
+    {
+      "path": "."
     },
-    "extensions": {
-        "recommendations": [
-            "JosephAbbey.scratch-vhdl-vscode",
-            "JosephAbbey.customasm"
-        ]
+    {
+      "path": "./scratch-vhdl-vscode",
+      "name": "vscode"
     }
+  ],
+  "settings": {
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#3E0F77",
+      "titleBar.activeBackground": "#5614A6",
+      "titleBar.activeForeground": "#FBF9FE"
+    },
+    "todo-tree.tree.showCountsInTree": true,
+    "todo-tree.tree.showBadges": true,
+    "todo-tree.tree.disableCompactFolders": true,
+    "explorer.fileNesting.enabled": true,
+    "material-icon-theme.files.associations": {
+      "*.vhdl": "Verilog"
+    },
+    "scratch-vhdl-vscode.templates": {
+      "led4_button4": {
+        "entity": {
+          "clk": ["in", "std_logic"],
+          "reset": ["in", "std_logic"],
+          "incr": ["in", "std_logic"],
+          "buttons": ["in", "std_logic_vector(3 downto 0)"],
+          "leds": ["out", "std_logic_vector(3 downto 0)"]
+        },
+        "name": "led4_button4",
+        "constants": {
+          "button_tab_c": ["natural", "1"]
+        }
+      }
+    },
+    "markdownlint.config": {
+      "MD033": false,
+      "MD024": false
+    },
+    "scratch-vhdl-vscode.asm_compile_path": "./design/asm_compile.cmd"
+  },
+  "extensions": {
+    "recommendations": [
+      "JosephAbbey.scratch-vhdl-vscode",
+      "JosephAbbey.customasm"
+    ]
+  }
 }

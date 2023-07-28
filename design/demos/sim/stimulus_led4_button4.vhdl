@@ -751,7 +751,7 @@ configuration test_cpu_interactive of test_led4_button4 is
     for led4_button4_i : led4_button4
       use entity work.led4_button4(risc_cpu)
         generic map(
-          rom_file_g => "./instr_files/interactive.o"
+          rom_file_g => "./instr_files/instructions.o"
         );
     end for;
 
