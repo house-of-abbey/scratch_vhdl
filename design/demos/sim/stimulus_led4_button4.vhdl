@@ -708,6 +708,25 @@ configuration test_risc_cpu of test_led4_button4 is
   end for;
 end configuration;
 
+-- Test the Scratch version of RISC CPU. In addition compile the ScratchVHDL
+-- file to create the products required.
+configuration test_risc_cpu_scratch of test_led4_button4 is
+  for test
+
+    for led4_button4_i : led4_button4
+      use entity work.led4_button4(scratch)
+        generic map(
+          rom_file_g => "./instr_files/tests.o"
+        );
+    end for;
+
+    for stimulus_led4_button4_i : stimulus_led4_button4
+      use entity work.stimulus_led4_button4(risc_cpu);
+    end for;
+
+  end for;
+end configuration;
+
 
 library local;
 

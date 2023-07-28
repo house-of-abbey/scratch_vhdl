@@ -760,10 +760,10 @@ architecture risc_cpu of led4_button4 is
   -- Program Counter
   signal pc       : std_logic_vector(8 downto 0) := (others => '0');
   signal pc_value : code_t'element               := (others => '0');
-  signal pc_op    : op_t;
-  signal pc_dest  : natural range 0 to 7;
-  signal pc_src1  : natural range 0 to 7;
-  signal pc_src2  : natural range 0 to 7;
+  signal op       : op_t;
+  signal o        : natural range 0 to 7;
+  signal a        : natural range 0 to 7;
+  signal b        : natural range 0 to 7;
   signal wi       : unsigned(8 downto 0);                -- Wait for 'incr'
   signal eif      : std_logic                    := '0'; -- skiping due to if
 
@@ -789,11 +789,11 @@ begin
   -- Use signals here rather than variable inside the process for ease of
   -- displaying their values in simulation.
   pc_value <= code(to_integer(unsigned(pc)));
-  pc_op    <= to_op_code(pc_value(12 downto 9));
-  -- Register indexes                               Assembler 'ruledef'
-  pc_dest  <= to_integer(unsigned(pc_value(8 downto 6))); -- o
-  pc_src1  <= to_integer(unsigned(pc_value(5 downto 3))); -- a
-  pc_src2  <= to_integer(unsigned(pc_value(2 downto 0))); -- b
+  op       <= to_op_code(pc_value(12 downto 9));
+  -- Register indexes
+  o        <= to_integer(unsigned(pc_value(8 downto 6)));
+  a        <= to_integer(unsigned(pc_value(5 downto 3)));
+  b        <= to_integer(unsigned(pc_value(2 downto 0)));
 
   process(clk) is
   begin
@@ -823,45 +823,45 @@ begin
             pc <= pc + 1;
           end if;
 
-          case pc_op is
-            when op_set  => reg(pc_dest) <= pc_value(3 downto 0);
-            when op_copy => reg(pc_dest) <= reg(pc_src1);
-            when op_and  => reg(pc_dest) <= reg(pc_src1) and reg(pc_src2);
-            when op_or   => reg(pc_dest) <= reg(pc_src1) or  reg(pc_src2);
-            when op_not  => reg(pc_dest) <= not reg(pc_src1);
-            when op_add  => reg(pc_dest) <= reg(pc_src1)  +  reg(pc_src2);
-            when op_sub  => reg(pc_dest) <= reg(pc_src1)  -  reg(pc_src2);
+          case op is
+            when op_set  => reg(o) <= pc_value(3 downto 0);
+            when op_copy => reg(o) <= reg(a);
+            when op_and  => reg(o) <= reg(a) and reg(b);
+            when op_or   => reg(o) <= reg(a) or  reg(b);
+            when op_not  => reg(o) <= not reg(a);
+            when op_add  => reg(o) <= reg(a)  +  reg(b);
+            when op_sub  => reg(o) <= reg(a)  -  reg(b);
 
             when op_shft =>
               if pc_value(1) = '0' then
-                reg(pc_dest) <= pc_value(0) & reg(pc_src1)(3 downto 1);
+                reg(o) <= pc_value(0) & reg(a)(3 downto 1);
               else
-                reg(pc_dest) <= reg(pc_src1)(2 downto 0) & pc_value(0);
+                reg(o) <= reg(a)(2 downto 0) & pc_value(0);
               end if;
 
             when op_ifbit =>
-              if reg(pc_src1)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
+              if reg(a)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
                 eif <= '1';
               else
                 pc <= pc + 2;
               end if;
 
             when op_ifeq =>
-              if reg(pc_src1) = reg(pc_src2) then
+              if reg(a) = reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;
               end if;
 
             when op_ifgt =>
-              if reg(pc_src1) > reg(pc_src2) then
+              if reg(a) > reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;
               end if;
 
             when op_ifge =>
-              if reg(pc_src1) >= reg(pc_src2) then
+              if reg(a) >= reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;

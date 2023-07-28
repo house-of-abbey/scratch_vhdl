@@ -14,10 +14,10 @@ architecture scratch of led4_button4 is
 
   signal pc : std_logic_vector(8 downto 0) := (others => '0');
   signal pc_value : work.risc_cpu_pkg.code_t'element := (others => '0');
-  signal pc_op : std_logic_vector(3 downto 0) := (others => '0');
-  signal pc_dest : natural range 0 to 7;
-  signal pc_src1 : natural range 0 to 7;
-  signal pc_src2 : natural range 0 to 7;
+  signal op : std_logic_vector(3 downto 0) := (others => '0');
+  signal o : natural range 0 to 7;
+  signal a : natural range 0 to 7;
+  signal b : natural range 0 to 7;
   signal wi : unsigned(8 downto 0) := (others => '0');
   signal eif : std_logic;
   signal reg : work.risc_cpu_pkg.reg_arr_t := (others => (others => '0'));
@@ -29,20 +29,20 @@ begin
 
   pc_value <= code(to_integer(unsigned(pc)));
 
-  pc_op <= pc_value(12 downto 9);
+  op <= pc_value(12 downto 9);
 
-  pc_dest <= to_integer(unsigned(pc_value(8 downto 6)));
+  o <= to_integer(unsigned(pc_value(8 downto 6)));
 
-  pc_src1 <= to_integer(unsigned(pc_value(5 downto 3)));
+  a <= to_integer(unsigned(pc_value(5 downto 3)));
 
-  pc_src2 <= to_integer(unsigned(pc_value(2 downto 0)));
+  b <= to_integer(unsigned(pc_value(2 downto 0)));
 
   process(clk)
   begin
     if rising_edge(clk) then
       if reset = '1' then
         pc <= (others => '0');
-        reg <= (others => (others => '1'));
+        reg <= (others => (others => '0'));
         wi <= (others => '0');
         eif <= '0';
       else
@@ -60,55 +60,57 @@ begin
         end if;
         -- wi is all zeros
         if nor(wi) then
-          -- Update the program counter
+          -- Update the program counter.
+          -- In the true branch of a conditional branch 'eif'
+          -- will be high in order to skip an extra instruction.
           if eif = '1' then
             pc <= pc + 2;
             eif <= '0';
           else
             pc <= pc + 1;
           end if;
-          case pc_op is
+          case op is
             -- op_set
             when "0001" =>
-              reg(pc_dest) <= pc_value(3 downto 0);
+              reg(o) <= pc_value(3 downto 0);
 
             -- op_copy
             when "0010" =>
-              reg(pc_dest) <= reg(pc_src1);
+              reg(o) <= reg(a);
 
             -- op_and
             when "0011" =>
-              reg(pc_dest) <= reg(pc_src1) and reg(pc_src1);
+              reg(o) <= reg(a) and reg(b);
 
             -- op_or
             when "0100" =>
-              reg(pc_dest) <= reg(pc_src1) or reg(pc_src1);
+              reg(o) <= reg(a) or reg(b);
 
             -- op_not
             when "0101" =>
-              reg(pc_dest) <= not reg(pc_src1);
+              reg(o) <= not reg(a);
 
             -- op_add
             when "0110" =>
-              reg(pc_dest) <= reg(pc_src1) + reg(pc_src2);
+              reg(o) <= reg(a) + reg(b);
 
             -- op_sub
             when "0111" =>
-              reg(pc_dest) <= reg(pc_src1) - reg(pc_src2);
+              reg(o) <= reg(a) - reg(b);
 
             -- op_shft
             when "1000" =>
               if pc_value(1) = '0' then
                 -- Shift right
-                reg(pc_dest) <= pc_value(0) & reg(pc_src1)(3 downto 1);
+                reg(o) <= pc_value(0) & reg(a)(3 downto 1);
               else
                 -- Shit left
-                reg(pc_dest) <= reg(pc_src1)(2 downto 0) & pc_value(0);
+                reg(o) <= reg(a)(2 downto 0) & pc_value(0);
               end if;
 
             -- op_ifbit
             when "1010" =>
-              if reg(pc_src1)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
+              if reg(a)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then
                 eif <= '1';
               else
                 pc <= pc + 2;
@@ -116,7 +118,7 @@ begin
 
             -- op_ifeq
             when "1011" =>
-              if reg(pc_src1) = reg(pc_src2) then
+              if reg(a) = reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;
@@ -124,7 +126,7 @@ begin
 
             -- op_ifgt
             when "1100" =>
-              if reg(pc_src1) > reg(pc_src2) then
+              if reg(a) > reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;
@@ -132,7 +134,7 @@ begin
 
             -- op_ifge
             when "1101" =>
-              if reg(pc_src1) >= reg(pc_src2) then
+              if reg(a) >= reg(b) then
                 eif <= '1';
               else
                 pc <= pc + 2;
