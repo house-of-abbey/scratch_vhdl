@@ -2,7 +2,7 @@
 
 _Demonstration cipher generator (with shortcomings)_.
 
-A really basic demonstration of encrypting a message so that it cannot easily be intercepted by an eavesdropper, but can be decrypted on receipt by the intended recipient. The following picture illustrates the top level plan. Note that the 'time increment' signal `incr` used to slow operation down to visible speeds has been omitted for brevity.
+A really basic demonstration of encrypting a message so that it cannot easily be intercepted by an eavesdropper, but can be decrypted on receipt by the intended recipient. The following picture illustrates the top level plan for a basic [stream cipher](https://en.wikipedia.org/wiki/Stream_cipher). Note that the 'time increment' signal `incr` used to slow operation down to visible speeds has been omitted for brevity.
 
 ![Crypto Architecture](images/circuit_diagrams/crypto.png)
 
@@ -24,7 +24,14 @@ Also for demonstration purposes, we'll provide the means to turn encryption on a
 
 ![Encryption Enable](images/scratch_blocks/crypto_cipher_enable.png)
 
-For our key material generator, we'll take some cryptographic short cuts for reasons of accessibility. We'll use a pseudo random number generator for which we already have two implementations from the [linear feedback shift register](lfsr.md) (LFSR). Here we've chosen the internal feedback implementation for no particular reason. Having only 4-bits of _entropy_ (less given we can only use 15 of the maximum 2<sup>4</sup> values) this is not cryptographically secure by any means, but as you've gathered by now, we only have 4 bits to play with! Having generated the pseudo random sequence of 4-bit values, we then take only the bottom bit of each value in the sequence for the key material, because we only need one bit to feed the XOR gate.
+For our key material generator, we'll take some cryptographic short cuts for reasons of accessibility. We'll use a [pseudo random number generator](https://en.wikipedia.org/wiki/Cryptographically_secure_pseudorandom_number_generator) for which we already have two implementations from the [linear feedback shift register](lfsr.md) (LFSR). Here we've chosen the internal feedback implementation for no particular reason. Having only 4-bits of _entropy_ (less given we can only use 15 of the maximum 2<sup>4</sup> values) this is not cryptographically secure by any means, but as you've gathered by now, we only have 4 bits to play with! Having generated the pseudo random sequence of 4-bit values, we then take only the bottom bit of each value in the sequence for the key material, because we only need one bit to feed the XOR gate.
+
+An example of a (bad) key implementation here might be to reset the LFSR to a different starting value in each LFRS instance. Then the generated key material sequence would start in a different place for each choice of key. This is bad for two reasons:
+
+1. There are only 15 possible keys in this implementation.
+2. The sequence is just rotated, not completely shuffled, for each different key.
+
+There is no sensible means of specifying a key with only 4 buttons in our design, hance no means of changing the key has been included.
 
 ![Message Transmission Key Generation](images/scratch_blocks/crypto_src_key_gen.png)
 
@@ -82,12 +89,12 @@ Without encryption you see `led(3)` (original message) propagates to `led(1)` an
 
 As already mentioned, this demonstration is limited by comparison with a real cryptographic product. Here are some of the limits:
 
-1. There is no provision to enter a _key_ and change the way the sequence of `0`s and `1`s is generated for the key material feeding the XOR gates.
-2. The key material generator needs to have much more 'entropy', meaning a bigger pool of randomness to extract the key sequence from.
-3. Synchronisation is provided by a net across the transmission line where the message is encrypted. This is unrealistic, so what alternatives might be used? E.g. start of message, but that's not helpful in a continuous data stream. Or derivation of the key material from a source known at both ends, e.g. the cipher text?
-4. Both ends of the communication line are co-located on the same FPGA board. Typically the encrypted message would be transmitted between locations, e.g. over the air.
-5. The ability to turn off encryption would ordinarily be omitted as it represents a risk where user error is concerned.
-6. There is no attempt to maintain separation of encrypted and unencrypted paths to prevent any shorts causing compromise.
+1. Both ends of the communication line are co-located on the same FPGA board. Typically the encrypted message would be transmitted between locations, e.g. over the air.
+2. There is no provision to enter a _[key](https://en.wikipedia.org/wiki/Key_(cryptography))_ and change the way the sequence of `0`s and `1`s is generated for the key material feeding the XOR gates.
+3. The key material generator needs to have much more '[entropy](https://en.wikipedia.org/wiki/Entropy_%28computing%29)' (or for the really keen see this [reference](https://en.wikipedia.org/wiki/Entropy_(information_theory))), meaning a bigger pool of randomness to extract the key sequence from.
+4. Synchronisation is provided by a net across the transmission line where the message is encrypted. This is unrealistic, so what alternatives might be used? E.g. start of message, but that's not helpful in a continuous data stream. Or derivation of the key material from a source known at both ends, e.g. the cipher text? That is known as a [self-synchronizing stream cipher](https://en.wikipedia.org/wiki/Stream_cipher#Self-synchronizing_stream_ciphers).
+5. The ability to turn off encryption represents a risk where user error is concerned.
+6. There is no attempt to maintain [separation of encrypted and unencrypted paths](https://en.wikipedia.org/wiki/Red/black_concept) to prevent any shorts causing compromise.
 
 ## Elaboration with Vivado
 
