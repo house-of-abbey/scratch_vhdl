@@ -87,3 +87,18 @@ As already mentioned, this demonstration is limited by comparison with a real cr
 3. Synchronisation is provided by a net across the transmission line where the message is encrypted. This is unrealistic, so what alternatives might be used? E.g. start of message, but that's not helpful in a continuous data stream. Or derivation of the key material from a source known at both ends, e.g. the cipher text?
 4. Both ends of the communication line are co-located on the same FPGA board. Typically the encrypted message would be transmitted between locations, e.g. over the air.
 5. The ability to turn off encryption would ordinarily be omitted as it represents a risk where user error is concerned.
+6. There is no attempt to maintain separation of encrypted and unencrypted paths to prevent any shorts causing compromise.
+
+## Elaboration with Vivado
+
+The elaborated design below has been coloured to show key aspects of the realised design.
+
+![Elaboration with Vivado](images/vivado/crypto.png)
+
+| Colour                                   | Significance      |
+|------------------------------------------|-------------------|
+| <span style="color:green">Green</span>   | Encryption path   |
+| <span style="color:red">Red</span>       | Decryption path   |
+| <span style="color:orange">Orange</span> | Encryption enable |
+
+The two key generators are `key_src_reg` and `key_dest_reg` since Vivado adds `_reg` to all registers. XOR gates are also used by the two LFSRs.
