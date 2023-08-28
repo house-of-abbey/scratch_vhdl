@@ -70,7 +70,7 @@ begin
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        leds <= "1111";
+        leds <= "0000";
       else
         leds <= (buttons(3) & run) & (cipher_text & plain_text);
       end if;
