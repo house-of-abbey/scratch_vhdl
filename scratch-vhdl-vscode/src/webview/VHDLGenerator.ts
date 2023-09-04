@@ -413,8 +413,12 @@ export function generate(
           '\n  signal ' +
           n +
           ' : ' +
-          signals[n][0] +
-          (signals[n][1] ? ' := ' + signals[n][1] : '') +
+          (signals[n] instanceof Array
+            ? signals[n][0] +
+              (signals[n][1] && signals[n][1] != ''
+                ? ' := ' + signals[n][1]
+                : '')
+            : signals[n]) +
           ';'
       )
       .join('');

@@ -26,7 +26,7 @@ export type WebviewToBackMessageResponse = (
 export interface Entity {
   name?: string;
   entity: Record<string, [string, string]>;
-  signals: Record<string, [string, string]>;
+  signals: Record<string, string | [string, string]>;
   constants: Record<string, [string, string]>;
   aliases: Record<string, string>;
   command?: string;

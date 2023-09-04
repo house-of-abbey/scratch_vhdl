@@ -74,7 +74,8 @@
         "entity",
         "signals",
         "constants",
-        "aliases"
+        "aliases",
+        "libraries"
       ],
       "additionalProperties": false
     }

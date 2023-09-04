@@ -425,7 +425,9 @@ Blockly.ContextMenuRegistry.registry.register({
     editable(
       grid,
       ['Name', 'Type', 'Initial'],
-      Object.entries(entity.signals).map(([x, y]) => [x, ...y])
+      Object.entries(entity.signals).map(([x, y]) =>
+        y instanceof Array ? [x, ...y] : [x, y, '']
+      )
     );
     modal.addEventListener('close', () => {
       modal.remove();
