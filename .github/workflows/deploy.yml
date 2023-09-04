@@ -26,8 +26,6 @@ jobs:
           version: 7
           run_install: false
 
-      - run: cd scratch-vhdl-vscode
-
       - name: Get pnpm store directory
         shell: bash
         run: |
@@ -42,9 +40,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
 
       - name: Install dependencies
-        run: pnpm install
-
-      - run: cd ..
+        run: |
+          cd scratch-vhdl-vscode
+          pnpm install
+          cd ..
 
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1
