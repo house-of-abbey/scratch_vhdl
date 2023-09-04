@@ -5,8 +5,6 @@ library work;
   use work.risc_cpu_pkg.all;
 
 
-
-
 architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 2;

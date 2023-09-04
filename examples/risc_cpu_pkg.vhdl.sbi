@@ -1,4 +1,4 @@
-({
-  name: "work.risc_cpu_pkg",
-  blocks: []
-})
+return {
+  name: 'work.risc_cpu_pkg',
+  blocks: [],
+};

@@ -1,81 +1,109 @@
-({
-    name: "ieee.numeric_std",
-    blocks: [
-        {
-            "block": {
-                "kind": "block",
-                "type": "ieee.numeric_std.to_integer",
-                "message0": "to_integer %1",
-                colour,
-                "args0": [
-                    {
-                        "type": "input_value",
-                        "name": "NUM"
-                    }
-                ],
-                "output": null,
-                "tooltip": "Converts to an integer"
-            },
-            "generator": function (block) {
-                return ["to_integer(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
-            }
-        },
-        {
-            "block": {
-                "kind": "block",
-                "type": "ieee.numeric_std.unsigned",
-                "message0": "unsigned %1",
-                colour,
-                "args0": [
-                    {
-                        "type": "input_value",
-                        "name": "NUM"
-                    }
-                ],
-                "output": null,
-                "tooltip": "Converts to an unsigned"
-            },
-            "generator": function (block) {
-                return ["unsigned(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
-            }
-        },
-        {
-            "block": {
-                "kind": "block",
-                "type": "ieee.numeric_std.signed",
-                "message0": "signed %1",
-                colour,
-                "args0": [
-                    {
-                        "type": "input_value",
-                        "name": "NUM"
-                    }
-                ],
-                "output": null,
-                "tooltip": "Converts to a signed"
-            },
-            "generator": function (block) {
-                return ["signed(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
-            }
-        },
-        {
-            "block": {
-                "kind": "block",
-                "type": "ieee.std_logic_1164.std_logic_vector",
-                "message0": "std_logic_vector %1",
-                colour,
-                "args0": [
-                    {
-                        "type": "input_value",
-                        "name": "NUM"
-                    }
-                ],
-                "output": null,
-                "tooltip": "Converts to a std_logic_vector"
-            },
-            "generator": function (block) {
-                return ["ieee.std_logic_1164.std_logic_vector(" + generator.valueToCode(block, "NUM", generator.ORDER_NONE) + ")", ["list_index", "list_range"].includes(block.getParent().type) ? generator.ORDER_ATOMIC : generator.ORDER_FUNCTION_CALL]
-            }
-        }
-    ]
-})
+return {
+  name: 'ieee.numeric_std',
+  blocks: [
+    {
+      block: {
+        kind: 'block',
+        type: 'ieee.numeric_std.to_integer',
+        message0: 'to_integer %1',
+        colour,
+        args0: [
+          {
+            type: 'input_value',
+            name: 'NUM',
+          },
+        ],
+        output: null,
+        tooltip: 'Converts to an integer',
+      },
+      generator: function (block) {
+        return [
+          'to_integer(' +
+            generator.valueToCode(block, 'NUM', generator.Order.NONE) +
+            ')',
+          ['list_index', 'list_range'].includes(block.getParent().type)
+            ? generator.Order.ATOMIC
+            : generator.Order.FUNCTION_CALL,
+        ];
+      },
+    },
+    {
+      block: {
+        kind: 'block',
+        type: 'ieee.numeric_std.unsigned',
+        message0: 'unsigned %1',
+        colour,
+        args0: [
+          {
+            type: 'input_value',
+            name: 'NUM',
+          },
+        ],
+        output: null,
+        tooltip: 'Converts to an unsigned',
+      },
+      generator: function (block) {
+        return [
+          'unsigned(' +
+            generator.valueToCode(block, 'NUM', generator.Order.NONE) +
+            ')',
+          ['list_index', 'list_range'].includes(block.getParent().type)
+            ? generator.Order.ATOMIC
+            : generator.Order.FUNCTION_CALL,
+        ];
+      },
+    },
+    {
+      block: {
+        kind: 'block',
+        type: 'ieee.numeric_std.signed',
+        message0: 'signed %1',
+        colour,
+        args0: [
+          {
+            type: 'input_value',
+            name: 'NUM',
+          },
+        ],
+        output: null,
+        tooltip: 'Converts to a signed',
+      },
+      generator: function (block) {
+        return [
+          'signed(' +
+            generator.valueToCode(block, 'NUM', generator.Order.NONE) +
+            ')',
+          ['list_index', 'list_range'].includes(block.getParent().type)
+            ? generator.Order.ATOMIC
+            : generator.Order.FUNCTION_CALL,
+        ];
+      },
+    },
+    {
+      block: {
+        kind: 'block',
+        type: 'ieee.std_logic_1164.std_logic_vector',
+        message0: 'std_logic_vector %1',
+        colour,
+        args0: [
+          {
+            type: 'input_value',
+            name: 'NUM',
+          },
+        ],
+        output: null,
+        tooltip: 'Converts to a std_logic_vector',
+      },
+      generator: function (block) {
+        return [
+          'ieee.std_logic_1164.std_logic_vector(' +
+            generator.valueToCode(block, 'NUM', generator.Order.NONE) +
+            ')',
+          ['list_index', 'list_range'].includes(block.getParent().type)
+            ? generator.Order.ATOMIC
+            : generator.Order.FUNCTION_CALL,
+        ];
+      },
+    },
+  ],
+};

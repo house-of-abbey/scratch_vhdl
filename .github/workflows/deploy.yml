@@ -3,7 +3,7 @@ name: Deploy Extension
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 jobs:
   deploy:
@@ -12,18 +12,45 @@ jobs:
       name: open-vsx
       url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-      - run: |
-          cd scratch-vhdl-vscode
-          npm install
-          cd ..
-      - name: Publish to Open VSX Registry
-        id: open_vsx
-        uses: HaaLeo/publish-vscode-extension@v1
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
         with:
+          version: 7
+          run_install: false
+
+      - run: cd scratch-vhdl-vscode
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - run: cd ..
+
+      - name: Publish to Open VSX Registry
+        uses: HaaLeo/publish-vscode-extension@v1
+        id: open_vsx
+        with:
+          dependencies: false
           packagePath: ./scratch-vhdl-vscode
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
       - name: Create Release
