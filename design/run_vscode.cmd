@@ -30,13 +30,13 @@ if not defined SCRATCH_SRC (
   goto error
 )
 
-if not defined DRIVE (
-  echo Variable 'DRIVE' not set.
+if not defined VSCODE_INSTALL (
+  echo Variable 'VSCODE_INSTALL' not set.
   goto error
 )
 
 
-"%DRIVE%\Microsoft VS Code\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
+"%VSCODE_INSTALL%\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
 
 exit /b %errorcode%
 
