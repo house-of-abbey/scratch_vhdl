@@ -3,8 +3,6 @@ library ieee;
   use ieee.numeric_std_unsigned.all;
 
 
-
-
 architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 1;

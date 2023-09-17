@@ -29,7 +29,7 @@
     ]
   },
   "signals": {
-    "buttons_d": "std_logic_vector(3 downto 0)"
+    "buttons_d": ["std_logic_vector(3 downto 0)", ""]
   },
   "aliases": {},
   "command": "../design/modelsim_compile.cmd pulse_gen.vhdl"
