@@ -409,12 +409,47 @@ export class ScratchVHDLEditorProvider
               color: var(--vscode-menu-foreground);
             }
 
-            :modal {
-              background-color: var(--vscode-editor-background);
-            }
             ::backdrop {
               background-color: #0004;
               backdrop-filter: blur(1px);
+            }
+
+            /* Properties */
+            :root {
+              --container-paddding: 20px;
+              --input-padding-vertical: 6px;
+              --input-padding-horizontal: 4px;
+              --input-margin-vertical: 4px;
+              --input-margin-horizontal: 0;
+            }
+            dialog {
+              padding: var(--container-paddding) 0;
+              color: var(--vscode-foreground);
+              font-size: var(--vscode-font-size);
+              font-weight: var(--vscode-font-weight);
+              font-family: var(--vscode-font-family);
+              background-color: var(--vscode-editor-background);
+              border-color: var(--vscode-menu-selectionBackground);
+            }
+            dialog > * {
+              margin-block-start: var(--input-margin-vertical);
+              margin-block-end: var(--input-margin-vertical);
+            }
+            dialog *:focus {
+              outline-color: var(--vscode-focusBorder) !important;
+            }
+            dialog input {
+              display: block;
+              width: 100%;
+              border: none;
+              font-family: var(--vscode-font-family);
+              padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+              color: var(--vscode-input-foreground);
+              outline-color: var(--vscode-input-border);
+              background-color: var(--vscode-input-background);
+            }
+            dialog input::placeholder {
+              color: var(--vscode-input-placeholderForeground);
             }
           </style>
         </head>

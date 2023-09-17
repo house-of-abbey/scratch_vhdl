@@ -1,13 +1,3 @@
-import {
-  DataGrid,
-  DataGridCell,
-  provideVSCodeDesignSystem,
-  vsCodeDataGrid,
-  vsCodeDataGridCell,
-  vsCodeDataGridRow,
-  vsCodeButton,
-  Button,
-} from '@vscode/webview-ui-toolkit';
 import * as Blockly from 'blockly';
 import { Entity } from '../types';
 import { toolbox } from './toolbox';
@@ -23,6 +13,14 @@ import {
   runCmd,
   viewCode,
 } from './message';
+import TableEditor, { Canceled } from './TableEditor';
+
+import {
+  provideVSCodeDesignSystem,
+  vsCodeButton,
+} from '@vscode/webview-ui-toolkit';
+
+provideVSCodeDesignSystem().register(vsCodeButton());
 
 async function updateEntity(data: { entity: Entity; filename: string }) {
   entity = data.entity;
@@ -155,109 +153,6 @@ async function main() {
   Blockly.Events.enable();
 }
 
-provideVSCodeDesignSystem().register(
-  vsCodeDataGrid(),
-  vsCodeDataGridCell(),
-  vsCodeDataGridRow(),
-  vsCodeButton()
-);
-
-function editable(grid: DataGrid, columns: string[], data: string[][]) {
-  // Make a given cell editable
-  function setCellEditable(cell: DataGridCell) {
-    cell.setAttribute('contenteditable', 'true');
-    const selection = window.getSelection();
-    if (selection) {
-      const range = document.createRange();
-      range.selectNodeContents(cell);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  }
-
-  // Make a given cell non-editable
-  function unsetCellEditable(cell: DataGridCell) {
-    cell.setAttribute('contenteditable', 'false');
-    const selection = window.getSelection();
-    if (selection) {
-      selection.removeAllRanges();
-    }
-  }
-
-  // Syncs changes made in an editable cell with the
-  // underlying data structure of a vscode-data-grid
-  function syncCellChanges(cell: DataGridCell) {
-    const column = cell.columnDefinition;
-    const row = cell.rowData;
-
-    if (column && row) {
-      const originalValue = row[column.columnDataKey];
-      const newValue = cell.innerText;
-
-      if (originalValue !== newValue) {
-        row[column.columnDataKey] = newValue;
-      }
-    }
-  }
-
-  grid.rowsData = data;
-  grid.columnDefinitions = columns.map((x, i) => ({
-    columnDataKey: i.toString(),
-    title: x,
-  }));
-
-  grid?.addEventListener('cell-focused', (e: Event) => {
-    const cell = e.target as DataGridCell;
-    // Do not continue if `cell` is undefined/null or is not a grid cell
-    if (!cell || cell.role !== 'gridcell') {
-      return;
-    }
-    // Do not allow data grid header cells to be editable
-    if (cell.className === 'column-header') {
-      return;
-    }
-
-    // Note: Need named closures in order to later use removeEventListener
-    // in the handleBlurClosure function
-    const handleKeydownClosure = (e: KeyboardEvent) => {
-      if (
-        !cell.hasAttribute('contenteditable') ||
-        cell.getAttribute('contenteditable') === 'false'
-      ) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          setCellEditable(cell);
-        }
-      } else {
-        if (e.key === 'Enter' || e.key === 'Escape') {
-          e.preventDefault();
-          syncCellChanges(cell);
-          unsetCellEditable(cell);
-        }
-      }
-    };
-    const handleClickClosure = () => {
-      setCellEditable(cell);
-    };
-    const handleBlurClosure = () => {
-      syncCellChanges(cell);
-      unsetCellEditable(cell);
-      // Remove the blur, keydown, and click event listener _only after_
-      // the cell is no longer focused
-      cell.removeEventListener('blur', handleBlurClosure);
-      cell.removeEventListener('keydown', handleKeydownClosure);
-      cell.removeEventListener('click', handleClickClosure);
-    };
-
-    cell.addEventListener('keydown', handleKeydownClosure);
-    // Run the click listener once so that if a cell's text is clicked a
-    // second time the cursor will move to the given position in the string
-    // (versus reselecting the cell text again)
-    cell.addEventListener('click', handleClickClosure, { once: true });
-    cell.addEventListener('blur', handleBlurClosure);
-  });
-}
-
 const theme = Blockly.Theme.defineTheme('vscode', {
   name: 'vscode',
   base: Blockly.Themes.Classic,
@@ -367,38 +262,17 @@ Blockly.ContextMenuRegistry.registry.register({
     return 'enabled';
   },
   async callback() {
-    const modal = document.createElement('dialog');
-    modal.innerHTML = /* html */ `<vscode-data-grid id="grid"></vscode-data-grid>
-                                    <div style="display: flex; justify-content: center; margin-top: 1em; gap: 1em">
-                                      <vscode-button id="cancel">Cancel</vscode-button>
-                                      <vscode-button id="save">Save</vscode-button>
-                                    </div>`;
-    document.body.appendChild(modal);
-
-    const grid = modal.querySelector('#grid') as DataGrid;
-    const save = modal.querySelector('#save') as Button;
-    const cancel = modal.querySelector('#cancel') as Button;
-    editable(
-      grid,
-      ['Name', 'Direction', 'Type'],
-      Object.entries(entity.entity).map(([x, y]) => [x, ...y])
-    );
-    modal.addEventListener('close', () => {
-      modal.remove();
-    });
-    save.addEventListener('click', () => {
-      entity.entity = Object.fromEntries(
-        (grid.rowsData as [string, string, string][]).map<
-          [string, [string, string]]
-        >(([x, ...y]) => [x, y])
+    try {
+      entity.entity = await TableEditor(
+        ['Name', 'Direction', 'Type'],
+        entity.entity
       );
-      modal.close();
       editEntity(entity);
       editContent(ws, filename, entity);
       updateEntity({ entity, filename });
-    });
-    cancel.addEventListener('click', () => modal.close());
-    modal.showModal();
+    } catch (e) {
+      if (!(e instanceof Canceled)) throw e;
+    }
   },
   scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
   id: 'edit_ports',
@@ -411,40 +285,17 @@ Blockly.ContextMenuRegistry.registry.register({
     return 'enabled';
   },
   async callback() {
-    const modal = document.createElement('dialog');
-    modal.innerHTML = /* html */ `<vscode-data-grid id="grid"></vscode-data-grid>
-                                    <div style="display: flex; justify-content: center; margin-top: 1em; gap: 1em">
-                                      <vscode-button id="cancel">Cancel</vscode-button>
-                                      <vscode-button id="save">Save</vscode-button>
-                                    </div>`;
-    document.body.appendChild(modal);
-
-    const grid = modal.querySelector('#grid') as DataGrid;
-    const save = modal.querySelector('#save') as Button;
-    const cancel = modal.querySelector('#cancel') as Button;
-    editable(
-      grid,
-      ['Name', 'Type', 'Initial'],
-      Object.entries(entity.signals).map(([x, y]) =>
-        y instanceof Array ? [x, ...y] : [x, y, '']
-      )
-    );
-    modal.addEventListener('close', () => {
-      modal.remove();
-    });
-    save.addEventListener('click', () => {
-      entity.signals = Object.fromEntries(
-        (grid.rowsData as [string, string, string][]).map<
-          [string, [string, string]]
-        >(([x, ...y]) => [x, y])
+    try {
+      entity.signals = await TableEditor(
+        ['Name', 'Type', 'Initial'],
+        entity.signals
       );
-      modal.close();
       editEntity(entity);
       editContent(ws, filename, entity);
       updateEntity({ entity, filename });
-    });
-    cancel.addEventListener('click', () => modal.close());
-    modal.showModal();
+    } catch (e) {
+      if (!(e instanceof Canceled)) throw e;
+    }
   },
   scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
   id: 'edit_signals',
@@ -457,32 +308,17 @@ Blockly.ContextMenuRegistry.registry.register({
     return 'enabled';
   },
   async callback() {
-    const modal = document.createElement('dialog');
-    modal.innerHTML = /* html */ `<vscode-data-grid id="grid"></vscode-data-grid>
-                                    <div style="display: flex; justify-content: center; margin-top: 1em; gap: 1em">
-                                      <vscode-button id="cancel">Cancel</vscode-button>
-                                      <vscode-button id="save">Save</vscode-button>
-                                    </div>`;
-    document.body.appendChild(modal);
-
-    const grid = modal.querySelector('#grid') as DataGrid;
-    const save = modal.querySelector('#save') as Button;
-    const cancel = modal.querySelector('#cancel') as Button;
-    editable(grid, ['Name', 'Value'], Object.entries(entity.aliases));
-    modal.addEventListener('close', () => {
-      modal.remove();
-    });
-    save.addEventListener('click', () => {
-      entity.aliases = Object.fromEntries(
-        grid.rowsData as [string, string][]
+    try {
+      entity.aliases = await TableEditor(
+        ['Name', 'Value'],
+        entity.aliases
       );
-      modal.close();
       editEntity(entity);
       editContent(ws, filename, entity);
       updateEntity({ entity, filename });
-    });
-    cancel.addEventListener('click', () => modal.close());
-    modal.showModal();
+    } catch (e) {
+      if (!(e instanceof Canceled)) throw e;
+    }
   },
   scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
   id: 'edit_aliases',
@@ -495,38 +331,17 @@ Blockly.ContextMenuRegistry.registry.register({
     return 'enabled';
   },
   async callback() {
-    const modal = document.createElement('dialog');
-    modal.innerHTML = /* html */ `<vscode-data-grid id="grid"></vscode-data-grid>
-                                    <div style="display: flex; justify-content: center; margin-top: 1em; gap: 1em">
-                                      <vscode-button id="cancel">Cancel</vscode-button>
-                                      <vscode-button id="save">Save</vscode-button>
-                                    </div>`;
-    document.body.appendChild(modal);
-
-    const grid = modal.querySelector('#grid') as DataGrid;
-    const save = modal.querySelector('#save') as Button;
-    const cancel = modal.querySelector('#cancel') as Button;
-    editable(
-      grid,
-      ['Name', 'Type', 'Value'],
-      Object.entries(entity.constants).map(([x, y]) => [x, ...y])
-    );
-    modal.addEventListener('close', () => {
-      modal.remove();
-    });
-    save.addEventListener('click', () => {
-      entity.constants = Object.fromEntries(
-        (grid.rowsData as [string, string, string][]).map<
-          [string, [string, string]]
-        >(([x, ...y]) => [x, y])
+    try {
+      entity.constants = await TableEditor(
+        ['Name', 'Type', 'Value'],
+        entity.constants
       );
-      modal.close();
       editEntity(entity);
       editContent(ws, filename, entity);
       updateEntity({ entity, filename });
-    });
-    cancel.addEventListener('click', () => modal.close());
-    modal.showModal();
+    } catch (e) {
+      if (!(e instanceof Canceled)) throw e;
+    }
   },
   scopeType: Blockly.ContextMenuRegistry.ScopeType.WORKSPACE,
   id: 'edit_constants',
