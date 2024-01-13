@@ -19,8 +19,7 @@ if exist %SRC%\config.cmd (
   call %SRC%\config.cmd
 ) else (
   echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
-  pause
-  exit /b 1
+  goto error
 )
 
 if not defined MODELSIMDIR (
@@ -29,6 +28,15 @@ if not defined MODELSIMDIR (
 )
 if not defined COMPILEDIR (
   echo Variable 'COMPILEDIR' not set.
+  goto error
+)
+
+if not exist %MODELSIMDIR%\ (
+  echo Directory %MODELSIMDIR% not found.
+  goto error
+)
+if not exist %COMPILEDIR%\ (
+  echo Directory %COMPILEDIR% not found.
   goto error
 )
 
@@ -43,4 +51,5 @@ exit /b %errorcode%
 :error
   echo.
   echo Execution FAILED
+  pause
   exit /b 1

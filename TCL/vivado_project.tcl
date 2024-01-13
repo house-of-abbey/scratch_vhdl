@@ -58,6 +58,7 @@ if {![file isdirectory $compile_dir]} {
 set proj_src     [file normalize $compile_dir/Xilinx/Workspace/scratch_vhdl]
 set modelsim_lib [file normalize $compile_dir/ModelSim/libraries]
 
+file mkdir $modelsim_lib
 cd $modelsim_lib
 # Create 'unisim' library for ModelSim only if required
 if {![file isdirectory "$modelsim_lib/unisim"]} {
@@ -68,7 +69,7 @@ if {![file isdirectory "$modelsim_lib/unisim"]} {
     -language vhdl \
     -library unisim \
     -dir $modelsim_lib \
-	-quiet
+    -quiet
 
   report_simlib_info $modelsim_lib
 }

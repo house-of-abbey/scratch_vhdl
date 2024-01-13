@@ -42,6 +42,15 @@ if {![file isdirectory $compile_dir]} {
   error "'compile_dir' does not point to an existing directory." 1
 }
 
+# Usage: elapsed_time {synth_my_design}
+#
+proc elapsed_time {command} {
+  set start_time [clock clicks -milliseconds]
+  $command
+  set elapsed_time [expr ([clock clicks -milliseconds] - $start_time) / 1000]
+  clock format $elapsed_time -format "$command took %M minutes %S seconds"
+}
+
 proc get_my_synth_run {} {
   get_runs -filter {NAME !~ "pll*" && IS_SYNTHESIS}
 }

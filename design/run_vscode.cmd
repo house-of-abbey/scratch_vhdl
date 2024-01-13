@@ -21,20 +21,26 @@ if exist %SRC%\config.cmd (
   call %SRC%\config.cmd
 ) else (
   echo Configuration file 'config.cmd' not found. Copy and edit 'config.cmd.editme'.
-  pause
-  exit /b 1
+  goto error
 )
 
 if not defined SCRATCH_SRC (
   echo Variable 'SCRATCH_SRC' not set.
   goto error
 )
-
 if not defined VSCODE_INSTALL (
   echo Variable 'VSCODE_INSTALL' not set.
   goto error
 )
 
+if not exist %SCRATCH_SRC%\ (
+  echo Directory %SCRATCH_SRC% not found.
+  goto error
+)
+if not exist %VSCODE_INSTALL%\ (
+  echo Directory %VSCODE_INSTALL% not found.
+  goto error
+)
 
 "%VSCODE_INSTALL%\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
 
@@ -43,4 +49,5 @@ exit /b %errorcode%
 :error
   echo.
   echo Execution FAILED
+  pause
   exit /b 1
