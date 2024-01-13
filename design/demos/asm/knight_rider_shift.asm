@@ -12,7 +12,7 @@
 ;
 ;---------------------------------------------------------------------------------
 
-#include "./asm/ruledef.asm"
+#include "./ruledef.asm"
 
 knight_rider_shift: 
   leds <- 0b0001

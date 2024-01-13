@@ -23,6 +23,10 @@ if exist %SRC%\config.cmd (
   goto error
 )
 
+if not defined SCRATCH_SRC (
+  echo Variable 'SCRATCH_SRC' not set.
+  goto error
+)
 if not defined MODELSIMDIR (
   echo Variable 'MODELSIMDIR' not set.
   goto error
@@ -32,15 +36,31 @@ if not defined COMPILEDIR (
   goto error
 )
 
+if not exist "%SCRATCH_SRC%\" (
+  echo Directory '%SCRATCH_SRC%' not found.
+  goto error
+)
+if not exist "%MODELSIMDIR%\" (
+  echo Directory '%MODELSIMDIR%' not found.
+  goto error
+)
+if not exist "%COMPILEDIR%\" (
+  echo Directory '%COMPILEDIR%' not found.
+  goto error
+)
+
 rem Fix the PATH variable for when compiling Scratch VHDL from an external drive
 rem Put ModelSim's vcom etc. on the PATH
 set PATH=%PATH%;%MODELSIMDIR%\modelsim_ase\win32aloem
 rem Fake the location of this directory for when we're not compiling to the assumed location
 set USERPROFILE=%COMPILEDIR%
-call F:\scratch_vhdl\fpga\VHDL\Local\modelsim_compile.cmd
+pushd
+echo y | call "%SCRATCH_SRC%\..\fpga\VHDL\Local\modelsim_compile.cmd"
+popd
 exit /b %errorcode%
 
 :error
   echo.
   echo Compilation FAILED
+  pause
   exit /b 1

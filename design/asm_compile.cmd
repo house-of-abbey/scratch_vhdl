@@ -27,6 +27,10 @@ if not defined COMPILEDIR (
   echo Variable 'COMPILEDIR' not set.
   goto error
 )
+if not exist "%COMPILEDIR%\" (
+  echo Directory '%COMPILEDIR%' not found.
+  goto error
+)
 
 rem Set the path to the compilation products
 set SIM=%COMPILEDIR%\ModelSim
