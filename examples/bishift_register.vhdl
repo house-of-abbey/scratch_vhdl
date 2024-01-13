@@ -26,7 +26,7 @@ begin
     if rising_edge(clk) then
       if reset = '1' then
         dir_rl_d <= '0';
-        dir_rl_d <= '0';
+        dir_lr_d <= '0';
         rl <= '0';
         leds <= "0000";
       else
