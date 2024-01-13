@@ -40,7 +40,7 @@ if not exist "%VSCODE_INSTALL%\" (
   goto error
 )
 
-set PATH=%PATH%;%SCRATCH_SRC%\bin
+set PATH=%PATH%;%SCRATCH_SRC%\..\bin
 
 "%VSCODE_INSTALL%\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
 

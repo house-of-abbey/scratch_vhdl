@@ -39,19 +39,13 @@ curl ^
   --output %TEMP%\scratch-vhdl-vscode.vsix ^
   https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
 
-curl ^
-  --silent ^
-  --location ^
-  --output %TEMP%\rjyoung.vscode-modern-vhdl-support.vsix ^
-  https://marketplace.visualstudio.com/_apis/public/gallery/publishers/rjyoung/vsextensions/vscode-modern-vhdl-support/1.0.6/vspackage
+set PATH=%PATH%;%VSCODE_INSTALL%
 
+call code --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
+  --install-extension hlorenzi.customasm-vscode ^
+  --install-extension rjyoung.vscode-modern-vhdl-support ^
+  --install-extension JosephAbbey.customasm
 
-echo Close VSCode on completion of extension installation.
-
-"%VSCODE_INSTALL%\code" ^
-  --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
-  --install-extension %TEMP%\rjyoung.vscode-modern-vhdl-support.vsix
-
-del /f %TEMP%\scratch-vhdl-vscode.vsix %TEMP%\rjyoung.vscode-modern-vhdl-support.vsix
+del /f %TEMP%\scratch-vhdl-vscode.vsix
 
 pause
