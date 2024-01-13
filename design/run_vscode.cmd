@@ -15,8 +15,6 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
-rem set PATH=%PATH%;F:\scratch_vhdl\bin
-
 if exist %SRC%\config.cmd (
   call %SRC%\config.cmd
 ) else (
@@ -41,6 +39,8 @@ if not exist "%VSCODE_INSTALL%\" (
   echo Directory '%VSCODE_INSTALL%' not found.
   goto error
 )
+
+set PATH=%PATH%;%SCRATCH_SRC%\bin
 
 "%VSCODE_INSTALL%\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
 
