@@ -31,12 +31,12 @@ if not defined COMPILEDIR (
   goto error
 )
 
-if not exist %MODELSIMDIR%\ (
-  echo Directory %MODELSIMDIR% not found.
+if not exist "%MODELSIMDIR%\" (
+  echo Directory '%MODELSIMDIR%' not found.
   goto error
 )
-if not exist %COMPILEDIR%\ (
-  echo Directory %COMPILEDIR% not found.
+if not exist "%COMPILEDIR%\" (
+  echo Directory '%COMPILEDIR%' not found.
   goto error
 )
 

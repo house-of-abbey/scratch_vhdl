@@ -15,7 +15,7 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
-set PATH=%PATH%;F:\scratch_vhdl\bin
+rem set PATH=%PATH%;F:\scratch_vhdl\bin
 
 if exist %SRC%\config.cmd (
   call %SRC%\config.cmd
@@ -33,12 +33,12 @@ if not defined VSCODE_INSTALL (
   goto error
 )
 
-if not exist %SCRATCH_SRC%\ (
-  echo Directory %SCRATCH_SRC% not found.
+if not exist "%SCRATCH_SRC%\" (
+  echo Directory '%SCRATCH_SRC%' not found.
   goto error
 )
-if not exist %VSCODE_INSTALL%\ (
-  echo Directory %VSCODE_INSTALL% not found.
+if not exist "%VSCODE_INSTALL%\" (
+  echo Directory '%VSCODE_INSTALL%' not found.
   goto error
 )
 

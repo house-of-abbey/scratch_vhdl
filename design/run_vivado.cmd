@@ -60,8 +60,8 @@ if not defined VIVADO_INSTALL (
   echo Variable 'VIVADO_INSTALL' not set.
   goto error
 )
-if not exist %VIVADO_INSTALL%\ (
-  echo Directory %VIVADO_INSTALL% not found.
+if not exist "%VIVADO_INSTALL%\" (
+  echo Directory '%VIVADO_INSTALL%' not found.
   goto error
 )
 
