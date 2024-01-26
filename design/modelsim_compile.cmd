@@ -15,10 +15,8 @@ set SRC=%~dp0
 rem drop last character '\'
 set SRC=%SRC:~0,-1%
 
-echo %SRC%\config.cmd
-
 rem Setup paths to local installations
-rem
+
 if exist %SRC%\config.cmd (
   call %SRC%\config.cmd
 ) else (
@@ -35,8 +33,20 @@ if not defined COMPILEDIR (
   echo Variable 'COMPILEDIR' not set.
   goto error
 )
+if not exist "%MODELSIMDIR%\" (
+  echo Directory '%MODELSIMDIR%' not found.
+  goto error
+)
+if not exist "%COMPILEDIR%\" (
+  echo Directory '%COMPILEDIR%' not found.
+  goto error
+)
 
 set MODELSIMBIN=%MODELSIMDIR%\modelsim_ase\win32aloem
+if not exist "%MODELSIMBIN%\" (
+  echo Directory '%MODELSIMBIN%' not found.
+  goto error
+)
 
 rem Set the path to the compilation products
 set SIM=%COMPILEDIR%\ModelSim
