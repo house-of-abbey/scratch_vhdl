@@ -1,6 +1,6 @@
 # Knight Rider
 
-The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series.
+The **[Knight Rider](https://www.youtube.com/watch?v=oNyXYPhnUIs&ab_channel=NBCClassics) KITT car** bonnet light sequence from the 1980's television series. Otherwise known as a [Larson Scanner](https://shop.evilmadscientist.com/productsmenu/tinykitlist/152-scanner)!
 
 Create a simple light sequence of a single LED lit moving from right to left to right and so on. Also with `start` and `stop`.
 
