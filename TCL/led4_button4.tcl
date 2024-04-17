@@ -29,6 +29,9 @@ set width      30
 set ledgap      8
 set butgap      4
 set fontsize   16
+# Newer PC are too fast, slow them down
+# Delay time in ms
+set autostep_delay 100
 
 # Don't amend these
 set thisscript  [file normalize [info script]]
@@ -269,12 +272,14 @@ proc change_asm_file_select {} {
 
 set autostep 0
 proc autostep_check {} {
-  global autostep now
+  global autostep now autostep_delay
   .controls.body.sim.step configure -state disabled
   .controls.body.sim.atcursor configure -state disabled
   while {$autostep} {
     run -all
     wave seetime $now
+	# Newer PC are too fast, slow them down
+	after $autostep_delay
   }
   .controls.body.sim.step configure -state normal
   .controls.body.sim.atcursor configure -state normal
