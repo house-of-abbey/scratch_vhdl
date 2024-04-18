@@ -14,10 +14,10 @@
 #include "./ruledef.asm"
 
 dimmer_shift:
-  if btns[0]
+  if btns[1]
     leds <- leds < 1
     noop
-  if btns[1]
+  if btns[0]
     leds <- 0 > leds
     noop
   wincr

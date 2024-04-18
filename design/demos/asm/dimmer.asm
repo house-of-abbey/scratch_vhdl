@@ -15,9 +15,9 @@
 #include "./ruledef.asm"
 
 ; Increment button
-r4 <- 0b0001
+r4 <- 0b0010
 ; Decrement button
-r5 <- 0b0010
+r5 <- 0b0001
 
 dimmer:
   .b0:
