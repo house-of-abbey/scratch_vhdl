@@ -17,8 +17,7 @@ dimmer:
     wincr
     if btns[1]
       goto .b1
-      noop
-    goto .b0
+      goto .b0
   .b1:
     leds <- 0b0001
     wincr
