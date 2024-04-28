@@ -53,6 +53,15 @@
   {o:sreg} <- {b:u1}   >  {a:reg}  => 0x8 @  o`3 @  a`3 @  0`2 @ b`1 ; op_shft
   {o:sreg} <- {a:reg}  <  {b:u1}   => 0x8 @  o`3 @  a`3 @  1`2 @ b`1 ; op_shft
 
+  {o:sreg} <- {a:reg} nand {b:reg}  => asm {
+    {o} <- {a} and {b}
+    {o} <- not {o}
+  }
+  {o:sreg} <- {a:reg} nor {b:reg}  => asm {
+    {o} <- {a} or {b}
+    {o} <- not {o}
+  }
+  
   if {c:condition}                 => c`13
   wait until {c:condition} => asm {
     if {c}
