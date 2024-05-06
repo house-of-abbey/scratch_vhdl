@@ -98,6 +98,9 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
   {a:reg} eq {b:reg}               => 0xb @  0`3 @  a`3 @  b`3       ; op_ifeq
   {a:reg} gt {b:reg}               => 0xc @  0`3 @  a`3 @  b`3       ; op_ifgt
   {a:reg} ge {b:reg}               => 0xd @  0`3 @  a`3 @  b`3       ; op_ifge
+
+  {a:reg} lt {b:reg}               => asm { {b} ge {a} }
+  {a:reg} le {b:reg}               => asm { {b} gt {a} }
 }
 
 ; In general: o = fn(a, b)
@@ -115,6 +118,15 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
   {o:sreg} <- {b:u1}   >  {a:reg}  => 0x8 @  o`3 @  a`3 @  0`2 @ b`1 ; op_shft
   {o:sreg} <- {a:reg}  <  {b:u1}   => 0x8 @  o`3 @  a`3 @  1`2 @ b`1 ; op_shft
 
+  {o:sreg} <- {a:reg} nand {b:reg}  => asm {
+    {o} <- {a} and {b}
+    {o} <- not {o}
+  }
+  {o:sreg} <- {a:reg} nor {b:reg}  => asm {
+    {o} <- {a} or {b}
+    {o} <- not {o}
+  }
+  
   if {c:condition}                 => c`13
   wait until {c:condition} => asm {
     if {c}
@@ -129,7 +141,23 @@ The demonstration RISC CPU comes with an [example instruction set definition](ht
 
   wincr                            => 0xe @         1`9              ; op_wi
   wincr {l:u9}                     => 0xe @         l`9              ; op_wi
+  wait incr        => asm { wincr }     ; Included as an alias to provide a
+  wait incr {l:u9} => asm { wincr {l} } ; more readable and consistent option.
+
   goto  {l:u9}                     => 0xf @         l`9              ; op_goto
+
+  halt    => asm { goto $ }
+  restart => asm { goto 0 }
+  clear   => asm {
+    r0   <- 0
+    r1   <- 0
+    r2   <- 0
+    r3   <- 0
+    r4   <- 0
+    r5   <- 0
+    btns <- 0
+    leds <- 0
+  }
 }
 </pre>
 
