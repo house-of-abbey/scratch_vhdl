@@ -98,6 +98,9 @@ reorder_files -after [get_files $scratch_vhdl_src/design/demos/src/led4_button4.
 # Vivado bleats if it can't manage a constraints file, so we've added one, but we're going to ignore it. Order is important here.
 set_property is_enabled false [get_files {managed.xdc}]
 set_property target_constrs_file [get_files {managed.xdc}] [current_fileset -constrset]
+# Enable the constraints file for a specific board
+set_property is_enabled true [get_files {Zybo-Z7-Master.xdc}]
+set_property is_enabled false [get_files {Zybo-Master.xdc}]
 
 #set_property top zybo_z7_10 [current_fileset]
 #set_property top zybo_risc_cpu [current_fileset]
