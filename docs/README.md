@@ -118,7 +118,7 @@ The desire is to combine a discussion of the theory with the practical via engag
 
 ## Getting Started
 
-These are split into separate pages as follows:
+Full installation instructions are detailed in the accompanying [Word document](https://github.com/house-of-abbey/scratch_vhdl/blob/main/docs/Training/Scratch%20VHDL%20User%20Guide.docx). These links will give you some idea of what is involved, and are split into separate pages as follows:
 
 * **Installation**
   * [ModelSim](modelsim_installation.md)
@@ -127,7 +127,7 @@ These are split into separate pages as follows:
   * Microsoft [Visual Studio Code](https://code.visualstudio.com/)
     * Also execute the [`install_extension.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/install_extension.cmd) to install Plugins for Scratch VHDL, Customasm and the VHDL editor.
   * Download the required project binaries.
-    * Execute the [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) script to install Customasm.
+    * Execute the [`fetch_bin.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/fetch_bin.cmd) script to install `customasm`.
 * **Setup**
   * Compile pre-requisite libraries for ModelSim by executing [`compile_libs.cmd`](https://github.com/house-of-abbey/scratch_vhdl/blob/main/design/compile_libs.cmd).
   * [Project creation](project_creation.md) covers how the Vivado project is generated.
