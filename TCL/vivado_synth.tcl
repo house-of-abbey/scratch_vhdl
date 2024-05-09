@@ -72,6 +72,35 @@ proc check_state {{synth synth_1} {impl impl_1}} {
   puts "$impl  PROGRESS      : [get_property PROGRESS      $impl_run]"
 }
 
+# Switch which constraints file to use for a specific board
+#
+# Parameter:
+#  1. A constraints file 'board', except the file extension.
+#     Possible values:
+#     - "Rev B" | "Zybo-Master"    (Old, mystical and _odd_ board)
+#     - "Rev D" | "Zybo-Z7-Master" (New and standard board)
+#
+# Usage: switch_board "Zybo-Master"
+#
+proc switch_board {board} {
+  set_property is_enabled false [get_files  {Zybo-Master.xdc}]
+  set_property is_enabled false [get_files  {Zybo-Z7-Master.xdc}]
+
+  switch $board {
+    "Rev B" -
+    "Zybo-Master" {
+      set_property is_enabled true [get_files  {Zybo-Master.xdc}]
+    }
+    "Rev D" -
+    "Zybo-Z7-Master" {
+      set_property is_enabled true [get_files  {Zybo-Z7-Master.xdc}]
+    }
+    default {
+      error "Board is not found." 1
+    }
+  }
+}
+
 # Elaborate the design and '-rtl' will open the full design.
 # We subsequently open just the interesting sub-design.
 #
@@ -294,33 +323,4 @@ if {[llength [get_projects -quiet]] == 0} {
   set proj_src [file normalize $compile_dir/Xilinx/Workspace/scratch_vhdl]
   open_project $proj_src/scratch_vhdl.xpr
   unset proj_src
-}
-
-# Switch which constraints file to use for a specific board
-#
-# Parameter:
-#  1. A constraints file 'board', except the file extension.
-#     Possible values:
-#     - "Rev B" | "Zybo-Master"    (Old, mystical and _odd_ board)
-#     - "Rev D" | "Zybo-Z7-Master" (New and standard board)
-#
-# Usage: switch_board "Zybo-Master"
-#
-proc switch_board {board} {
-  set_property is_enabled false [get_files  {Zybo-Master.xdc}]
-  set_property is_enabled false [get_files  {Zybo-Z7-Master.xdc}]
-
-  switch $board {
-    "Rev B" -
-    "Zybo-Master" {
-      set_property is_enabled true [get_files  {Zybo-Master.xdc}]
-    }
-    "Rev D" -
-    "Zybo-Z7-Master" {
-      set_property is_enabled true [get_files  {Zybo-Z7-Master.xdc}]
-    }
-    default {
-      error "Board is not found." 1
-    }
-  }
 }
