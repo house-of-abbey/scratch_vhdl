@@ -65,10 +65,11 @@ if {![file isdirectory "$modelsim_lib/unisim"]} {
   compile_simlib \
     -simulator modelsim \
     -simulator_exec_path $modelsim_install \
-    -family all \
+    -family zynq \
     -language vhdl \
     -library unisim \
-    -dir $modelsim_lib \
+    -directory $modelsim_lib \
+    -no_ip_compile \
     -quiet
 
   report_simlib_info $modelsim_lib

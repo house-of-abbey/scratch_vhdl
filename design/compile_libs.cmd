@@ -57,6 +57,7 @@ set USERPROFILE=%COMPILEDIR%
 pushd
 echo y | call "%SCRATCH_SRC%\..\fpga\VHDL\Local\modelsim_compile.cmd"
 popd
+pause
 exit /b %errorcode%
 
 :error
