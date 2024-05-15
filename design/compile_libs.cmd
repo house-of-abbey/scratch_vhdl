@@ -50,8 +50,9 @@ if not exist "%COMPILEDIR%\" (
 )
 
 rem Fix the PATH variable for when compiling Scratch VHDL from an external drive
-rem Put ModelSim's vcom etc. on the PATH
-set PATH=%PATH%;%MODELSIMDIR%\modelsim_ase\win32aloem
+rem Put ModelSim's vcom etc. on the PATH _first_, otherwise a different installation
+rem of a different version might be found first.
+set PATH=%MODELSIMDIR%\modelsim_ase\win32aloem;%PATH%
 rem Fake the location of this directory for when we're not compiling to the assumed location
 set USERPROFILE=%COMPILEDIR%
 pushd
