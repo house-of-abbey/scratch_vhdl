@@ -39,7 +39,7 @@ curl ^
   --output %TEMP%\scratch-vhdl-vscode.vsix ^
   https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
 
-set PATH=%PATH%;%VSCODE_INSTALL%
+set PATH=%VSCODE_INSTALL%;%PATH%
 
 call code --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
   --install-extension hlorenzi.customasm-vscode ^
