@@ -6,31 +6,24 @@ on:
       - '*'
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment:
-      name: open-vsx
-      url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - uses: pnpm/action-setup@v4
         name: Install pnpm
         with:
           version: 8
           run_install: false
-
       - name: Get pnpm store directory
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
       - uses: actions/cache@v4
         name: Setup pnpm cache
         with:
@@ -38,20 +31,34 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
       - name: Install dependencies
         run: |
           cd scratch-vhdl-vscode
           pnpm install
           cd ..
-
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1
-        id: open_vsx
+        id: package
         with:
           dependencies: false
           packagePath: ./scratch-vhdl-vscode
-          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+          dryRun: true
+          pat: ""
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          path: ${{ steps.build.outputs.vsixPath }}
+  deploy-github:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-release
+      url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        id: download
+        with:
+          name: artifact
       - name: Create Release
         id: create_release
         uses: actions/create-release@latest
@@ -70,6 +77,39 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.open_vsx.outputs.vsixPath }}
+          asset_path: ${{ steps.download.outputs.download-path }}
           asset_name: scratch-vhdl-vscode.vsix
           asset_content_type: application/zip
+  deploy-open-vsx:
+    runs-on: ubuntu-latest
+    environment:
+      name: open-vsx
+      url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        id: download
+        with:
+          name: artifact
+      - name: Publish to Open VSX Registry
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          extensionFile: ${{ steps.download.outputs.download-path }}
+          pat: ${{ secrets.OPEN_VSX_TOKEN }}
+  deploy-visual-studio:
+    runs-on: ubuntu-latest
+    environment:
+      name: visual-studio
+      url: https://marketplace.visualstudio.com/items?itemName=JosephAbbey.scratch-vhdl-vscode
+    steps:
+      - name: Download Artifact
+        uses: actions/download-artifact@v4
+        id: download
+        with:
+          name: artifact
+      - name: Publish to Visual Studio Marketplace
+        uses: HaaLeo/publish-vscode-extension@v1
+        with:
+          registryUrl: https://marketplace.visualstudio.com
+          extensionFile: ${{ steps.download.outputs.download-path }}
+          pat: ${{ secrets.VISUAL_STUDIO_TOKEN }}
