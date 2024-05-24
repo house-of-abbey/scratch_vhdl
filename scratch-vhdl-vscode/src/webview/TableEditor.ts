@@ -85,7 +85,7 @@ export default function TableEditor<
       const tr_td_input = document.createElement('input');
       tr_td.appendChild(tr_td_input);
       tr.appendChild(tr_td);
-      for (let i = 0; i < Object.values(rows)[0].length; i++) {
+      for (let i = 0; i < cols.length - 1; i++) {
         const td = document.createElement('td');
         const td_input = document.createElement('input');
         td.appendChild(td_input);

@@ -8,7 +8,7 @@
   "publisher": "JosephAbbey",
   "displayName": "Scratch VHDL",
   "description": "",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "license": "MIT",
   "engines": {
     "vscode": "^1.75.0"
