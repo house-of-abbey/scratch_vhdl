@@ -78,7 +78,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.download.outputs.download-path }}
+          asset_path: ${{ steps.download.outputs.download-path }}/scratch-vhdl-vscode-${{ github.ref }}.vsix
           asset_name: scratch-vhdl-vscode.vsix
           asset_content_type: application/zip
   deploy-open-vsx:
@@ -96,7 +96,7 @@ jobs:
       - name: Publish to Open VSX Registry
         uses: HaaLeo/publish-vscode-extension@v1
         with:
-          extensionFile: ${{ steps.download.outputs.download-path }}
+          extensionFile: ${{ steps.download.outputs.download-path }}/scratch-vhdl-vscode-${{ github.ref }}.vsix
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
   deploy-visual-studio:
     runs-on: ubuntu-latest
@@ -114,5 +114,5 @@ jobs:
         uses: HaaLeo/publish-vscode-extension@v1
         with:
           registryUrl: https://marketplace.visualstudio.com
-          extensionFile: ${{ steps.download.outputs.download-path }}
+          extensionFile: ${{ steps.download.outputs.download-path }}/scratch-vhdl-vscode-${{ github.ref }}.vsix
           pat: ${{ secrets.VISUAL_STUDIO_TOKEN }}
