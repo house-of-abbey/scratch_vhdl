@@ -33,16 +33,16 @@ if not exist "%VSCODE_INSTALL%\" (
   goto error
 )
 
-curl ^
-  --silent ^
-  --location ^
-  --output %TEMP%\scratch-vhdl-vscode.vsix ^
-  https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
+rem curl ^
+rem   --silent ^
+rem   --location ^
+rem   --output %DRIVE%\Installers\VS_Code\scratch-vhdl-vscode.vsix ^
+rem   https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
 
 set PATH=%VSCODE_INSTALL%;%PATH%
 
-call "%VSCODE_INSTALL%\code" ^
-  --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
+call "%VSCODE_INSTALL%\code" --force ^
+  --install-extension josephabbey.scratch-vhdl-vscode ^
   --install-extension hlorenzi.customasm-vscode ^
   --install-extension rjyoung.vscode-modern-vhdl-support ^
   --install-extension JosephAbbey.customasm
