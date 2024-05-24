@@ -8,14 +8,12 @@
   "publisher": "JosephAbbey",
   "displayName": "Scratch VHDL",
   "description": "",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "license": "MIT",
   "engines": {
     "vscode": "^1.75.0"
   },
-  "categories": [
-    "Other"
-  ],
+  "categories": ["Other"],
   "repository": {
     "type": "git",
     "url": "https://github.com/house-of-abbey/scratch_vhdl"
@@ -63,22 +61,15 @@
     "languages": [
       {
         "id": "javascript",
-        "extensions": [
-          ".sbi"
-        ]
+        "extensions": [".sbi"]
       },
       {
         "id": "json",
-        "extensions": [
-          ".sbd",
-          ".sbe"
-        ]
+        "extensions": [".sbd", ".sbe"]
       },
       {
         "id": "customasm",
-        "extensions": [
-          ".asm"
-        ]
+        "extensions": [".asm"]
       }
     ],
     "jsonValidation": [
