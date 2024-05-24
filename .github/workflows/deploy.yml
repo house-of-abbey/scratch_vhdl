@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-release
-      url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
+      url: https://github.com/house-of-abbey/scratch_vhdl/releases/latest
     steps:
       - name: Download Artifact
         uses: actions/download-artifact@v4
