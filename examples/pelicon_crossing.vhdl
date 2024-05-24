@@ -2,8 +2,6 @@ library ieee;
   use ieee.std_logic_1164.all;
 
 
-
-
 architecture scratch of led4_button4 is
 
   constant button_tab_c : natural := 3;

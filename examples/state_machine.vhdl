@@ -4,7 +4,7 @@ library ieee;
 
 architecture scratch of led4_button4 is
 
-  constant button_tab_c : natural := 1;
+  constant button_tab_c : natural := 2;
 
   signal state : natural range 0 to 4 := 0;
 
@@ -32,7 +32,7 @@ begin
 
           when 1 =>
             -- Moore - outputs depend only on the state variable.
-            leds <= "0001";
+            leds <= "0101";
             if buttons(1) = '1' then
               state <= 2;
             end if;
@@ -48,12 +48,11 @@ begin
             if buttons(3) = '1' then
               state <= 2;
             elsif buttons(1 downto 0) = "11" then
-              leds <= "0001";
+              leds <= "0101";
               state <= 4;
             end if;
 
           when 4 =>
-            leds <= "0001";
             if buttons(2) = '1' then
               leds <= "0000";
               state <= 0;

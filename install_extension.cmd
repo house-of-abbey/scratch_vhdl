@@ -41,11 +41,13 @@ curl ^
 
 set PATH=%VSCODE_INSTALL%;%PATH%
 
-call code --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
+call "%VSCODE_INSTALL%\code" ^
+  --install-extension %TEMP%\scratch-vhdl-vscode.vsix ^
   --install-extension hlorenzi.customasm-vscode ^
   --install-extension rjyoung.vscode-modern-vhdl-support ^
   --install-extension JosephAbbey.customasm
 
-del /f %TEMP%\scratch-vhdl-vscode.vsix
-
 pause
+
+rem Delete this after code is closed
+del /f %TEMP%\scratch-vhdl-vscode.vsix
