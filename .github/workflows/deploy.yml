@@ -50,6 +50,7 @@ jobs:
           path: ${{ steps.build.outputs.vsixPath }}
   deploy-github:
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: github-release
       url: https://github.com/house-of-abbey/scratch_vhdl/releases/latest
@@ -82,6 +83,7 @@ jobs:
           asset_content_type: application/zip
   deploy-open-vsx:
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: open-vsx
       url: https://open-vsx.org/extension/JosephAbbey/scratch-vhdl-vscode
@@ -98,6 +100,7 @@ jobs:
           pat: ${{ secrets.OPEN_VSX_TOKEN }}
   deploy-visual-studio:
     runs-on: ubuntu-latest
+    needs: build
     environment:
       name: visual-studio
       url: https://marketplace.visualstudio.com/items?itemName=JosephAbbey.scratch-vhdl-vscode
