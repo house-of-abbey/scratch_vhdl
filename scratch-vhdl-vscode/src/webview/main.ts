@@ -23,6 +23,7 @@ import {
 provideVSCodeDesignSystem().register(vsCodeButton());
 
 async function updateEntity(data: { entity: Entity; filename: string }) {
+  const oldEntity = entity;
   entity = data.entity;
   filename = data.filename;
 
@@ -128,6 +129,95 @@ async function updateEntity(data: { entity: Entity; filename: string }) {
     },
     ...categories,
   ];
+
+  if (oldEntity) {
+    const es = Object.keys(entity.entity);
+    const oes = Object.keys(oldEntity.entity);
+    for (const e in es) {
+      const v = ws.getVariable(es[e]);
+      if (!v) {
+        if (oes[e]) {
+          const ov = ws.getVariable(oes[e]);
+          if (ov) {
+            ws.renameVariableById(ov.getId(), es[e]);
+          } else {
+            ws.createVariable(es[e], null, null);
+          }
+        } else {
+          ws.createVariable(es[e], null, null);
+        }
+      }
+    }
+    const as = Object.keys(entity.aliases);
+    const oas = Object.keys(oldEntity.aliases);
+    for (const a in as) {
+      const v = ws.getVariable(as[a]);
+      if (!v) {
+        if (oas[a]) {
+          const ov = ws.getVariable(oas[a]);
+          if (ov) {
+            ws.renameVariableById(ov.getId(), as[a]);
+          } else {
+            ws.createVariable(as[a], null, null);
+          }
+        } else {
+          ws.createVariable(as[a], null, null);
+        }
+      }
+    }
+    const ss = Object.keys(entity.signals);
+    const oss = Object.keys(oldEntity.signals);
+    for (const s in ss) {
+      const v = ws.getVariable(ss[s]);
+      if (!v) {
+        if (oss[s]) {
+          const ov = ws.getVariable(oss[s]);
+          if (ov) {
+            ws.renameVariableById(ov.getId(), ss[s]);
+          } else {
+            ws.createVariable(ss[s], null, null);
+          }
+        } else {
+          ws.createVariable(ss[s], null, null);
+        }
+      }
+    }
+  } else {
+    const es = Object.keys(entity.entity);
+    for (const e in es) {
+      console.log(es[e]);
+      const v = ws.getVariable(es[e]);
+      console.log(v, !v);
+      if (!v) {
+        console.log(ws.createVariable(es[e], null, null));
+      }
+    }
+    const as = Object.keys(entity.aliases);
+    for (const a in as) {
+      const v = ws.getVariable(as[a]);
+      if (!v) {
+        ws.createVariable(as[a], null, null);
+      }
+    }
+    const ss = Object.keys(entity.signals);
+    for (const s in ss) {
+      const v = ws.getVariable(ss[s]);
+      if (!v) {
+        ws.createVariable(ss[s], null, null);
+      }
+    }
+  }
+  for (const v of ws.getAllVariables()) {
+    if (
+      !(
+        v.name in entity.entity ||
+        v.name in entity.aliases ||
+        v.name in entity.signals
+      )
+    ) {
+      ws.deleteVariableById(v.getId());
+    }
+  }
 
   ws.updateToolbox(tb);
 
@@ -368,7 +458,9 @@ export class FieldVar extends Blockly.FieldVariable {
   static dropdownCreate(
     this: Blockly.FieldVariable
   ): Blockly.MenuOption[] {
-    return super.dropdownCreate().slice(0, -2);
+    const o = super.dropdownCreate();
+    if (o.length > 2) return o.slice(0, -2);
+    else return o;
   }
 
   protected render_(): void {
@@ -423,3 +515,5 @@ ws.addChangeListener((e) => {
 });
 
 main();
+
+setTimeout(() => updateEntity({ entity, filename }), 1000);

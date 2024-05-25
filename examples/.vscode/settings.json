@@ -1,0 +1,28 @@
+{
+  "workbench.colorCustomizations": {
+    "statusBar.background": "#f5c2e7",
+    "statusBar.foreground": "#181825",
+    "statusBarItem.hoverBackground": "#ee96d6",
+    "statusBarItem.remoteBackground": "#f5c2e7",
+    "statusBarItem.remoteForeground": "#181825"
+  },
+  "peacock.color": "#f5c2e7",
+  "scratch-vhdl-vscode.templates": {
+    "led4_button4": {
+      "entity": {
+        "clk": ["in", "std_logic"],
+        "reset": ["in", "std_logic"],
+        "incr": ["in", "std_logic"],
+        "buttons": ["in", "std_logic_vector(3 downto 0)"],
+        "leds": ["out", "std_logic_vector(3 downto 0)"]
+      },
+      "signals": {},
+      "aliases": {},
+      "name": "led4_button4",
+      "constants": {
+        "button_tab_c": ["natural", "1"]
+      },
+      "libraries": { "ieee": {} }
+    }
+  }
+}

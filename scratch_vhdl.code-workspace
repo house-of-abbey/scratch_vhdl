@@ -25,17 +25,28 @@
           "buttons": ["in", "std_logic_vector(3 downto 0)"],
           "leds": ["out", "std_logic_vector(3 downto 0)"]
         },
+        "signals": {},
+        "aliases": {},
         "name": "led4_button4",
         "constants": {
           "button_tab_c": ["natural", "1"]
-        }
+        },
+        "libraries": { "ieee": {} }
       }
     },
     "markdownlint.config": {
       "MD033": false,
       "MD024": false
     },
-    "scratch-vhdl-vscode.asm_compile_path": "./design/asm_compile.cmd"
+    "scratch-vhdl-vscode.asm_compile_path": "./design/asm_compile.cmd",
+    "workbench.colorCustomizations": {
+      "statusBar.background": "#cba6f7",
+      "statusBar.foreground": "#181825",
+      "statusBarItem.hoverBackground": "#b077f3",
+      "statusBarItem.remoteBackground": "#cba6f7",
+      "statusBarItem.remoteForeground": "#181825"
+    },
+    "peacock.color": "#cba6f7"
   },
   "extensions": {
     "recommendations": [
