@@ -31,8 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
             'Assemble',
             'ScratchVHDL',
             new vscode.ShellExecution(
-              `echo "y" | ${path.join(
-                vscode.wchorkspace.workspaceFile?.fsPath ?? '',
+              `${path.join(
+                'echo "y" | ',
+                vscode.workspace.workspaceFile?.fsPath ?? '',
                 '..',
                 configuration
                   .get<string>('scratch-vhdl-vscode.asm_compile_path')
