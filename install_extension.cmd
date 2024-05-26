@@ -33,11 +33,17 @@ if not exist "%VSCODE_INSTALL%\" (
   goto error
 )
 
-rem curl ^
-rem   --silent ^
-rem   --location ^
-rem   --output %DRIVE%\Installers\VS_Code\scratch-vhdl-vscode.vsix ^
-rem   https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
+if defined DRIVE (
+  if exist "%DRIVE%\Installers\VS_Code\" (
+    echo Directory '%DRIVE%\Installers\VS_Code' found, copying VSIX file locally.
+    curl ^
+      --silent ^
+      --location ^
+      --output %DRIVE%\Installers\VS_Code\scratch-vhdl-vscode.vsix ^
+      https://github.com/house-of-abbey/scratch_vhdl/releases/latest/download/scratch-vhdl-vscode.vsix
+  )
+)
+
 
 set PATH=%VSCODE_INSTALL%;%PATH%
 
