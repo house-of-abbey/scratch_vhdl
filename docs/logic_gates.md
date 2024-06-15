@@ -2,6 +2,17 @@
 
 Compare the workings of up to four standard logic gates. Each LED is the output of a single 4-input logic gate, allowing up to four functions to be tried, one for each LED. The obvious gates to try first are AND and OR. After that the demo chose to try Exclusive-OR (XOR or EOR) as its quite different, and complete the family with NOR.
 
+<center>
+  <iframe
+    src="https://circuitverse.org/simulator/embed/logic-gates-acaf6127-d900-443a-9744-8d2c052dbfb2?theme=lite-born-spring&display_title=true&clock_time=true&fullscreen=true&zoom_in_out=true"
+    style="border-width: 2; border-style: solid; border-color: black;"
+    id="logic_gates"
+    height="500"
+    width="700"
+    allowFullScreen>
+  </iframe>
+</center>
+
 The discussion can start with writing out the tables for 2-input gates as follows:
 
 <table style="margin-inline:auto;text-align:center;">

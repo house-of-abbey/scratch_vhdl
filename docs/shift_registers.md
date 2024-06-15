@@ -1,6 +1,19 @@
 # Shift Registers
 
-This demonstration introduces a time or history element. The initial application uses a key press to send a lit LED down a shift register. Because a manual key press can be long in duration, a pulse generator is used to limit a derived pulse to no more time than until the next `incr`, when action is taken. Shifting is only enabled by `incr` is high in order to slow the light changes down to be visible.
+This demonstration introduces a time or history element. The initial application uses a key press to send a lit LED down a shift register.
+
+<center>
+  <iframe
+    src="https://circuitverse.org/simulator/embed/shift-register-7ff8c97b-95e9-45cc-8940-ca0d29f24c98?theme=lite-born-spring&display_title=true&clock_time=true&fullscreen=true&zoom_in_out=true"
+    style="border-width: 2; border-style: solid; border-color: black;"
+    id="sm_buttons"
+    height="500"
+    width="700"
+    allowFullScreen>
+  </iframe>
+</center>
+
+Because a manual key press can be long in duration, a pulse generator is used to limit a derived pulse to no more time than one `incr` duration, when action is taken. Shifting is only enabled when `incr` is high in order to slow the light changes down to be visible.
 
 ![Shift Register Demo](./images/sim_controls/shift_register_demo.gif)
 

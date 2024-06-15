@@ -18,6 +18,17 @@ From this we can determine that:
 
 `pulse` = `buttons` AND NOT `Q`
 
+<center>
+  <iframe
+    src="https://circuitverse.org/simulator/embed/lead-edge-pulse-generator?theme=lite-born-spring&display_title=true&clock_time=true&fullscreen=true&zoom_in_out=true"
+    style="border-width: 2; border-style: solid; border-color: black;"
+    id="sm_buttons"
+    height="400"
+    width="600"
+    allowFullScreen>
+  </iframe>
+</center>
+
 This principle can be extended to several clock cycles by including a condition on a heart beat pulse like `incr`.
 
 ![Wave window for pulse generators](./images/modelsim_wave/pulse_gen_wave.png)
