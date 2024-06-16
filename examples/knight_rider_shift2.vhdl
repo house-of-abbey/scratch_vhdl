@@ -8,8 +8,7 @@ architecture scratch of led4_button4 is
 
   signal start_r : std_logic := '0';
   signal stop_r : std_logic := '0';
-  signal state : natural range 0 to 7 := 0;
-  signal dir : std_logic := '0';
+  signal reg : std_logic_vector(5 downto 0) := "000000";
 
   alias start is buttons(0);
   alias stop is buttons(1);
@@ -21,21 +20,16 @@ begin
   begin
     if rising_edge(clk) then
       if reset = '1' then
-        leds <= "0001";
-        dir <= '1';
+        leds <= "1000";
+        reg <= "100000";
       else
         if incr = '1' then
-          if leds(1) = '1' and dir = '0' then
-            dir <= '1';
-          elsif leds(2) = '1' and dir = '1' then
-            dir <= '0';
-          end if;
-          if dir = '0' then
-            leds <= '0' & leds(3 downto 1);
-          elsif dir = '1' then
-            leds <= leds(2 downto 0) & '0';
-          end if;
+          reg <= reg(0) & reg(5 downto 1);
         end if;
+        leds(3) <= reg(5);
+        leds(2) <= reg(4) or reg(0);
+        leds(1) <= reg(3) or reg(1);
+        leds(0) <= reg(2);
       end if;
     end if;
   end process;

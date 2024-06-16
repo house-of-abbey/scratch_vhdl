@@ -110,6 +110,9 @@ proc elab_my_design {} {
   show_schematic [get_cells {led4_button4_i/*}]
 }
 
+# Project mode flatten hierarchy
+# set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY full [get_runs synth_1]
+
 # Synthesise the design and wait for completion.
 # We subsequently open just the interesting sub-design.
 #
