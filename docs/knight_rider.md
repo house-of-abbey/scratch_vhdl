@@ -43,3 +43,16 @@ Output decoding based solely on the state variable's value.
 |   3   |   "1000"    |
 |   4   |   "0100"    |
 |   5   |   "0010"    |
+
+This suggests a simple implementation in logic as follows where the state variable is [one-hot encoded](https://en.wikipedia.org/wiki/One-hot) for trivial state decoding. **Press "reset" to initialise the light sequence.**
+
+<center>
+  <iframe
+    src="https://circuitverse.org/simulator/embed/knight-rider-21ab8d72-a345-4138-bd17-3ff16545cc99?theme=lite-born-spring&display_title=true&clock_time=true&fullscreen=true&zoom_in_out=true"
+    style="border-width: 2; border-style: solid; border-color: black;"
+    id="logic_gates"
+    height="500"
+    width="700"
+    allowFullScreen>
+  </iframe>
+</center>
