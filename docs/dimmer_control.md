@@ -1,6 +1,6 @@
 # Dimmer Control
 
-This is not provided as a demo with a solution as it is sufficiently similar to other ideas presented, but different enough that it might be of interest for someone to try. Consider a room light dimmer control that can be incremented and decremented in brightness.
+Consider a room light dimmer control that can be incremented and decremented in brightness of the main light. This is a digital version of the classic analogue dimmer that you rotate.
 
 ![Dimmer Controller Sequence](./images/sim_controls/dimmer_control_demo.gif)
 
@@ -31,3 +31,19 @@ Now we just need to add the output assignments, e.g. using a `case` statement, t
 |   2   |   "1100"    |
 |   3   |   "1110"    |
 |   4   |   "1111"    |
+
+
+## Non-Finite State Machine
+
+An implementation using a two-way shift register. The FSM implementation is perhaps more descriptive and hence easier to understand.
+
+<center>
+  <iframe
+    src="https://circuitverse.org/simulator/embed/dimmer?theme=lite-born-spring&display_title=true&clock_time=true&fullscreen=true&zoom_in_out=true"
+    style="border-width: 2; border-style: solid; border-color: black;"
+    id="logic_gates"
+    height="500"
+    width="700"
+    allowFullScreen>
+  </iframe>
+</center>
