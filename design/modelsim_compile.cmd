@@ -70,10 +70,8 @@ if exist work (
   if %ERRORLEVEL% NEQ 0 (goto error)
 )
 
-%MODELSIMBIN%\vmap unisim %SIM%\libraries\unisim
-if %ERRORLEVEL% NEQ 0 (goto error)
-
-%MODELSIMBIN%\vmap local %SIM%\libraries\local
+rem Convert back slashes to forward slashes
+%MODELSIMBIN%\vmap others %SIM:\=/%/libraries/modelsim.ini
 if %ERRORLEVEL% NEQ 0 (goto error)
 
 %MODELSIMBIN%\vlib work
