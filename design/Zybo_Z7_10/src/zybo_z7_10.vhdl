@@ -111,7 +111,7 @@ begin
   process(clk)
   begin
     if rising_edge(clk) then
-      (reset, rst_reg) <= rst_reg(rst_reg'high downto 0) & not locked;
+      (reset, rst_reg) <= rst_reg & not locked;
     end if;
   end process;
 
