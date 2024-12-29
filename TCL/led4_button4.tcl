@@ -47,6 +47,17 @@ set incr    {/test_led4_button4/incr}
 set leds    {/test_led4_button4/leds}
 set buttons {/test_led4_button4/buttons}
 
+# Allow the environment to define a variable with a path to a logo file to be placed in the GUI for branding.
+if { [catch {[info exists $::env(SV_LOGO) ]}] } {
+  set logo default
+} else {
+  if {[file exists $::env(SV_LOGO)]} {
+    set logo $::env(SV_LOGO)
+  } else {
+    echo "WARNING - Logo file '$::env(SV_LOGO)' does not exist."
+    set logo default
+  }
+}
 
 proc LED {can {conf plain} {w 10} {value 0} {n 0} {col #f00} {ox 0} {oy 0}} {
   global off
@@ -278,8 +289,8 @@ proc autostep_check {} {
   while {$autostep} {
     run -all
     wave seetime $now
-	# Newer PC are too fast, slow them down
-	after $autostep_delay
+    # Newer PC are too fast, slow them down
+    after $autostep_delay
   }
   .controls.body.sim.step configure -state normal
   .controls.body.sim.atcursor configure -state normal
@@ -319,8 +330,11 @@ destroy .controls
 toplevel .controls
 
 catch {image delete logo}
-#label .controls.logo -image [image create photo logo -file "${thisdir}/l3harris.png"]
-label .controls.logo -image [image create photo logo -width 200 -file "${thisdir}/icon_200w.png"]
+if {$logo != "default"} {
+  label .controls.logo -image [image create photo logo -file "${logo}"]
+} else {
+  label .controls.logo -image [image create photo logo -width 200 -file "${thisdir}/icon_200w.png"]
+}
 pack .controls.logo -side left -fill x -expand 0 -padx 20 -pady 20
 
 frame .controls.body
@@ -520,11 +534,11 @@ if {$now > 0} {
 if {[runStatus] == "ready" || [runStatus] == "break"} {
   # Setup the triggers to update the displayed controls
   setup_monitor
-  puts "NOTE - Trigger setup."
+  echo "NOTE - Trigger setup."
 } {
-  puts "WARNING - Load the design then call TCL 'setup_monitor'."
+  echo "WARNING - Load the design then call TCL 'setup_monitor'."
 }
-puts "NOTE - Use 'display_cursor' to update the display to the values shown under the cursor."
+echo "NOTE - Use 'display_cursor' to update the display to the values shown under the cursor."
 # Switch the tab used to display the buttons and LEDs to the one preferred by the active 'led4_button4' architecture
 get_button_tab
 run -all

@@ -42,6 +42,11 @@ if not exist "%COMPILEDIR%\" (
 
 set MODELSIMBIN=%MODELSIMDIR%\modelsim_ase\win32aloem
 
+rem Allow a shortcut to define a command line parameter with a path to a logo file to be placed in the GUI for branding.
+if not "%~1" == "" (
+  set SV_LOGO=%1
+)
+
 %MODELSIMBIN%\vsim -do "source {../TCL/start_sim.tcl}"
 rem This file can be reported as in use by another process when it is not, so just clean it up.
 del /f %COMPILEDIR%\ModelSim\projects\button_leds\vsim.wlf transcript
