@@ -80,7 +80,7 @@ architecture rtl of zybo_z7_10 is
   constant divide_c : positive := divide(sim_g);
 
   signal clk     : std_logic                     := '0';
-  signal reset   : std_logic                     := '0';
+  signal reset   : std_logic                     := '1';
   signal locked  : std_logic;
   signal rst_reg : std_logic_vector(3 downto 0)  := (others => '1');
   signal sw_r    : std_logic_vector(sw'range)    := (others => '0');
