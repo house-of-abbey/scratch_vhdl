@@ -79,17 +79,18 @@ architecture rtl of zybo_z7_10 is
 
   constant divide_c : positive := divide(sim_g);
 
-  signal clk     : std_logic                     := '0';
-  signal reset   : std_logic                     := '1';
-  signal locked  : std_logic;
-  signal rst_reg : std_logic_vector(3 downto 0)  := (others => '1');
-  signal sw_r    : std_logic_vector(sw'range)    := (others => '0');
-  signal btn_r   : std_logic_vector(btn'range)   := (others => '0');
-  signal buttons : std_logic_vector(btn'range)   := (others => '0');
-  signal incr    : std_logic                     := '0';
-  signal count   : natural range 0 to divide_c-1 := 0;
-  signal sevseg0 : std_logic_vector(6 downto 0)  := (others => '0');
-  signal sevseg1 : std_logic_vector(6 downto 0)  := (others => '0');
+  signal clk      : std_logic                     := '0';
+  signal reset    : std_logic                     := '1';
+  signal locked   : std_logic;
+  signal locked_r : std_logic;
+  signal rst_reg  : std_logic_vector(3 downto 0)  := (others => '1');
+  signal sw_r     : std_logic_vector(sw'range)    := (others => '0');
+  signal btn_r    : std_logic_vector(btn'range)   := (others => '0');
+  signal buttons  : std_logic_vector(btn'range)   := (others => '0');
+  signal incr     : std_logic                     := '0';
+  signal count    : natural range 0 to divide_c-1 := 0;
+  signal sevseg0  : std_logic_vector(6 downto 0)  := (others => '0');
+  signal sevseg1  : std_logic_vector(6 downto 0)  := (others => '0');
 
 begin
 
@@ -103,6 +104,19 @@ begin
       locked  => locked
     );
 
+  -- 'locked' is clockless and goes high before 'clk' and then causes the design to come out of 'reset'.
+  -- No 'reset' to be used. Simulation suggests 'locked' is well settled before 'clk' starts, but being
+  -- safe here.
+  retime_lk : entity work.retime
+    generic map (
+      num_bits => 1
+    )
+    port map (
+      clk          => clk,
+      reset        => '0',
+      flags_in(0)  => locked,
+      flags_out(0) => locked_r
+    );
 
   -- Take advantage of initial values set GSR to generate the reset. It's not obvious
   -- how to tap GSR directly and discouraged too. 'locked' goes high earlier than GSR
@@ -111,7 +125,7 @@ begin
   process(clk)
   begin
     if rising_edge(clk) then
-      (reset, rst_reg) <= rst_reg & not locked;
+      (reset, rst_reg) <= rst_reg & not locked_r;
     end if;
   end process;
 
