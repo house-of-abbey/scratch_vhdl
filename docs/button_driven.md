@@ -78,8 +78,6 @@ end architecture;
 </code>
 </pre>
 
-On the rising edge of the clock (`clk`), check if `reset` is high, if so assign the default values, otherwise transfer the state of the `buttons` to the `leds`. This does little presently except introduce a one clock cycle delay.
-
 The `reset` condition ensures we are able to start from a known state across our design. Here we use a _synchronous_ reset, one that requires the active edge of the clock to execute. This is because synchronous resets are advised by the FPGA vendors for their devices.
 
 ![Synchronous reset](./images/vivado/synchronous_reset.png)
