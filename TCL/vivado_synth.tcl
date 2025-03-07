@@ -5,14 +5,7 @@
 #
 #####################################################################################
 #
-# Constraints file required for synthesis of the full design.
-#
-# This file is a general .xdc for the Zybo Z7 Rev. B
-# It is compatible with the Zybo Z7-20 and Zybo Z7-10
-# To use it in a project:
-# - uncomment the lines corresponding to used pins
-# - rename the used ports (in each line, after get_ports) according to the top level
-#   signal names in the project
+# Define the TCL procedures required for automating build functions for ScratchVHDL.
 #
 # J D Abbey & P A Abbey, 21 October 2022
 #
@@ -75,28 +68,32 @@ proc check_state {{synth synth_1} {impl impl_1}} {
 # Switch which constraints file to use for a specific board
 #
 # Parameter:
-#  1. A constraints file 'board', except the file extension.
+#  1. A constraints file (without the file extension) or 'board',
 #     Possible values:
-#     - "Rev B" | "Zybo-Master"    (Old, mystical and _odd_ board)
-#     - "Rev D" | "Zybo-Z7-Master" (New and standard board)
+#     - "legacy"  | "Zybo-Master"    (Legacy Zybo Rev B board)
+#     - "current" | "Zybo-Z7-Master" (Current Zybo Z7-10 Rev D board)
 #
-# Usage: switch_board "Zybo-Master"
+# Usage: switch_board "current"
 #
 proc switch_board {board} {
-  set_property is_enabled false [get_files  {Zybo-Master.xdc}]
-  set_property is_enabled false [get_files  {Zybo-Z7-Master.xdc}]
-
   switch $board {
-    "Rev B" -
+    "legacy" -
+    "Legacy" -
+    "Zybo" -
     "Zybo-Master" {
-      set_property is_enabled true [get_files  {Zybo-Master.xdc}]
+      set_property is_enabled true  [get_files  {Zybo-Master.xdc}]
+      set_property is_enabled false [get_files  {Zybo-Z7-Master.xdc}]
     }
-    "Rev D" -
+    "current" -
+    "Current" -
+    "Zybo Z7" -
+    "Zybo Z7-10" -
     "Zybo-Z7-Master" {
-      set_property is_enabled true [get_files  {Zybo-Z7-Master.xdc}]
+      set_property is_enabled false [get_files  {Zybo-Master.xdc}]
+      set_property is_enabled true  [get_files  {Zybo-Z7-Master.xdc}]
     }
     default {
-      error "Board is not found." 1
+      error "Board '$board' is not found. Try 'current' or 'legacy'." 1
     }
   }
 }

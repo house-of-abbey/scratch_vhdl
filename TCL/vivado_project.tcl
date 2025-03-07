@@ -5,14 +5,7 @@
 #
 #####################################################################################
 #
-# Constraints file required for synthesis of the full design.
-#
-# This file is a general .xdc for the Zybo Z7 Rev. B
-# It is compatible with the Zybo Z7-20 and Zybo Z7-10
-# To use it in a project:
-# - uncomment the lines corresponding to used pins
-# - rename the used ports (in each line, after get_ports) according to the top level
-#   signal names in the project
+# Automate the creation of the Vivado project for building ScratchVHDL designs.
 #
 # J D Abbey & P A Abbey, 21 October 2022
 #
