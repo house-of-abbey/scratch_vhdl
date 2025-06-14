@@ -29,7 +29,7 @@ begin
 --          Taps x^ 4321 0
 -- x^4 + x^3 + 1 => 1100(1)
 -- Period (2^n - 1) = 15
--- Implementation Reference: https://www.eng.auburn.edu/~strouce/class/elec6250/LFSRs.pdf
+-- Implementation Reference: https://www.eng.auburn.edu/~nelson/courses/elec4200/ClassMaterial/lfsrs.pdf
 -- External Feedback Implementation
 -- ================================
 --                  ++------+
