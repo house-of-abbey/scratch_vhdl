@@ -19,9 +19,21 @@ architecture scratch of led4_button4 is
   signal wi : unsigned(8 downto 0) := (others => '0');
   signal eif : std_logic;
   signal reg : work.risc_cpu_pkg.reg_arr_t := (others => (others => '0'));
+  signal rnd : std_logic_vector(7 downto 0) := "00000001";
 
 
 begin
+
+  process(clk)
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        rnd <= "00000001";
+      else
+        rnd <= ((rnd(7) xor rnd(5)) xor (rnd(4) xor (rnd(3) xor rnd(0)))) & rnd(7 downto 1);
+      end if;
+    end if;
+  end process;
 
   leds <= reg(7);
 
@@ -105,6 +117,10 @@ begin
                 -- Shit left
                 reg(o) <= reg(a)(2 downto 0) & pc_value(0);
               end if;
+
+            -- op_sub
+            when "1001" =>
+              reg(o) <= rnd(3 downto 0);
 
             -- op_ifbit
             when "1010" =>
