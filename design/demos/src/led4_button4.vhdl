@@ -767,6 +767,9 @@ architecture risc_cpu of led4_button4 is
   signal wi       : unsigned(8 downto 0);                -- Wait for 'incr'
   signal eif      : std_logic                    := '0'; -- skiping due to if
 
+  -- rnd generation from pseudo random generator using a LFSR
+  signal rnd      : std_logic_vector(7 downto 0) := "00000001";
+
   -- This ROM method is not ideal as it uses a large multiplexer to select the
   -- instruction. We ought to use a clocked ROM, but we've enough slack on timing
   -- we don't need the grief from an additional clock cycle delay.
@@ -794,6 +797,17 @@ begin
   o        <= to_integer(unsigned(pc_value(8 downto 6)));
   a        <= to_integer(unsigned(pc_value(5 downto 3)));
   b        <= to_integer(unsigned(pc_value(2 downto 0)));
+
+  process(clk) is
+  begin
+    if rising_edge(clk) then
+      if reset = '1' then
+        rnd <= "00000001";
+      else
+        rnd <= (rnd(7) xor rnd(5) xor rnd(4) xor rnd(3) xor rnd(0)) & rnd(7 downto 1);
+      end if;
+    end if;
+  end process;
 
   process(clk) is
   begin
@@ -838,6 +852,8 @@ begin
               else
                 reg(o) <= reg(a)(2 downto 0) & pc_value(0);
               end if;
+
+            when op_rnd => reg(o) <= rnd(3 downto 0);
 
             when op_ifbit =>
               if reg(a)(to_integer(unsigned(pc_value(1 downto 0)))) = '1' then

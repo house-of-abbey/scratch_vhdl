@@ -28,6 +28,7 @@ package risc_pkg is
     op_add,
     op_sub,
     op_shft,
+    op_rnd,
     op_ifbit,
     op_ifeq,
     op_ifgt,
@@ -71,6 +72,8 @@ package body risc_pkg is
       when x"7"   => return op_sub;
 
       when x"8"   => return op_shft;
+
+      when x"9"   => return op_rnd;
 
       when x"a"   => return op_ifbit;
       when x"b"   => return op_ifeq;

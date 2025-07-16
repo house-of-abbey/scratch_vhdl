@@ -55,6 +55,7 @@
   {o:sreg} <- {a:reg}  -  {b:reg}  => 0x7 @  o`3 @  a`3 @  b`3       ; op_sub
   {o:sreg} <- {b:u1}   >  {a:reg}  => 0x8 @  o`3 @  a`3 @  0`2 @ b`1 ; op_shft
   {o:sreg} <- {a:reg}  <  {b:u1}   => 0x8 @  o`3 @  a`3 @  1`2 @ b`1 ; op_shft
+  {o:sreg} <- rnd                  => 0x9 @  o`3 @         0`6       ; op_rnd
 
   {o:sreg} <- {a:reg} nand {b:reg}  => asm {
     {o} <- {a} and {b}
