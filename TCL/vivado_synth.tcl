@@ -315,6 +315,13 @@ proc remove_my_buttons {} {
   }
 }
 
+# Restore the synthesis tool state to where it required for a clean start
+#
+proc reset {} {
+  set_property top zybo_scratch [current_fileset]
+  reset_run synth_1
+}
+
 # Refresh the toolbar buttons
 remove_my_buttons
 add_my_buttons
