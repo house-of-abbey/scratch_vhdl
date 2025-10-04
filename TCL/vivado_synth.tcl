@@ -318,6 +318,21 @@ proc remove_my_buttons {} {
 # Restore the synthesis tool state to where it required for a clean start
 #
 proc reset {} {
+  # DELETE ONCE ALL LAPTOPS UPDATED
+  # Use this code to amend the Vivado project file after the retime.vhdl file was moved to a new directory.
+  if {[llength [get_files -quiet {A:/Philip/Work/VHDL/scratch_vhdl/design/demos/src/retime.vhdl}]] > 0} {
+    update_files \
+      -from_files A:/Philip/Work/VHDL/scratch_vhdl/design/Zybo_Z7_10/src/retime.vhdl \
+      -to_files   A:/Philip/Work/VHDL/scratch_vhdl/design/demos/src/retime.vhdl \
+      -filesets [get_filesets *]
+    puts "Note: Revised directory structure now updated."
+  } elseif {[llength [get_files -quiet {A:/Philip/Work/VHDL/scratch_vhdl/design/Zybo_Z7_10/src/retime.vhdl}]] > 0} {
+    puts "Note: Revised directory structure already updated, revert 'proc reset'."
+  } else {
+    puts "Error: in ScratchVHDL Project source - please check manually."
+  }
+  # DELETE ONCE ALL LAPTOPS UPDATED
+
   set_property top zybo_scratch [current_fileset]
   reset_run synth_1
 }
