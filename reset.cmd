@@ -38,6 +38,7 @@ if not exist "%SCRATCH_SRC%\" (
 
 cd %SCRATCH_SRC%
 git reset --hard HEAD
+git clean -f
 git pull
 
 call %VIVADO_INSTALL%\vivado.bat ^
