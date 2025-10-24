@@ -70,7 +70,7 @@ architecture rtl of zybo_z7_10 is
     else
       -- ERROR: [Synth 8-27] Division of physical type values not supported
       -- return positive(500 ms / 8 ns);
-      -- Vivado does not support division of physical quantites, even when the result is
+      -- Vivado does not support division of physical quantities, even when the result is
       -- assigned to a constant. You can't even convert to real by dividing by "1 ns".
       -- Using real literals instead.
       return positive(500.0e-3 / 8.0e-9);
@@ -121,7 +121,7 @@ begin
   -- Take advantage of initial values set GSR to generate the reset. It's not obvious
   -- how to tap GSR directly and discouraged too. 'locked' goes high earlier than GSR
   -- allows 'rst_reg' to start shifting, so this is belt & braces to ensure that reset
-  -- cannot preceed the PLL entering the locked state.
+  -- cannot precede the PLL entering the locked state.
   process(clk)
   begin
     if rising_edge(clk) then
