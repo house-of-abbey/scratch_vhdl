@@ -55,7 +55,7 @@ architecture rtl of zybo_z7_10 is
 
   -- When using configurations this must be instantiated via a component rather
   -- than entity work.pll or Vivado bleats.
-  component pll
+  component pll is
     port (
       clk_in  : in  std_logic;
       clk_out : out std_logic;
