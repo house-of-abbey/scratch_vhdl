@@ -30,8 +30,7 @@ end entity;
 
 architecture rtl of retime is
 
-  signal reg_capture : std_logic_vector(num_bits-1 downto 0) := (others => '0');
-  signal reg_retime  : std_logic_vector(num_bits-1 downto 0) := (others => '0');
+  signal reg_retime : std_logic_vector(num_bits-1 downto 0) := (others => '0');
 
   -- Could be placed in a constraints file
   attribute ASYNC_REG : string;
