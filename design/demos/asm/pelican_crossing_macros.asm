@@ -11,7 +11,7 @@
 
 #include "./ruledef.asm"
 
-pelicon_crossing:
+pelican_crossing:
   .s0:
     leds <- 0b0001
     wait until btns[0]
@@ -36,4 +36,4 @@ pelicon_crossing:
   .s7:
     leds <- 0b0010
     wincr
-    goto pelicon_crossing
+    goto pelican_crossing

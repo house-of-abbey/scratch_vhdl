@@ -553,7 +553,7 @@ end configuration;
 library local;
   use local.testbench_pkg.all;
 
-architecture pelicon_crossing of stimulus_led4_button4 is
+architecture pelican_crossing of stimulus_led4_button4 is
 
   alias start is buttons(0);
   alias stop  is buttons(1);
@@ -580,15 +580,15 @@ begin
 
 end architecture;
 
-configuration test_pelicon_crossing of test_led4_button4 is
+configuration test_pelican_crossing of test_led4_button4 is
   for test
 
     for led4_button4_i : led4_button4
-      use entity work.led4_button4(pelicon_crossing);
+      use entity work.led4_button4(pelican_crossing);
     end for;
 
     for stimulus_led4_button4_i : stimulus_led4_button4
-      use entity work.stimulus_led4_button4(pelicon_crossing);
+      use entity work.stimulus_led4_button4(pelican_crossing);
     end for;
 
   end for;

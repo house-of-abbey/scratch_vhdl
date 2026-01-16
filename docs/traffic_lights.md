@@ -16,7 +16,7 @@ Reference: [Highway Code](https://www.gov.uk/guidance/the-highway-code/light-sig
 
 Similar to the above, but implement the flashing amber light sequence. Again with `start` and `stop` buttons.
 
-![Pelican Crossing](./images/sim_controls/pelicon_crossing_demo.gif)
+![Pelican Crossing](./images/sim_controls/pelican_crossing_demo.gif)
 
 Reference: [Flashing amber traffic lights](https://www.passmefast.co.uk/resources/driving-advice/traffic-light-sequence-guide) (www.passmefast.co.uk)
 

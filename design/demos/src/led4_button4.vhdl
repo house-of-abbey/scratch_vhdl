@@ -522,7 +522,7 @@ end architecture;
 --
 -- https://www.passmefast.co.uk/resources/driving-advice/traffic-light-sequence-guide
 --
-architecture pelicon_crossing of led4_button4 is
+architecture pelican_crossing of led4_button4 is
 
   -- 1 - Push Switch tab
   -- 2 - Toggle Switch tab
