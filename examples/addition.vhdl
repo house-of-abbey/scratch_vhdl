@@ -18,8 +18,8 @@ begin
       if reset = '1' then
         leds <= "0000";
       else
-        leds(0) <= buttons(0) xor buttons(2);
-        leds(1) <= (buttons(0) and buttons(2)) xor (buttons(1) xor buttons(3));
+        leds(0) <= buttons(2) xor buttons(0);
+        leds(1) <= (buttons(2) and buttons(0)) xor (buttons(3) xor buttons(1));
         -- One of the XOR and OR logic gates can be interchanged.
         leds(2) <= (buttons(3) and buttons(1)) or ((buttons(3) or buttons(1)) and (buttons(2) and buttons(0)));
       end if;
