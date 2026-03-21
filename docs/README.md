@@ -106,13 +106,14 @@ Demonstration designs are provided in order of incremental difficulty (in the ma
 4. **[Shift Register](shift_registers.md)**, use a button to choose the status of LED 0, all the LEDs continue to scroll to the left. This can be developed into sequences that go back and forth for a bi-directional shift register controlled by two buttons, each inserting a lit LED into one end and changing the direction of shift.
 5. **4-bit [binary counter](binary_counter.md)** with start and stop buttons.
 6. **[Sum of buttons pressed](adders.md)**. This come in two variations, one-hot and binary. The former lights a single LED based on the number of buttons pressed at any one time. The latter represent the number of buttons in binary 0-4.
-7. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
-8. **[Traffic lights](traffic_lights.md)** come in two variations; the standard junction and the Pelican crossing. The latter (of course) includes a flashing yellow stage.
+7. **[Addition](addition.md)**, add two 2-bit numbers to make a 3-bit result.
+8. The **[Knight Rider](knight_rider.md) KITT car** bonnet light sequence from the 1980's television series.
+9. **[Traffic lights](traffic_lights.md)** comes in two variations; the standard junction and the Pelican crossing. The latter (of course) includes a flashing yellow stage.
   ![Traffic Lights](./images/sim_controls/traffic_lights_demo.gif)
-9. **[Dimmer Controller](dimmer_control.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
-10. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
-11. **["Crypto" Application](crypto.md)** to demonstrate the basic operation of message encryption and decryption.
-12. **[RISC CPU](risc_cpu.md)** - A simple "Reduce Instruction Set Computer" "Central Processing Unit" to read the buttons and drive the LEDs. Now you can re-write all the examples in assembly code!
+10. **[Dimmer Controller](dimmer_control.md)** two buttons increase or decrease a control value, e.g. the brightness of a room light, with the LEDs signifying the size of the value being controlled. (No solution provided.)
+11. **[Linear Feedback Shift Register](lfsr.md)** in two variations, internal and external feedback. This is included for something more taxing for the more capable student.
+12. **["Crypto" Application](crypto.md)** to demonstrate the basic operation of message encryption and decryption.
+13. **[RISC CPU](risc_cpu.md)** - A simple "Reduce Instruction Set Computer" "Central Processing Unit" to read the buttons and drive the LEDs. Now you can re-write all the examples in assembly code!
 
 The desire is to combine a discussion of the theory with the practical via engagement with interactive tools. Each of the demonstration designs above has their own description page.
 
