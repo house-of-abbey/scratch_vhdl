@@ -46,11 +46,9 @@ Two pairs of buttons are used as 2-bit inputs. So `btns(3:2)` and  `btns(1:0)` f
 
 ## Equations
 
-$$ \\
-\mathtt{led}(0) = \mathtt{btns}(2) \oplus \mathtt{btns}(0) \\
-\mathtt{led}(1) = (\mathtt{btns}(2) . \mathtt{btns}(0)) \oplus \mathtt{btns}(3) \oplus \mathtt{btns}(1) \\
-\mathtt{led}(2) = (\mathtt{btns}(3) . \mathtt{btns}(1)) + (\mathtt{btns}(3) \oplus \mathtt{btns}(1)) . \mathtt{btns}(2) . \mathtt{btns}(0)
-$$
+$$ \mathtt{led}(0) = \mathtt{btns}(2) \oplus \mathtt{btns}(0) $$
+$$ \mathtt{led}(1) = (\mathtt{btns}(2) . \mathtt{btns}(0)) \oplus \mathtt{btns}(3) \oplus \mathtt{btns}(1) $$
+$$ \mathtt{led}(2) = (\mathtt{btns}(3) . \mathtt{btns}(1)) + (\mathtt{btns}(3) \oplus \mathtt{btns}(1)) . \mathtt{btns}(2) . \mathtt{btns}(0) $$
 
 ## Circuit
 
