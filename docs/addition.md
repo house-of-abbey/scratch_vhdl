@@ -1,3 +1,7 @@
+---
+usemathjax: true
+---
+
 # Binary Addition
 
 Two pairs of buttons are used as 2-bit inputs. So `btns(3:2)` and  `btns(1:0)` form two inputs with the integer range 0 to 3. They are then added together to create a 3-bit output displayed as `leds(2:0)`. The logic is crafted to produce the following table of results.
