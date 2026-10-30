@@ -23,7 +23,7 @@ echo.
 echo Launching Vivado...
 start /min "" run_vivado.cmd
 
-timeout /t 30 /nobreak
+timeout /t 45 /nobreak
 echo ---------------------------------------------------
 
 echo Launching ModelSim...
