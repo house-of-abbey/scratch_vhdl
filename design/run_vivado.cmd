@@ -74,8 +74,8 @@ call %VIVADO_INSTALL%\vivado.bat ^
   -source "..\TCL\vivado_synth.tcl"
 
 rem Clean up junk
-del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log
-exit /b 0
+del /Q /F vivado_pid*.str hs_err_pid*.dmp hs_err_pid*.log >nul 2>&1
+exit 0
 
 :error
   echo.

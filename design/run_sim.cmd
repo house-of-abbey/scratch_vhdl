@@ -49,9 +49,8 @@ if not "%~1" == "" (
 
 %MODELSIMBIN%\vsim -do "source {../TCL/start_sim.tcl}"
 rem This file can be reported as in use by another process when it is not, so just clean it up.
-del /f %COMPILEDIR%\ModelSim\projects\button_leds\vsim.wlf transcript
-
-exit /b %errorcode%
+del /f %COMPILEDIR%\ModelSim\projects\button_leds\vsim.wlf transcript >nul 2>&1
+exit 0
 
 :error
   echo.

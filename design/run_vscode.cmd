@@ -44,7 +44,7 @@ set PATH=%SCRATCH_SRC%\..\bin;%PATH%
 
 "%VSCODE_INSTALL%\Code.exe" "%SCRATCH_SRC%\..\scratch_vhdl.code-workspace"
 
-exit /b %errorcode%
+exit %errorcode%
 
 :error
   echo.
