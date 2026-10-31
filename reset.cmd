@@ -41,6 +41,11 @@ git reset --hard HEAD
 git clean -f
 git pull
 
+rem Update GitHub Desktop to the latest version
+winget upgrade GitHub.GitHubDesktop
+rem Update VS Code to the latest version
+winget upgrade Microsoft.VisualStudioCode
+
 call %VIVADO_INSTALL%\vivado.bat ^
   -mode gui ^
   -tempDir %TEMP% ^
